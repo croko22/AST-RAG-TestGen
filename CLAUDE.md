@@ -69,12 +69,28 @@ Prompt → LLMClient → Generated Test
 - API keys: `ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, `GLM_API_KEY`, `GEMINI_API_KEY`, `NVIDIA_API_KEY`, `OPENROUTER_API_KEY`
 - Provider defaults: `LLM_PROVIDER`, `LLM_MODEL`
 
+## Documentation
+
+Detailed architecture and design documentation:
+
+- `docs/architecture/overview.md` - Complete pipeline overview and data flow
+- `docs/architecture/parser-module.md` - Tree-sitter AST parsing details
+- `docs/architecture/retriever-module.md` - Dependency resolution and indexing
+- `docs/architecture/prompt-builder.md` - Context assembly strategy
+- `docs/architecture/llm-client.md` - Multi-provider LLM interface
+- `docs/decisions/tree-sitter-choice.md` - Why Tree-sitter over javac
+- `docs/decisions/dependency-depth.md` - Why max_depth=2
+- `docs/decisions/prompt-strategy.md` - Spanish prompt engineering choices
+- `docs/api-contracts/retriever-api.md` - JavaFileRetriever/DependencyResolver contracts
+- `docs/api-contracts/data-types.md` - ParsedJavaClass, JavaDependency, MethodSignature
+
 ## Project Structure
 
 ```
 core/           # AST parsing, retrieval, prompt building
 llm/            # LLM API clients (multi-provider)
 main.py          # Orchestrator entry point
+docs/            # Architecture, decisions, API contracts
 environment.yml   # Conda dependencies
 .env.template     # Environment variable template
 tests_generados/ # Output directory (gitignored)
