@@ -1,0 +1,90 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Common Commands
+
+```bash
+# Create/activate conda environment
+conda env create -f environment.yml
+conda activate ast-rag-testgen
+
+# Generate test for a Java file
+python main.py <java_file> <java_project_path> [options]
+
+# Examples:
+python main.py mock-java-project/src/main/java/com/example/demo/service/UsuarioService.java mock-java-project/
+python main.py service.java project/ --provider nvidia --model meta/llama-3.1-405b-instruct
+python main.py service.java project/ --output ./my_tests --max-deps 5
+```
+
+## Architecture
+
+AST-RAG TestGen is a 4-step pipeline for generating Java unit tests using AST-based context retrieval:
+
+1. **Extractor** (`core/parser.py`): Uses Tree-sitter to parse Java files and extract:
+   - Package declarations
+   - Import statements
+   - Class/interface names
+   - Field declarations
+   - Method signatures
+
+2. **Retriever** (`core/retriever.py`): Finds and resolves dependency files in the Java project
+   - `JavaFileRetriever`: Scans project for `.java` files
+   - `DependencyResolver`: Recursively resolves dependencies with depth limit
+   - Builds class name to file path index
+
+3. **Prompt Builder** (`core/prompt_builder.py`): Assembles the dynamic prompt
+   - Combines code under test with extracted method signatures
+   - Formats context for LLM consumption
+
+4. **LLM Client** (`llm/client.py`): Multi-provider LLM interface
+   - Supports: anthropic, openai, glm, gemini, nvidia, openrouter
+   - Each provider has default models and API-specific handling
+   - NVIDIA and OpenRouter use OpenAI-compatible API
+
+### Data Flow
+
+```
+Java File → JavaParser → ParsedJavaClass
+    ↓
+JavaProjectPath → JavaFileRetriever → DependencyResolver
+    ↓
+ParsedJavaClass + ResolvedDependencies → PromptBuilder
+    ↓
+Prompt → LLMClient → Generated Test
+```
+
+### Key Classes
+
+- `ParsedJavaClass`: Complete parsed representation of a Java file
+- `JavaDependency`: Represents a dependency with name, type, package
+- `MethodSignature`: Extracted method metadata (visibility, return type, params)
+- `LLMConfig`: Config for LLM API calls (provider, model, temperature)
+- `LLMClient`: Multi-provider interface to various LLM APIs
+
+## Configuration
+
+- Environment variables loaded from `.env` via `python-dotenv`
+- API keys: `ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, `GLM_API_KEY`, `GEMINI_API_KEY`, `NVIDIA_API_KEY`, `OPENROUTER_API_KEY`
+- Provider defaults: `LLM_PROVIDER`, `LLM_MODEL`
+
+## Project Structure
+
+```
+core/           # AST parsing, retrieval, prompt building
+llm/            # LLM API clients (multi-provider)
+main.py          # Orchestrator entry point
+environment.yml   # Conda dependencies
+.env.template     # Environment variable template
+tests_generados/ # Output directory (gitignored)
+```
+
+## Testing
+
+Mock Java project (`mock-java-project/`) exists for testing but is gitignored.
+
+Generate tests for any service:
+```bash
+python main.py mock-java-project/src/main/java/com/example/demo/service/UsuarioService.java mock-java-project/ --provider nvidia
+```
