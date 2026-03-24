@@ -153,9 +153,8 @@ class DependencyResolver:
                 if parsed:
                     result.append(parsed)
 
-                    # Recursively resolve the dependencies
                     for dep in parsed.dependencies:
-                        if dep.type in ("class", "interface", "import"):
+                        if dep.type in ("class", "interface", "import", "field"):
                             _resolve(dep.name, depth + 1)
 
         _resolve(class_name, 0)

@@ -166,21 +166,20 @@ class JavaParser:
         """
         dependencies = []
 
-        # Add imports as potential dependencies
         for imp in imports:
             if not imp.startswith("java.") and not imp.startswith("javax.") and not imp.startswith("org.springframework"):
-                # Filter out standard library and framework imports
                 deps = self._parse_import_to_dependencies(imp)
                 dependencies.extend(deps)
 
-        # Extract from field declarations
         for child in root.children:
             if child.type in ("class_declaration", "interface_declaration"):
                 for child2 in child.children:
-                    if child2.type == "field_declaration":
-                        dep = self._extract_field_dependency(child2)
-                        if dep:
-                            dependencies.append(dep)
+                    if child2.type in ("class_body", "interface_body"):
+                        for child3 in child2.children:
+                            if child3.type == "field_declaration":
+                                dep = self._extract_field_dependency(child3)
+                                if dep:
+                                    dependencies.append(dep)
 
         return dependencies
 
@@ -227,10 +226,12 @@ class JavaParser:
         for child in root.children:
             if child.type in ("class_declaration", "interface_declaration"):
                 for child2 in child.children:
-                    if child2.type == "method_declaration":
-                        method = self._parse_method_signature(child2)
-                        if method:
-                            methods.append(method)
+                    if child2.type in ("class_body", "interface_body"):
+                        for child3 in child2.children:
+                            if child3.type == "method_declaration":
+                                method = self._parse_method_signature(child3)
+                                if method:
+                                    methods.append(method)
 
         return methods
 
@@ -292,10 +293,12 @@ class JavaParser:
         for child in root.children:
             if child.type in ("class_declaration", "interface_declaration"):
                 for child2 in child.children:
-                    if child2.type == "field_declaration":
-                        field = self._parse_field(child2)
-                        if field:
-                            fields.append(field)
+                    if child2.type in ("class_body", "interface_body"):
+                        for child3 in child2.children:
+                            if child3.type == "field_declaration":
+                                field = self._parse_field(child3)
+                                if field:
+                                    fields.append(field)
 
         return fields
 

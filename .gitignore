@@ -45,6 +45,12 @@ build/
 # Generated tests
 tests_generados/
 
+# Coverage
+htmlcov/
+.coverage
+coverage.xml
+.pytest_cache/
+
 # Conda
 .conda/
 condaenv.*.txt
