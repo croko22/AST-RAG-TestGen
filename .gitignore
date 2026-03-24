@@ -57,3 +57,6 @@ condaenv.*.txt
 
 # Mock Java project (for testing)
 mock-java-project/
+
+# pip
+pip-cache/
