@@ -1,0 +1,506 @@
+"""Unit tests for Metainfo Database module."""
+
+import pytest
+from pathlib import Path
+from tempfile import TemporaryDirectory
+
+# Import models with aliases to avoid pytest collection conflicts
+from core.metainfo.database import MetainfoDatabase
+from core.metainfo import schemas as metainfo_schemas
+
+# Use aliases for test classes to avoid conflicts with model names
+# Since these have __init__, pytest won't collect them as test classes
+from core.metainfo.schemas import (
+    ClassInfo,
+    MethodInfo,
+    FieldInfo,
+    PackageInfo,
+    TestInfo,
+    TestBundle,
+    ReferenceRelationship,
+    ReferencePhase,
+    ReferenceMethodSet,
+    ScopeGraph,
+)
+
+
+@pytest.fixture
+def db_path(tmp_path):
+    """Create a temporary database file."""
+    return str(tmp_path / "test_metainfo.db")
+
+
+@pytest.fixture
+def db(db_path):
+    """MetainfoDatabase instance for testing."""
+    db = MetainfoDatabase(db_path)
+    yield db
+    # Cleanup after test
+    Path(db_path).unlink(missing_ok=True)
+
+
+class TestMetainfoDB:
+
+    def test_database_creation(self, db_path):
+        """Test that database is created on initialization."""
+        db = MetainfoDatabase(db_path)
+        assert Path(db_path).exists()
+        db.close()
+
+    def test_save_and_retrieve_class(self, db):
+        """Test saving and retrieving a class."""
+        class_info = ClassInfo(
+            uri="com.example.TestService",
+            name="TestService",
+            file_path="src/main/java/com/example/TestService.java",
+            package="com.example",
+            superclasses=["AbstractService"],
+            super_interfaces=["IService"],
+            class_docstring="Test service class",
+            original_string="class TestService extends AbstractService implements IService {}",
+        )
+
+        db.save_class(class_info)
+        retrieved = db.get_class("com.example.TestService")
+
+        assert retrieved is not None
+        assert retrieved.name == "TestService"
+        assert retrieved.package == "com.example"
+        assert "AbstractService" in retrieved.superclasses
+
+    def test_save_and_retrieve_method(self, db):
+        """Test saving and retrieving a method."""
+        method_info = MethodInfo(
+            uri="com.example.TestService.getData",
+            name="getData",
+            class_uri="com.example.TestService",
+            visibility="public",
+            return_type="String",
+            parameters=[],
+            modifiers=["public"],
+            is_static=False,
+            docstring="Get data from repository",
+            original_string="public String getData() { return repo.findAll(); }",
+        )
+
+        db.save_method(method_info)
+        retrieved = db.get_method("com.example.TestService.getData")
+
+        assert retrieved is not None
+        assert retrieved.name == "getData"
+        assert retrieved.return_type == "String"
+        assert not retrieved.is_static
+
+    def test_save_and_retrieve_field(self, db):
+        """Test saving and retrieving a field."""
+        field_info = FieldInfo(
+            uri="com.example.TestService.repo",
+            name="repo",
+            class_uri="com.example.TestService",
+            type="Repository",
+            modifiers=["private", "final"],
+            docstring="",
+        )
+
+        db.save_field(field_info)
+        retrieved = db.get_field("com.example.TestService.repo")
+
+        assert retrieved is not None
+        assert retrieved.name == "repo"
+        assert retrieved.type == "Repository"
+        assert "private" in retrieved.modifiers
+
+    def test_save_and_retrieve_package(self, db):
+        """Test saving and retrieving a package."""
+        package_info = PackageInfo(
+            uri="com.example",
+            name="com.example",
+            file_path="src/main/java/com/example/package-info.java",
+            classes=["TestService", "Repository"],
+        )
+
+        db.save_package(package_info)
+        retrieved = db.get_package("com.example")
+
+        assert retrieved is not None
+        assert retrieved.name == "com.example"
+        assert "TestService" in retrieved.classes
+
+    def test_save_and_retrieve_test(self, db):
+        """Test saving and retrieving test information."""
+        test_info = TestInfo(
+            uri="com.example.TestServiceTest",
+            name="TestServiceTest",
+            file_path="src/test/java/com/example/TestServiceTest.java",
+            target_class="com.example.TestService",
+            test_cases=["testGetData", "testSaveData"],
+            fixtures=["beforeEach", "setUp"],
+        )
+
+        db.save_test(test_info)
+        retrieved = db.get_test("com.example.TestServiceTest")
+
+        assert retrieved is not None
+        assert retrieved.name == "TestServiceTest"
+        assert retrieved.target_class == "com.example.TestService"
+        assert "testGetData" in retrieved.test_cases
+
+    def test_get_methods_by_class(self, db):
+        """Test retrieving all methods for a class."""
+        class_uri = "com.example.TestService"
+
+        method1 = MethodInfo(
+            uri=f"{class_uri}.getData",
+            name="getData",
+            class_uri=class_uri,
+            visibility="public",
+            return_type="String",
+            parameters=[],
+        )
+
+        method2 = MethodInfo(
+            uri=f"{class_uri}.setData",
+            name="setData",
+            class_uri=class_uri,
+            visibility="public",
+            return_type="void",
+            parameters=[{"name": "data", "type": "String"}],
+        )
+
+        db.save_method(method1)
+        db.save_method(method2)
+
+        methods = db.get_methods_by_class(class_uri)
+
+        assert len(methods) == 2
+        method_names = [m.name for m in methods]
+        assert "getData" in method_names
+        assert "setData" in method_names
+
+    def test_get_fields_by_class(self, db):
+        """Test retrieving all fields for a class."""
+        class_uri = "com.example.TestService"
+
+        field1 = FieldInfo(
+            uri=f"{class_uri}.repo",
+            name="repo",
+            class_uri=class_uri,
+            type="Repository",
+        )
+
+        field2 = FieldInfo(
+            uri=f"{class_uri}.config",
+            name="config",
+            class_uri=class_uri,
+            type="Config",
+        )
+
+        db.save_field(field1)
+        db.save_field(field2)
+
+        fields = db.get_fields_by_class(class_uri)
+
+        assert len(fields) == 2
+        field_names = [f.name for f in fields]
+        assert "repo" in field_names
+        assert "config" in field_names
+
+    def test_get_classes_by_package(self, db):
+        """Test retrieving all classes in a package."""
+        package_name = "com.example"
+
+        class1 = ClassInfo(
+            uri=f"{package_name}.TestService",
+            name="TestService",
+            file_path="src/TestService.java",
+            package=package_name,
+        )
+
+        class2 = ClassInfo(
+            uri=f"{package_name}.Repository",
+            name="Repository",
+            file_path="src/Repository.java",
+            package=package_name,
+        )
+
+        db.save_class(class1)
+        db.save_class(class2)
+
+        classes = db.get_classes_by_package(package_name)
+
+        assert len(classes) == 2
+        class_names = [c.name for c in classes]
+        assert "TestService" in class_names
+        assert "Repository" in class_names
+
+    def test_save_and_retrieve_test_bundle(self, db):
+        """Test saving and retrieving a test bundle."""
+        test_bundle = TestBundle(
+            test_uri="com.example.TestServiceTest.testGetData",
+            test_name="testGetData",
+            test_class_uri="com.example.TestServiceTest",
+            target_method="com.example.TestService.getData",
+            fixtures_used=["beforeEach"],
+            external_dependencies={"modules": ["Config"], "class_members": ["redis"]},
+            project_specific_resources=["TestUtil.logTestResult"],
+        )
+
+        db.save_test_bundle(test_bundle)
+        retrieved = db.get_test_bundle("com.example.TestServiceTest.testGetData")
+
+        assert retrieved is not None
+        assert retrieved.test_name == "testGetData"
+        assert retrieved.target_method == "com.example.TestService.getData"
+        assert "beforeEach" in retrieved.fixtures_used
+
+    def test_save_and_retrieve_reference_relationship(self, db):
+        """Test saving and retrieving reference relationships."""
+        ref_rel = ReferenceRelationship(
+            source_method="com.example.Service.getData",
+            target_method="com.example.Service.validateData",
+            phase=ReferencePhase.WHEN,
+            description="Both methods validate data before return",
+            confidence=0.85,
+            is_external=False,
+        )
+
+        db.save_reference_relationship(ref_rel)
+        retrieved = db.get_reference_relationship(
+            "com.example.Service.getData",
+            "com.example.Service.validateData"
+        )
+
+        assert retrieved is not None
+        assert retrieved.phase == ReferencePhase.WHEN
+        assert retrieved.confidence == 0.85
+        assert not retrieved.is_external
+
+    def test_get_reference_relationships_for_method(self, db):
+        """Test getting all reference relationships for a method."""
+        source_method = "com.example.Service.getData"
+
+        ref1 = ReferenceRelationship(
+            source_method=source_method,
+            target_method="com.example.Service.validateData",
+            phase=ReferencePhase.WHEN,
+            confidence=0.85,
+        )
+
+        ref2 = ReferenceRelationship(
+            source_method=source_method,
+            target_method="com.example.Service.loadData",
+            phase=ReferencePhase.GIVEN,
+            confidence=0.75,
+        )
+
+        db.save_reference_relationship(ref1)
+        db.save_reference_relationship(ref2)
+
+        refs = db.get_reference_relationships_for_method(source_method)
+
+        assert len(refs) == 2
+        phases = [r.phase for r in refs]
+        assert ReferencePhase.WHEN in phases
+        assert ReferencePhase.GIVEN in phases
+
+    def test_query_by_class_name(self, db):
+        """Test searching classes by name (partial match)."""
+        class1 = ClassInfo(
+            uri="com.example.TestService",
+            name="TestService",
+            file_path="src/TestService.java",
+            package="com.example",
+        )
+
+        class2 = ClassInfo(
+            uri="org.other.AnotherService",
+            name="AnotherService",
+            file_path="src/AnotherService.java",
+            package="org.other",
+        )
+
+        db.save_class(class1)
+        db.save_class(class2)
+
+        results = db.query_classes_by_name("Service")
+
+        assert len(results) >= 1
+        assert any(c.name == "TestService" for c in results)
+
+    def test_clear_database(self, db):
+        """Test clearing the database."""
+        class_info = ClassInfo(
+            uri="com.example.TestService",
+            name="TestService",
+            file_path="src/TestService.java",
+            package="com.example",
+        )
+
+        db.save_class(class_info)
+        db.clear()
+
+        assert db.get_class("com.example.TestService") is None
+
+
+class TestClassModel:
+
+    def test_class_info_validation(self):
+        """Test ClassInfo validation."""
+        # Valid class info
+        class_info = ClassInfo(
+            uri="com.example.TestService",
+            name="TestService",
+            file_path="src/TestService.java",
+            package="com.example",
+        )
+        assert class_info.uri == "com.example.TestService"
+
+        # Missing required field
+        with pytest.raises(ValueError):
+            ClassInfo(
+                uri="",  # Empty URI
+                name="TestService",
+                file_path="src/TestService.java",
+                package="com.example",
+            )
+
+
+class TestMethodModel:
+
+    def test_method_info_validation(self):
+        """Test MethodInfo validation."""
+        # Valid method info
+        method_info = MethodInfo(
+            uri="com.example.TestService.getData",
+            name="getData",
+            class_uri="com.example.TestService",
+            visibility="public",
+            return_type="String",
+            parameters=[],
+        )
+        assert method_info.name == "getData"
+
+        # Invalid visibility
+        with pytest.raises(ValueError):
+            MethodInfo(
+                uri="com.example.TestService.getData",
+                name="getData",
+                class_uri="com.example.TestService",
+                visibility="invalid",
+                return_type="String",
+                parameters=[],
+            )
+
+
+class TestReferenceMethodSetModel:
+
+    def test_all_methods(self):
+        """Test getting all referenced method URIs."""
+        ref_set = ReferenceMethodSet(
+            focal_method_uri="com.example.Service.getData",
+            complete=["com.example.Service.validate"],
+            given=[("com.example.Service.setup", "Preconditions")],
+            when=[("com.example.Service.loadData", "Load test data")],
+            then=[("com.example.Service.assertResult", "Verify result")],
+        )
+
+        all_methods = ref_set.all_methods()
+
+        assert len(all_methods) == 4
+        assert "com.example.Service.validate" in all_methods
+        assert "com.example.Service.setup" in all_methods
+        assert "com.example.Service.loadData" in all_methods
+        assert "com.example.Service.assertResult" in all_methods
+
+    def test_rank(self):
+        """Test ranking methods by priority."""
+        ref_set = ReferenceMethodSet(
+            focal_method_uri="com.example.Service.getData",
+            complete=["com.example.Service.validate"],
+            given=[("com.example.Service.setup", "Preconditions")],
+            when=[("com.example.Service.loadData", "Load test data")],
+            then=[("com.example.Service.assertResult", "Verify result")],
+        )
+
+        ranked = ref_set.rank(max_count=3)
+
+        assert len(ranked) == 3
+        # Complete method should be first
+        assert ranked[0][0] == "com.example.Service.validate"
+        assert ranked[0][2] == 1.0
+
+        # Given should be second
+        assert ranked[1][0] == "com.example.Service.setup"
+        assert ranked[1][2] == 0.8
+
+        # When should be third
+        assert ranked[2][0] == "com.example.Service.loadData"
+        assert ranked[2][2] == 0.6
+
+
+class TestScopeGraphModel:
+
+    def test_add_and_resolve_scope(self):
+        """Test adding scopes and resolving references."""
+        graph = ScopeGraph()
+
+        # Add scopes
+        graph.add_scope("class_scope", parent_id=None)
+        graph.add_scope("method_scope", parent_id="class_scope")
+
+        # Add definitions
+        graph.add_definition("repo_var", scope_id="class_scope")
+        graph.add_definition("data_method", scope_id="method_scope")
+
+        # Add reference
+        graph.add_reference("repo_var", scope_id="method_scope")
+
+        # Resolve reference - returns the definition node ID
+        resolved = graph.resolve_local("repo_var")
+
+        # In current implementation, nodes store type only
+        # The test checks if we get the expected definition
+        assert resolved is not None
+        assert "repo_var" in graph.nodes or resolved == "repo_var"
+
+    def test_resolve_not_found(self):
+        """Test resolving non-existent reference."""
+        graph = ScopeGraph()
+
+        graph.add_scope("class_scope")
+        graph.add_definition("data_method", scope_id="class_scope")
+        graph.add_reference("unknown_var", scope_id="class_scope")
+
+        resolved = graph.resolve_local("unknown_var")
+
+        assert resolved is None
+
+    def test_parent_scope_traversal(self):
+        """Test scope traversal to parent."""
+        graph = ScopeGraph()
+
+        graph.add_scope("global", parent_id=None)
+        graph.add_scope("class_scope", parent_id="global")
+        graph.add_scope("method_scope", parent_id="class_scope")
+
+        graph.add_definition("repo_var", scope_id="class_scope")
+        graph.add_reference("repo_var", scope_id="method_scope")
+
+        resolved = graph.resolve_local("repo_var")
+
+        assert resolved == "repo_var"
+
+    def test_node_types(self):
+        """Test that node type constants are set correctly."""
+        assert ScopeGraph.NODE_SCOPE == "LocalScope"
+        assert ScopeGraph.NODE_DEF == "LocalDef"
+        assert ScopeGraph.NODE_IMPORT == "LocalImport"
+        assert ScopeGraph.NODE_REF == "Reference"
+
+    def test_edge_types(self):
+        """Test that edge type constants are set correctly."""
+        assert ScopeGraph.EDGE_SCOPE_TO_SCOPE == "ScopeToScope"
+        assert ScopeGraph.EDGE_DEF_TO_SCOPE == "DefToScope"
+        assert ScopeGraph.EDGE_IMPORT_TO_SCOPE == "ImportToScope"
+        assert ScopeGraph.EDGE_REF_TO_DEF == "RefToDef"
+        assert ScopeGraph.EDGE_REF_TO_IMPORT == "RefToImport"

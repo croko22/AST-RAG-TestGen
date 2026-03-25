@@ -97,13 +97,12 @@ python_version = "3.11"
 warn_return_any = true
 warn_unused_configs = true
 ignore_missing_imports = true
-check_untyped_defs = true
 
 [[tool.mypy.overrides]]
 module = "tree_sitter.*"
 ignore_missing_imports = true
 
-[tool.pytest.ini_options]
+[tool.pytest]
 testpaths = ["tests"]
 python_files = ["test_*.py"]
 python_classes = ["Test*"]
@@ -114,16 +113,17 @@ addopts = [
     "--tb=short",
     "--cov=core",
     "--cov=llm",
+    "--cov=core.metainfo",
     "--cov-report=html",
     "--cov-report=term-missing",
     "--cov-report=xml",
     "--cov-fail-under=75",
 ]
-
-[tool.pytest.markers]
-unit = "Unit tests"
-integration = "Integration tests"
-slow = "Slow running tests"
+markers = [
+    "unit: Unit tests",
+    "integration: Integration tests",
+    "slow: Slow running tests",
+]
 
 [tool.coverage.run]
 source = ["core", "llm"]

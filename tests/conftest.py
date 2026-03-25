@@ -2,8 +2,17 @@
 
 import pytest
 from pathlib import Path
-from core import JavaFileRetriever, DependencyResolver
-from llm import LLMClient, LLMConfig
+
+# Try to import core modules, but don't fail if tree-sitter is not installed
+try:
+    from core import JavaFileRetriever, DependencyResolver
+    from llm import LLMClient, LLMConfig
+except ImportError:
+    # tree-sitter not available - set to None for tests that don't need it
+    JavaFileRetriever = None
+    DependencyResolver = None
+    LLMClient = None
+    LLMConfig = None
 
 
 @pytest.fixture
@@ -51,18 +60,24 @@ public class Service {
 @pytest.fixture
 def retriever(mock_project_root):
     """JavaFileRetriever initialized with mock project."""
+    if JavaFileRetriever is None:
+        pytest.skip("Tree-sitter not installed")
     return JavaFileRetriever(mock_project_root)
 
 
 @pytest.fixture
 def resolver(retriever):
     """DependencyResolver initialized with retriever."""
+    if DependencyResolver is None:
+        pytest.skip("Tree-sitter not installed")
     return DependencyResolver(retriever)
 
 
 @pytest.fixture
 def llm_config():
     """LLMConfig for testing (no real API calls by default)."""
+    if LLMConfig is None:
+        pytest.skip("LLM client not available")
     return LLMConfig(
         provider="anthropic",  # Use mock in actual tests
         model="test-model",
