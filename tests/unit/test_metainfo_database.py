@@ -1,20 +1,25 @@
 """Unit tests for Metainfo Database module."""
 
-import pytest
 from pathlib import Path
+
+import pytest
 
 from core.metainfo.database import MetainfoDatabase
 from core.metainfo.schemas import (
     ClassInfo,
-    MethodInfo,
     FieldInfo,
+    MethodInfo,
     PackageInfo,
-    TestInfo as MetainfoTestInfo,
-    TestBundle as MetainfoTestBundle,
-    ReferenceRelationship,
-    ReferencePhase,
     ReferenceMethodSet,
+    ReferencePhase,
+    ReferenceRelationship,
     ScopeGraph,
+)
+from core.metainfo.schemas import (
+    TestBundle as MetainfoTestBundle,
+)
+from core.metainfo.schemas import (
+    TestInfo as MetainfoTestInfo,
 )
 
 
@@ -35,6 +40,36 @@ def db(db_path):
 
 class TestMetainfoDB:
 
+    @staticmethod
+    def _seed_class(db, class_uri: str) -> None:
+        db.save_class(
+            ClassInfo(
+                uri=class_uri,
+                name=class_uri.split(".")[-1],
+                file_path=f"src/main/java/{class_uri.replace('.', '/')}.java",
+                package=".".join(class_uri.split(".")[:-1]),
+                class_docstring=None,
+                original_string=None,
+            )
+        )
+
+    @classmethod
+    def _seed_method(cls, db, method_uri: str) -> None:
+        class_uri, method_name = method_uri.rsplit(".", 1)
+        cls._seed_class(db, class_uri)
+        db.save_method(
+            MethodInfo(
+                uri=method_uri,
+                name=method_name,
+                class_uri=class_uri,
+                visibility="public",
+                return_type="void",
+                parameters=[],
+                docstring=None,
+                original_string=None,
+            )
+        )
+
     def test_database_creation_creates_parent_dir(self, tmp_path):
         """Database initialization creates missing parent directories."""
         db_path = tmp_path / "nested" / "db" / "metainfo.db"
@@ -47,6 +82,48 @@ class TestMetainfoDB:
         db = MetainfoDatabase(db_path)
         assert Path(db_path).exists()
         db.close()
+
+    def test_connection_pragmas_are_applied(self, db):
+        """Connection-level PRAGMAs should be enabled for safety/performance."""
+        with db._get_connection() as conn:
+            assert conn.execute("PRAGMA foreign_keys").fetchone()[0] == 1
+            assert str(conn.execute("PRAGMA journal_mode").fetchone()[0]).lower() == "wal"
+            assert conn.execute("PRAGMA synchronous").fetchone()[0] == 1
+            assert conn.execute("PRAGMA busy_timeout").fetchone()[0] == 5000
+
+    def test_transaction_commit_persists_changes(self, db):
+        """transaction() commits changes when block exits successfully."""
+        class_info = ClassInfo(
+            uri="com.example.TxCommitService",
+            name="TxCommitService",
+            file_path="src/main/java/com/example/TxCommitService.java",
+            package="com.example",
+            class_docstring=None,
+            original_string=None,
+        )
+
+        with db.transaction() as conn:
+            db.save_class(class_info, conn=conn)
+
+        assert db.get_class("com.example.TxCommitService") is not None
+
+    def test_transaction_rollback_discards_changes(self, db):
+        """transaction() rolls back if an exception is raised."""
+        class_info = ClassInfo(
+            uri="com.example.TxRollbackService",
+            name="TxRollbackService",
+            file_path="src/main/java/com/example/TxRollbackService.java",
+            package="com.example",
+            class_docstring=None,
+            original_string=None,
+        )
+
+        with pytest.raises(RuntimeError, match="force rollback"):
+            with db.transaction() as conn:
+                db.save_class(class_info, conn=conn)
+                raise RuntimeError("force rollback")
+
+        assert db.get_class("com.example.TxRollbackService") is None
 
     def test_save_and_retrieve_class(self, db):
         """Test saving and retrieving a class."""
@@ -71,6 +148,7 @@ class TestMetainfoDB:
 
     def test_save_and_retrieve_method(self, db):
         """Test saving and retrieving a method."""
+        self._seed_class(db, "com.example.TestService")
         method_info = MethodInfo(
             uri="com.example.TestService.getData",
             name="getData",
@@ -94,6 +172,7 @@ class TestMetainfoDB:
 
     def test_save_and_retrieve_field(self, db):
         """Test saving and retrieving a field."""
+        self._seed_class(db, "com.example.TestService")
         field_info = FieldInfo(
             uri="com.example.TestService.repo",
             name="repo",
@@ -129,6 +208,7 @@ class TestMetainfoDB:
 
     def test_save_and_retrieve_test(self, db):
         """Test saving and retrieving test information."""
+        self._seed_class(db, "com.example.TestService")
         test_info = MetainfoTestInfo(
             uri="com.example.TestServiceTest",
             name="TestServiceTest",
@@ -149,6 +229,7 @@ class TestMetainfoDB:
     def test_get_methods_by_class(self, db):
         """Test retrieving all methods for a class."""
         class_uri = "com.example.TestService"
+        self._seed_class(db, class_uri)
 
         method1 = MethodInfo(
             uri=f"{class_uri}.getData",
@@ -185,6 +266,7 @@ class TestMetainfoDB:
     def test_get_fields_by_class(self, db):
         """Test retrieving all fields for a class."""
         class_uri = "com.example.TestService"
+        self._seed_class(db, class_uri)
 
         field1 = FieldInfo(
             uri=f"{class_uri}.repo",
@@ -246,6 +328,19 @@ class TestMetainfoDB:
 
     def test_save_and_retrieve_test_bundle(self, db):
         """Test saving and retrieving a test bundle."""
+        self._seed_class(db, "com.example.TestService")
+        self._seed_class(db, "com.example.TestServiceTest")
+        self._seed_method(db, "com.example.TestService.getData")
+        db.save_test(
+            MetainfoTestInfo(
+                uri="com.example.TestServiceTest",
+                name="TestServiceTest",
+                file_path="src/test/java/com/example/TestServiceTest.java",
+                target_class="com.example.TestService",
+                test_cases=[],
+            )
+        )
+
         test_bundle = MetainfoTestBundle(
             test_uri="com.example.TestServiceTest.testGetData",
             test_name="testGetData",
@@ -269,6 +364,8 @@ class TestMetainfoDB:
 
     def test_save_and_retrieve_reference_relationship(self, db):
         """Test saving and retrieving reference relationships."""
+        self._seed_method(db, "com.example.Service.getData")
+        self._seed_method(db, "com.example.Service.validateData")
         ref_rel = ReferenceRelationship(
             source_method="com.example.Service.getData",
             target_method="com.example.Service.validateData",
@@ -293,6 +390,9 @@ class TestMetainfoDB:
     def test_get_reference_relationships_for_method(self, db):
         """Test getting all reference relationships for a method."""
         source_method = "com.example.Service.getData"
+        self._seed_method(db, source_method)
+        self._seed_method(db, "com.example.Service.validateData")
+        self._seed_method(db, "com.example.Service.loadData")
 
         ref1 = ReferenceRelationship(
             source_method=source_method,
@@ -325,6 +425,9 @@ class TestMetainfoDB:
     def test_get_complete_relationships_filters_partial(self, db):
         """Only complete GWT relationships are returned as complete."""
         source_method = "com.example.Service.getData"
+        self._seed_method(db, source_method)
+        self._seed_method(db, "com.example.Service.validateAndReturn")
+        self._seed_method(db, "com.example.Service.loadData")
 
         complete_ref = ReferenceRelationship(
             source_method=source_method,

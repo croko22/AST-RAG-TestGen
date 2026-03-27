@@ -14,10 +14,6 @@ import argparse
 import sys
 from pathlib import Path
 
-from core.prompt_builder import PromptBuilder
-from core.retriever import DependencyResolver, JavaFileRetriever
-from llm.client import LLMClient, LLMConfig, get_available_providers
-
 
 def generate_test_for_file(
     java_file_path: str,
@@ -26,6 +22,8 @@ def generate_test_for_file(
     max_dependencies: int = 10,
     llm_provider: str = "anthropic",
     llm_model: str = "claude-3-5-sonnet-20241022",
+    enable_metainfo_db: bool = False,
+    enable_reftest_parity: bool = False,
 ) -> str:
     """
     Generate a unit test for a given Java file.
@@ -37,6 +35,8 @@ def generate_test_for_file(
         max_dependencies: Maximum number of dependencies to include
         llm_provider: LLM provider (anthropic, openai, glm, gemini, openrouter)
         llm_model: Model to use
+        enable_metainfo_db: Reserved feature flag for metainfo DB-backed flow
+        enable_reftest_parity: Reserved feature flag for reftest parity flow
 
     Returns:
         Generated test code as string
@@ -48,8 +48,15 @@ def generate_test_for_file(
     print(f"📦 Project: {java_project_path}")
     print(f"🤖 LLM: {llm_provider}/{llm_model}")
 
+    # Reserved feature flags for incremental rollout. Disabled by default and
+    # intentionally no-op until their respective phases are implemented.
+    _ = (enable_metainfo_db, enable_reftest_parity)
+
     # Step 1: Initialize retriever and resolver
     print("\n[1/4] 📥 Initializing retriever...")
+    from core.prompt_builder import PromptBuilder
+    from core.retriever import DependencyResolver, JavaFileRetriever
+
     retriever = JavaFileRetriever(java_project_path)
     resolver = DependencyResolver(retriever)
     prompt_builder = PromptBuilder(retriever, resolver)
@@ -74,6 +81,8 @@ def generate_test_for_file(
 
     # Step 4: Generate test with LLM
     print("[4/4] 🤖 Generating test with LLM...")
+    from llm.client import LLMClient, LLMConfig
+
     llm_config = LLMConfig(
         provider=llm_provider,
         model=llm_model,
@@ -128,6 +137,8 @@ def main():
             max_dependencies=args.max_deps,
             llm_provider=args.provider,
             llm_model=args.model,
+            enable_metainfo_db=args.enable_metainfo_db,
+            enable_reftest_parity=args.enable_reftest_parity,
         )
 
         if args.print:
@@ -148,6 +159,13 @@ def main():
 
 def build_arg_parser() -> argparse.ArgumentParser:
     """Build command-line argument parser."""
+    try:
+        from llm.client import get_available_providers
+
+        available_providers = get_available_providers()
+    except ModuleNotFoundError:
+        available_providers = ["anthropic", "openai", "glm", "gemini", "openrouter", "nvidia"]
+
     parser = argparse.ArgumentParser(
         description="AST-RAG TestGen: Generate unit tests using AST-based RAG",
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -183,8 +201,8 @@ Examples:
     parser.add_argument(
         "--provider",
         default="anthropic",
-        choices=get_available_providers(),
-        help=f"LLM provider. Available: {', '.join(get_available_providers())} (default: anthropic)",
+        choices=available_providers,
+        help=f"LLM provider. Available: {', '.join(available_providers)} (default: anthropic)",
     )
     parser.add_argument(
         "--model",
@@ -206,6 +224,16 @@ Examples:
         "--print",
         action="store_true",
         help="Print the generated test to stdout",
+    )
+    parser.add_argument(
+        "--enable-metainfo-db",
+        action="store_true",
+        help="Enable experimental metainfo DB flow (default: disabled)",
+    )
+    parser.add_argument(
+        "--enable-reftest-parity",
+        action="store_true",
+        help="Enable experimental reftest parity flow (default: disabled)",
     )
     return parser
 

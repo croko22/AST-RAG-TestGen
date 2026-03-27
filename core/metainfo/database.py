@@ -41,10 +41,49 @@ class MetainfoDatabase:
         """Context manager for database connections."""
         conn = sqlite3.connect(self.db_path)
         conn.row_factory = sqlite3.Row
+        self._bootstrap_connection(conn)
         try:
             yield conn
         finally:
             conn.close()
+
+    @staticmethod
+    def _bootstrap_connection(conn: sqlite3.Connection) -> None:
+        """Apply connection-level safety and performance pragmas."""
+        conn.execute("PRAGMA foreign_keys = ON")
+        conn.execute("PRAGMA journal_mode = WAL")
+        conn.execute("PRAGMA synchronous = NORMAL")
+        conn.execute("PRAGMA busy_timeout = 5000")
+
+    @contextmanager
+    def transaction(self):
+        """Explicit transaction scope with commit/rollback semantics."""
+        with self._get_connection() as conn:
+            try:
+                conn.execute("BEGIN")
+                yield conn
+            except Exception:
+                conn.rollback()
+                raise
+            else:
+                conn.commit()
+
+    @contextmanager
+    def _write_cursor(self, conn: sqlite3.Connection | None = None):
+        """Yield a cursor and commit only when owning the connection."""
+        if conn is not None:
+            yield conn.cursor()
+            return
+
+        with self._get_connection() as owned_conn:
+            cursor = owned_conn.cursor()
+            try:
+                yield cursor
+            except Exception:
+                owned_conn.rollback()
+                raise
+            else:
+                owned_conn.commit()
 
     def _create_schema(self):
         """Create database tables if they don't exist."""
@@ -179,16 +218,26 @@ class MetainfoDatabase:
             conn.commit()
 
     # CRUD operations for Classes
-    def save_class(self, class_info: ClassInfo) -> None:
+    def save_class(self, class_info: ClassInfo, conn: sqlite3.Connection | None = None) -> None:
         """Save or update a class."""
-        with self._get_connection() as conn:
-            cursor = conn.cursor()
+        with self._write_cursor(conn) as cursor:
             cursor.execute(
                 """
-                INSERT OR REPLACE INTO classes
+                INSERT INTO classes
                 (uri, name, file_path, package, superclasses, super_interfaces,
                  class_docstring, original_string, is_abstract, is_interface, is_record)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ON CONFLICT(uri) DO UPDATE SET
+                    name = excluded.name,
+                    file_path = excluded.file_path,
+                    package = excluded.package,
+                    superclasses = excluded.superclasses,
+                    super_interfaces = excluded.super_interfaces,
+                    class_docstring = excluded.class_docstring,
+                    original_string = excluded.original_string,
+                    is_abstract = excluded.is_abstract,
+                    is_interface = excluded.is_interface,
+                    is_record = excluded.is_record
             """,
                 (
                     class_info.uri,
@@ -204,7 +253,6 @@ class MetainfoDatabase:
                     1 if class_info.is_record else 0,
                 ),
             )
-            conn.commit()
 
     def get_class(self, uri: str) -> ClassInfo | None:
         """Retrieve a class by URI."""
@@ -233,16 +281,27 @@ class MetainfoDatabase:
             return [self._row_to_class(row) for row in cursor.fetchall()]
 
     # CRUD operations for Methods
-    def save_method(self, method_info: MethodInfo) -> None:
+    def save_method(self, method_info: MethodInfo, conn: sqlite3.Connection | None = None) -> None:
         """Save or update a method."""
-        with self._get_connection() as conn:
-            cursor = conn.cursor()
+        with self._write_cursor(conn) as cursor:
             cursor.execute(
                 """
-                INSERT OR REPLACE INTO methods
+                INSERT INTO methods
                 (uri, name, class_uri, visibility, return_type, parameters,
                  modifiers, is_static, docstring, original_string, throws, is_constructor)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ON CONFLICT(uri) DO UPDATE SET
+                    name = excluded.name,
+                    class_uri = excluded.class_uri,
+                    visibility = excluded.visibility,
+                    return_type = excluded.return_type,
+                    parameters = excluded.parameters,
+                    modifiers = excluded.modifiers,
+                    is_static = excluded.is_static,
+                    docstring = excluded.docstring,
+                    original_string = excluded.original_string,
+                    throws = excluded.throws,
+                    is_constructor = excluded.is_constructor
             """,
                 (
                     method_info.uri,
@@ -259,7 +318,6 @@ class MetainfoDatabase:
                     1 if method_info.is_constructor else 0,
                 ),
             )
-            conn.commit()
 
     def get_method(self, uri: str) -> MethodInfo | None:
         """Retrieve a method by URI."""
@@ -279,15 +337,22 @@ class MetainfoDatabase:
             return [self._row_to_method(row) for row in cursor.fetchall()]
 
     # CRUD operations for Fields
-    def save_field(self, field_info: FieldInfo) -> None:
+    def save_field(self, field_info: FieldInfo, conn: sqlite3.Connection | None = None) -> None:
         """Save or update a field."""
-        with self._get_connection() as conn:
-            cursor = conn.cursor()
+        with self._write_cursor(conn) as cursor:
             cursor.execute(
                 """
-                INSERT OR REPLACE INTO fields
+                INSERT INTO fields
                 (uri, name, class_uri, type, modifiers, docstring, is_static, is_final)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                ON CONFLICT(uri) DO UPDATE SET
+                    name = excluded.name,
+                    class_uri = excluded.class_uri,
+                    type = excluded.type,
+                    modifiers = excluded.modifiers,
+                    docstring = excluded.docstring,
+                    is_static = excluded.is_static,
+                    is_final = excluded.is_final
             """,
                 (
                     field_info.uri,
@@ -300,7 +365,6 @@ class MetainfoDatabase:
                     1 if field_info.is_final else 0,
                 ),
             )
-            conn.commit()
 
     def get_field(self, uri: str) -> FieldInfo | None:
         """Retrieve a field by URI."""
@@ -320,15 +384,18 @@ class MetainfoDatabase:
             return [self._row_to_field(row) for row in cursor.fetchall()]
 
     # CRUD operations for Packages
-    def save_package(self, package_info: PackageInfo) -> None:
+    def save_package(self, package_info: PackageInfo, conn: sqlite3.Connection | None = None) -> None:
         """Save or update a package."""
-        with self._get_connection() as conn:
-            cursor = conn.cursor()
+        with self._write_cursor(conn) as cursor:
             cursor.execute(
                 """
-                INSERT OR REPLACE INTO packages
+                INSERT INTO packages
                 (uri, name, file_path, classes)
                 VALUES (?, ?, ?, ?)
+                ON CONFLICT(uri) DO UPDATE SET
+                    name = excluded.name,
+                    file_path = excluded.file_path,
+                    classes = excluded.classes
             """,
                 (
                     package_info.uri,
@@ -337,7 +404,6 @@ class MetainfoDatabase:
                     json.dumps(package_info.classes),
                 ),
             )
-            conn.commit()
 
     def get_package(self, uri: str) -> PackageInfo | None:
         """Retrieve a package by URI."""
@@ -350,15 +416,22 @@ class MetainfoDatabase:
             return None
 
     # CRUD operations for Tests
-    def save_test(self, test_info: TestInfo) -> None:
+    def save_test(self, test_info: TestInfo, conn: sqlite3.Connection | None = None) -> None:
         """Save or update test information."""
-        with self._get_connection() as conn:
-            cursor = conn.cursor()
+        with self._write_cursor(conn) as cursor:
             cursor.execute(
                 """
-                INSERT OR REPLACE INTO tests
+                INSERT INTO tests
                 (uri, name, file_path, target_class, test_cases, fixtures, imports, class_members)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                ON CONFLICT(uri) DO UPDATE SET
+                    name = excluded.name,
+                    file_path = excluded.file_path,
+                    target_class = excluded.target_class,
+                    test_cases = excluded.test_cases,
+                    fixtures = excluded.fixtures,
+                    imports = excluded.imports,
+                    class_members = excluded.class_members
             """,
                 (
                     test_info.uri,
@@ -371,7 +444,6 @@ class MetainfoDatabase:
                     json.dumps(test_info.class_members),
                 ),
             )
-            conn.commit()
 
     def get_test(self, uri: str) -> TestInfo | None:
         """Retrieve test information by URI."""
@@ -391,16 +463,26 @@ class MetainfoDatabase:
             return [self._row_to_test(row) for row in cursor.fetchall()]
 
     # CRUD operations for Test Bundles
-    def save_test_bundle(self, bundle: TestBundle) -> None:
+    def save_test_bundle(self, bundle: TestBundle, conn: sqlite3.Connection | None = None) -> None:
         """Save or update a test bundle."""
-        with self._get_connection() as conn:
-            cursor = conn.cursor()
+        with self._write_cursor(conn) as cursor:
             cursor.execute(
                 """
-                INSERT OR REPLACE INTO test_bundles
+                INSERT INTO test_bundles
                 (test_uri, test_name, test_class_uri, target_method, fixtures_used,
                  external_dependencies, project_specific_resources, assertions, given_phase, when_phase, then_phase)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ON CONFLICT(test_uri) DO UPDATE SET
+                    test_name = excluded.test_name,
+                    test_class_uri = excluded.test_class_uri,
+                    target_method = excluded.target_method,
+                    fixtures_used = excluded.fixtures_used,
+                    external_dependencies = excluded.external_dependencies,
+                    project_specific_resources = excluded.project_specific_resources,
+                    assertions = excluded.assertions,
+                    given_phase = excluded.given_phase,
+                    when_phase = excluded.when_phase,
+                    then_phase = excluded.then_phase
             """,
                 (
                     bundle.test_uri,
@@ -416,7 +498,6 @@ class MetainfoDatabase:
                     json.dumps(bundle.then_phase) if bundle.then_phase else None,
                 ),
             )
-            conn.commit()
 
     def get_test_bundle(self, uri: str) -> TestBundle | None:
         """Retrieve a test bundle by URI."""
@@ -439,19 +520,26 @@ class MetainfoDatabase:
             return [self._row_to_test_bundle(row) for row in cursor.fetchall()]
 
     # CRUD operations for Reference Relationships
-    def save_reference_relationship(self, ref: ReferenceRelationship) -> None:
+    def save_reference_relationship(
+        self, ref: ReferenceRelationship, conn: sqlite3.Connection | None = None
+    ) -> None:
         """Save or update a reference relationship."""
-        with self._get_connection() as conn:
-            cursor = conn.cursor()
+        with self._write_cursor(conn) as cursor:
             phases_json = None
             if ref.phases and len(ref.phases) > 1:
                 phases_json = json.dumps([p.value for p in ref.phases])
 
             cursor.execute(
                 """
-                INSERT OR REPLACE INTO reference_relationships
+                INSERT INTO reference_relationships
                 (source_method, target_method, phase, phases, description, confidence, is_external)
                 VALUES (?, ?, ?, ?, ?, ?, ?)
+                ON CONFLICT(source_method, target_method) DO UPDATE SET
+                    phase = excluded.phase,
+                    phases = excluded.phases,
+                    description = excluded.description,
+                    confidence = excluded.confidence,
+                    is_external = excluded.is_external
             """,
                 (
                     ref.source_method,
@@ -463,7 +551,6 @@ class MetainfoDatabase:
                     1 if ref.is_external else 0,
                 ),
             )
-            conn.commit()
 
     def get_reference_relationship(self, source: str, target: str) -> ReferenceRelationship | None:
         """Retrieve a reference relationship."""
@@ -502,10 +589,9 @@ class MetainfoDatabase:
             return [rel for rel in relationships if rel.is_complete]
 
     # Utility methods
-    def clear(self) -> None:
+    def clear(self, conn: sqlite3.Connection | None = None) -> None:
         """Clear all data from the database."""
-        with self._get_connection() as conn:
-            cursor = conn.cursor()
+        with self._write_cursor(conn) as cursor:
             cursor.execute("DELETE FROM reference_relationships")
             cursor.execute("DELETE FROM test_bundles")
             cursor.execute("DELETE FROM tests")
@@ -513,7 +599,6 @@ class MetainfoDatabase:
             cursor.execute("DELETE FROM fields")
             cursor.execute("DELETE FROM classes")
             cursor.execute("DELETE FROM packages")
-            conn.commit()
 
     def close(self) -> None:
         """Close the database connection."""
