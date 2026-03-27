@@ -384,7 +384,9 @@ class MetainfoDatabase:
             return [self._row_to_field(row) for row in cursor.fetchall()]
 
     # CRUD operations for Packages
-    def save_package(self, package_info: PackageInfo, conn: sqlite3.Connection | None = None) -> None:
+    def save_package(
+        self, package_info: PackageInfo, conn: sqlite3.Connection | None = None
+    ) -> None:
         """Save or update a package."""
         with self._write_cursor(conn) as cursor:
             cursor.execute(
