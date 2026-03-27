@@ -3,10 +3,7 @@ Prompt builder module for assembling the master prompt
 with code under test and extracted context.
 """
 
-from typing import List
-from pathlib import Path
-
-from .parser import ParsedJavaClass, MethodSignature
+from .parser import MethodSignature, ParsedJavaClass
 from .retriever import DependencyResolver, JavaFileRetriever
 
 
@@ -54,9 +51,7 @@ class PromptBuilder:
         code_under_test = parsed.content
 
         # Extract and resolve dependencies
-        dependency_context = self._build_dependency_context(
-            parsed, max_dependencies
-        )
+        dependency_context = self._build_dependency_context(parsed, max_dependencies)
 
         return code_under_test, dependency_context
 
@@ -85,7 +80,11 @@ class PromptBuilder:
 
         # Also add dependencies from import statements
         for imp in parsed_class.imports:
-            if not imp.startswith("java.") and not imp.startswith("javax.") and not imp.startswith("org."):
+            if (
+                not imp.startswith("java.")
+                and not imp.startswith("javax.")
+                and not imp.startswith("org.")
+            ):
                 parts = imp.split(".")
                 if len(parts) > 1:
                     dep_name = parts[-1]
@@ -96,7 +95,9 @@ class PromptBuilder:
         count = 0
         for dep_name in dependency_names:
             if count >= max_dependencies:
-                lines.append(f"\n// ... and {len(dependency_names) - max_dependencies} more dependencies (truncated)")
+                lines.append(
+                    f"\n// ... and {len(dependency_names) - max_dependencies} more dependencies (truncated)"
+                )
                 break
 
             # Try to find and format the dependency
@@ -114,9 +115,7 @@ class PromptBuilder:
 
         return "\n".join(lines)
 
-    def format_method_signatures(
-        self, class_name: str, methods: List[MethodSignature]
-    ) -> str:
+    def format_method_signatures(self, class_name: str, methods: list[MethodSignature]) -> str:
         """
         Format method signatures for a class.
 

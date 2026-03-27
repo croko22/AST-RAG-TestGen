@@ -2,21 +2,15 @@
 
 import pytest
 from pathlib import Path
-from tempfile import TemporaryDirectory
 
-# Import models with aliases to avoid pytest collection conflicts
 from core.metainfo.database import MetainfoDatabase
-from core.metainfo import schemas as metainfo_schemas
-
-# Use aliases for test classes to avoid conflicts with model names
-# Since these have __init__, pytest won't collect them as test classes
 from core.metainfo.schemas import (
     ClassInfo,
     MethodInfo,
     FieldInfo,
     PackageInfo,
-    TestInfo,
-    TestBundle,
+    TestInfo as MetainfoTestInfo,
+    TestBundle as MetainfoTestBundle,
     ReferenceRelationship,
     ReferencePhase,
     ReferenceMethodSet,
@@ -40,6 +34,13 @@ def db(db_path):
 
 
 class TestMetainfoDB:
+
+    def test_database_creation_creates_parent_dir(self, tmp_path):
+        """Database initialization creates missing parent directories."""
+        db_path = tmp_path / "nested" / "db" / "metainfo.db"
+        db = MetainfoDatabase(str(db_path))
+        assert db_path.exists()
+        db.close()
 
     def test_database_creation(self, db_path):
         """Test that database is created on initialization."""
@@ -128,7 +129,7 @@ class TestMetainfoDB:
 
     def test_save_and_retrieve_test(self, db):
         """Test saving and retrieving test information."""
-        test_info = TestInfo(
+        test_info = MetainfoTestInfo(
             uri="com.example.TestServiceTest",
             name="TestServiceTest",
             file_path="src/test/java/com/example/TestServiceTest.java",
@@ -156,6 +157,8 @@ class TestMetainfoDB:
             visibility="public",
             return_type="String",
             parameters=[],
+            docstring=None,
+            original_string=None,
         )
 
         method2 = MethodInfo(
@@ -165,6 +168,8 @@ class TestMetainfoDB:
             visibility="public",
             return_type="void",
             parameters=[{"name": "data", "type": "String"}],
+            docstring=None,
+            original_string=None,
         )
 
         db.save_method(method1)
@@ -186,6 +191,7 @@ class TestMetainfoDB:
             name="repo",
             class_uri=class_uri,
             type="Repository",
+            docstring=None,
         )
 
         field2 = FieldInfo(
@@ -193,6 +199,7 @@ class TestMetainfoDB:
             name="config",
             class_uri=class_uri,
             type="Config",
+            docstring=None,
         )
 
         db.save_field(field1)
@@ -214,6 +221,8 @@ class TestMetainfoDB:
             name="TestService",
             file_path="src/TestService.java",
             package=package_name,
+            class_docstring=None,
+            original_string=None,
         )
 
         class2 = ClassInfo(
@@ -221,6 +230,8 @@ class TestMetainfoDB:
             name="Repository",
             file_path="src/Repository.java",
             package=package_name,
+            class_docstring=None,
+            original_string=None,
         )
 
         db.save_class(class1)
@@ -235,7 +246,7 @@ class TestMetainfoDB:
 
     def test_save_and_retrieve_test_bundle(self, db):
         """Test saving and retrieving a test bundle."""
-        test_bundle = TestBundle(
+        test_bundle = MetainfoTestBundle(
             test_uri="com.example.TestServiceTest.testGetData",
             test_name="testGetData",
             test_class_uri="com.example.TestServiceTest",
@@ -243,6 +254,9 @@ class TestMetainfoDB:
             fixtures_used=["beforeEach"],
             external_dependencies={"modules": ["Config"], "class_members": ["redis"]},
             project_specific_resources=["TestUtil.logTestResult"],
+            given_phase=None,
+            when_phase=None,
+            then_phase=None,
         )
 
         db.save_test_bundle(test_bundle)
@@ -259,6 +273,7 @@ class TestMetainfoDB:
             source_method="com.example.Service.getData",
             target_method="com.example.Service.validateData",
             phase=ReferencePhase.WHEN,
+            phases={ReferencePhase.WHEN},
             description="Both methods validate data before return",
             confidence=0.85,
             is_external=False,
@@ -283,6 +298,8 @@ class TestMetainfoDB:
             source_method=source_method,
             target_method="com.example.Service.validateData",
             phase=ReferencePhase.WHEN,
+            phases={ReferencePhase.WHEN},
+            description="Validates data before returning",
             confidence=0.85,
         )
 
@@ -290,6 +307,8 @@ class TestMetainfoDB:
             source_method=source_method,
             target_method="com.example.Service.loadData",
             phase=ReferencePhase.GIVEN,
+            phases={ReferencePhase.GIVEN},
+            description="Loads setup data before action",
             confidence=0.75,
         )
 
@@ -303,6 +322,35 @@ class TestMetainfoDB:
         assert ReferencePhase.WHEN in phases
         assert ReferencePhase.GIVEN in phases
 
+    def test_get_complete_relationships_filters_partial(self, db):
+        """Only complete GWT relationships are returned as complete."""
+        source_method = "com.example.Service.getData"
+
+        complete_ref = ReferenceRelationship(
+            source_method=source_method,
+            target_method="com.example.Service.validateAndReturn",
+            phase=ReferencePhase.GIVEN,
+            phases={ReferencePhase.GIVEN, ReferencePhase.WHEN, ReferencePhase.THEN},
+            description="Covers full setup-action-assertion flow",
+            confidence=0.9,
+        )
+        partial_ref = ReferenceRelationship(
+            source_method=source_method,
+            target_method="com.example.Service.loadData",
+            phase=ReferencePhase.GIVEN,
+            phases={ReferencePhase.GIVEN, ReferencePhase.WHEN},
+            description="Only setup and action overlap",
+            confidence=0.7,
+        )
+
+        db.save_reference_relationship(complete_ref)
+        db.save_reference_relationship(partial_ref)
+
+        complete_relationships = db.get_complete_relationships(source_method)
+
+        assert len(complete_relationships) == 1
+        assert complete_relationships[0].target_method == "com.example.Service.validateAndReturn"
+
     def test_query_by_class_name(self, db):
         """Test searching classes by name (partial match)."""
         class1 = ClassInfo(
@@ -310,6 +358,8 @@ class TestMetainfoDB:
             name="TestService",
             file_path="src/TestService.java",
             package="com.example",
+            class_docstring=None,
+            original_string=None,
         )
 
         class2 = ClassInfo(
@@ -317,6 +367,8 @@ class TestMetainfoDB:
             name="AnotherService",
             file_path="src/AnotherService.java",
             package="org.other",
+            class_docstring=None,
+            original_string=None,
         )
 
         db.save_class(class1)
@@ -334,6 +386,8 @@ class TestMetainfoDB:
             name="TestService",
             file_path="src/TestService.java",
             package="com.example",
+            class_docstring=None,
+            original_string=None,
         )
 
         db.save_class(class_info)
@@ -352,6 +406,8 @@ class TestClassModel:
             name="TestService",
             file_path="src/TestService.java",
             package="com.example",
+            class_docstring=None,
+            original_string=None,
         )
         assert class_info.uri == "com.example.TestService"
 
@@ -362,6 +418,8 @@ class TestClassModel:
                 name="TestService",
                 file_path="src/TestService.java",
                 package="com.example",
+                class_docstring=None,
+                original_string=None,
             )
 
 
@@ -377,6 +435,8 @@ class TestMethodModel:
             visibility="public",
             return_type="String",
             parameters=[],
+            docstring=None,
+            original_string=None,
         )
         assert method_info.name == "getData"
 
@@ -389,7 +449,62 @@ class TestMethodModel:
                 visibility="invalid",
                 return_type="String",
                 parameters=[],
+                docstring=None,
+                original_string=None,
             )
+
+    def test_method_visibility_normalization(self):
+        """Visibility is normalized before validation."""
+        method_info = MethodInfo(
+            uri="com.example.TestService.getData",
+            name="getData",
+            class_uri="com.example.TestService",
+            visibility=" Public ",
+            return_type="String",
+            parameters=[],
+            docstring=None,
+            original_string=None,
+        )
+
+        assert method_info.visibility == "public"
+
+
+class TestReferenceRelationshipModel:
+
+    def test_reference_relationship_normalizes_phases(self):
+        """Primary phase is always included in phases set."""
+        rel = ReferenceRelationship(
+            source_method="com.example.Source.method",
+            target_method="com.example.Target.method",
+            phase=ReferencePhase.THEN,
+            phases={ReferencePhase.GIVEN},
+            description="Assertion path",
+            confidence=0.8,
+        )
+
+        assert rel.phases == {ReferencePhase.GIVEN, ReferencePhase.THEN}
+
+    def test_reference_relationship_is_complete(self):
+        """is_complete requires all Given/When/Then phases."""
+        complete = ReferenceRelationship(
+            source_method="com.example.Source.method",
+            target_method="com.example.Target.complete",
+            phase=ReferencePhase.WHEN,
+            phases={ReferencePhase.GIVEN, ReferencePhase.WHEN, ReferencePhase.THEN},
+            description="Complete relationship",
+            confidence=0.95,
+        )
+        partial = ReferenceRelationship(
+            source_method="com.example.Source.method",
+            target_method="com.example.Target.partial",
+            phase=ReferencePhase.WHEN,
+            phases={ReferencePhase.WHEN},
+            description="Partial relationship",
+            confidence=0.55,
+        )
+
+        assert complete.is_complete is True
+        assert partial.is_complete is False
 
 
 class TestReferenceMethodSetModel:
@@ -449,29 +564,26 @@ class TestScopeGraphModel:
         graph.add_scope("method_scope", parent_id="class_scope")
 
         # Add definitions
-        graph.add_definition("repo_var", scope_id="class_scope")
-        graph.add_definition("data_method", scope_id="method_scope")
+        graph.add_definition("repo_var_def", scope_id="class_scope", symbol="repo_var")
+        graph.add_definition("data_method_def", scope_id="method_scope", symbol="data_method")
 
         # Add reference
-        graph.add_reference("repo_var", scope_id="method_scope")
+        graph.add_reference("repo_var_ref", scope_id="method_scope", symbol="repo_var")
 
         # Resolve reference - returns the definition node ID
-        resolved = graph.resolve_local("repo_var")
+        resolved = graph.resolve_local("repo_var_ref")
 
-        # In current implementation, nodes store type only
-        # The test checks if we get the expected definition
-        assert resolved is not None
-        assert "repo_var" in graph.nodes or resolved == "repo_var"
+        assert resolved == "repo_var_def"
 
     def test_resolve_not_found(self):
         """Test resolving non-existent reference."""
         graph = ScopeGraph()
 
         graph.add_scope("class_scope")
-        graph.add_definition("data_method", scope_id="class_scope")
-        graph.add_reference("unknown_var", scope_id="class_scope")
+        graph.add_definition("data_method_def", scope_id="class_scope", symbol="data_method")
+        graph.add_reference("unknown_var_ref", scope_id="class_scope", symbol="unknown_var")
 
-        resolved = graph.resolve_local("unknown_var")
+        resolved = graph.resolve_local("unknown_var_ref")
 
         assert resolved is None
 
@@ -483,12 +595,12 @@ class TestScopeGraphModel:
         graph.add_scope("class_scope", parent_id="global")
         graph.add_scope("method_scope", parent_id="class_scope")
 
-        graph.add_definition("repo_var", scope_id="class_scope")
-        graph.add_reference("repo_var", scope_id="method_scope")
+        graph.add_definition("repo_var_def", scope_id="class_scope", symbol="repo_var")
+        graph.add_reference("repo_var_ref", scope_id="method_scope", symbol="repo_var")
 
-        resolved = graph.resolve_local("repo_var")
+        resolved = graph.resolve_local("repo_var_ref")
 
-        assert resolved == "repo_var"
+        assert resolved == "repo_var_def"
 
     def test_node_types(self):
         """Test that node type constants are set correctly."""
@@ -502,5 +614,6 @@ class TestScopeGraphModel:
         assert ScopeGraph.EDGE_SCOPE_TO_SCOPE == "ScopeToScope"
         assert ScopeGraph.EDGE_DEF_TO_SCOPE == "DefToScope"
         assert ScopeGraph.EDGE_IMPORT_TO_SCOPE == "ImportToScope"
+        assert ScopeGraph.EDGE_REF_TO_SCOPE == "RefToScope"
         assert ScopeGraph.EDGE_REF_TO_DEF == "RefToDef"
         assert ScopeGraph.EDGE_REF_TO_IMPORT == "RefToImport"

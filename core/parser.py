@@ -3,44 +3,48 @@ Core module for AST parsing of Java files.
 Uses Tree-sitter to extract dependencies, imports, and method signatures.
 """
 
-from pathlib import Path
-from typing import List, Dict, Optional
 from dataclasses import dataclass
+from pathlib import Path
 
 try:
     from tree_sitter import Language, Parser
-except ImportError:
-    raise ImportError("Tree-sitter is not installed. Install with: pip install tree-sitter")
+except ImportError as exc:
+    raise ImportError(
+        "Tree-sitter is not installed. Install with: pip install tree-sitter"
+    ) from exc
 
 
 @dataclass
 class JavaDependency:
     """Represents a dependency extracted from Java code."""
+
     name: str
     type: str  # "class", "interface", "import", "field", "method"
-    package: Optional[str] = None
-    file_path: Optional[str] = None
+    package: str | None = None
+    file_path: str | None = None
 
 
 @dataclass
 class MethodSignature:
     """Represents a method signature extracted from a Java class/interface."""
+
     visibility: str
     return_type: str
     name: str
-    parameters: List[str]
+    parameters: list[str]
     is_static: bool = False
 
 
 @dataclass
 class ParsedJavaClass:
     """Represents a parsed Java class/interface with all its details."""
+
     name: str
-    package: Optional[str]
-    imports: List[str]
-    dependencies: List[JavaDependency]
-    methods: List[MethodSignature]
-    fields: List[Dict]
+    package: str | None
+    imports: list[str]
+    dependencies: list[JavaDependency]
+    methods: list[MethodSignature]
+    fields: list[dict]
     file_path: str
     content: str
 
@@ -57,12 +61,13 @@ class JavaParser:
         try:
             # Try to load from tree-sitter-java package
             import tree_sitter_java as tsjava
+
             self.java_lang = Language(tsjava.language())
         except Exception as e:
             raise ImportError(
                 f"Could not load Java language parser: {e}\n"
                 "Make sure tree-sitter-java is installed: pip install tree-sitter-java"
-            )
+            ) from e
 
         # Set language using the correct API
         self.parser.language = self.java_lang
@@ -86,9 +91,7 @@ class JavaParser:
 
         return self._extract_class_info(tree, str(path), content)
 
-    def _extract_class_info(
-        self, tree, file_path: str, content: str
-    ) -> ParsedJavaClass:
+    def _extract_class_info(self, tree, file_path: str, content: str) -> ParsedJavaClass:
         """Extract class information from the parsed tree."""
         root = tree.root_node
 
@@ -110,19 +113,19 @@ class JavaParser:
             content=content,
         )
 
-    def _extract_package(self, root) -> Optional[str]:
+    def _extract_package(self, root) -> str | None:
         """Extract the package declaration."""
         for child in root.children:
             if child.type == "package_declaration":
                 # Get the package identifier
                 for child2 in child.children:
                     if child2.type == "scoped_identifier":
-                        return child2.text.decode("utf-8")
+                        return str(child2.text.decode("utf-8"))
                     elif child2.type == "identifier":
-                        return child2.text.decode("utf-8")
+                        return str(child2.text.decode("utf-8"))
         return None
 
-    def _extract_imports(self, root) -> List[str]:
+    def _extract_imports(self, root) -> list[str]:
         """Extract all import statements."""
         imports = []
         for child in root.children:
@@ -153,12 +156,10 @@ class JavaParser:
             if child.type in ("class_declaration", "interface_declaration"):
                 for child2 in child.children:
                     if child2.type == "identifier":
-                        return child2.text.decode("utf-8")
+                        return str(child2.text.decode("utf-8"))
         return "Unknown"
 
-    def _extract_dependencies(
-        self, root, imports: List[str]
-    ) -> List[JavaDependency]:
+    def _extract_dependencies(self, root, imports: list[str]) -> list[JavaDependency]:
         """
         Extract dependencies from imports and field declarations.
 
@@ -167,7 +168,11 @@ class JavaParser:
         dependencies = []
 
         for imp in imports:
-            if not imp.startswith("java.") and not imp.startswith("javax.") and not imp.startswith("org.springframework"):
+            if (
+                not imp.startswith("java.")
+                and not imp.startswith("javax.")
+                and not imp.startswith("org.springframework")
+            ):
                 deps = self._parse_import_to_dependencies(imp)
                 dependencies.extend(deps)
 
@@ -183,9 +188,9 @@ class JavaParser:
 
         return dependencies
 
-    def _parse_import_to_dependencies(self, import_str: str) -> List[JavaDependency]:
+    def _parse_import_to_dependencies(self, import_str: str) -> list[JavaDependency]:
         """Parse an import string into dependency objects."""
-        deps = []
+        deps: list[JavaDependency] = []
         if import_str.endswith(".*"):
             # Package import - can't determine exact classes
             return deps
@@ -204,7 +209,7 @@ class JavaParser:
             )
         return deps
 
-    def _extract_field_dependency(self, field_node) -> Optional[JavaDependency]:
+    def _extract_field_dependency(self, field_node) -> JavaDependency | None:
         """Extract dependency from a field declaration."""
         for child in field_node.children:
             if child.type == "type_identifier":
@@ -215,7 +220,7 @@ class JavaParser:
                 )
         return None
 
-    def _extract_methods(self, root) -> List[MethodSignature]:
+    def _extract_methods(self, root) -> list[MethodSignature]:
         """
         Extract all method signatures from the class/interface.
 
@@ -235,7 +240,7 @@ class JavaParser:
 
         return methods
 
-    def _parse_method_signature(self, method_node) -> Optional[MethodSignature]:
+    def _parse_method_signature(self, method_node) -> MethodSignature | None:
         """Parse a method declaration node into a MethodSignature."""
         visibility = "package-private"
         return_type = "void"
@@ -270,10 +275,10 @@ class JavaParser:
         """Extract visibility modifier from modifiers node."""
         for child in modifiers_node.children:
             if child.type in ("public", "private", "protected"):
-                return child.type
+                return str(child.type)
         return "package-private"
 
-    def _extract_parameters(self, params_node) -> List[str]:
+    def _extract_parameters(self, params_node) -> list[str]:
         """Extract parameter types from formal parameters node."""
         params = []
         for child in params_node.children:
@@ -286,7 +291,7 @@ class JavaParser:
                     params.append(param_type)
         return params
 
-    def _extract_fields(self, root) -> List[Dict]:
+    def _extract_fields(self, root) -> list[dict]:
         """Extract field declarations with types and names."""
         fields = []
 
@@ -302,7 +307,7 @@ class JavaParser:
 
         return fields
 
-    def _parse_field(self, field_node) -> Optional[Dict]:
+    def _parse_field(self, field_node) -> dict | None:
         """Parse a field declaration node."""
         field_type = ""
         field_name = ""

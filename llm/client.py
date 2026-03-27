@@ -3,9 +3,9 @@ LLM client for interfacing with multiple LLM APIs.
 Supports: Anthropic, OpenAI, GLM (Zhipu AI), Gemini, OpenRouter.
 """
 
-from dataclasses import dataclass, field
-from typing import Optional, Dict, Any, List
 import os
+from dataclasses import dataclass
+from typing import Any
 
 from dotenv import load_dotenv
 
@@ -19,13 +19,13 @@ class LLMConfig:
 
     provider: str = "anthropic"
     model: str = "claude-3-5-sonnet-20241022"
-    api_key: Optional[str] = None
-    base_url: Optional[str] = None  # For OpenRouter and other custom endpoints
+    api_key: str | None = None
+    base_url: str | None = None  # For OpenRouter and other custom endpoints
     max_tokens: int = 4096
     temperature: float = 0.3
     top_p: float = 1.0
     # For OpenRouter specific settings
-    provider_order: Optional[List[str]] = None  # Fallback providers for OpenRouter
+    provider_order: list[str] | None = None  # Fallback providers for OpenRouter
 
     def __post_init__(self):
         """Load API key from environment if not provided."""
@@ -91,7 +91,7 @@ class LLMClient:
         "gemini-1.0-pro",
     ]
 
-    def __init__(self, config: Optional[LLMConfig] = None):
+    def __init__(self, config: LLMConfig | None = None):
         """
         Initialize LLM client.
 
@@ -99,7 +99,7 @@ class LLMClient:
             config: LLMConfig object. If None, loads from environment.
         """
         self.config = config or LLMConfig()
-        self._client = None
+        self._client: Any = None
         self._init_client()
 
     def _init_client(self):
@@ -125,48 +125,51 @@ class LLMClient:
         """Initialize Anthropic client."""
         try:
             from anthropic import Anthropic
+
             self._client = Anthropic(api_key=self.config.api_key)
-        except ImportError:
+        except ImportError as exc:
             raise ImportError(
                 "Anthropic SDK not installed. Install with: pip install anthropic"
-            )
+            ) from exc
 
     def _init_openai(self):
         """Initialize OpenAI client."""
         try:
             from openai import OpenAI
+
             self._client = OpenAI(api_key=self.config.api_key)
-        except ImportError:
-            raise ImportError(
-                "OpenAI SDK not installed. Install with: pip install openai"
-            )
+        except ImportError as exc:
+            raise ImportError("OpenAI SDK not installed. Install with: pip install openai") from exc
 
     def _init_glm(self):
         """Initialize GLM (Zhipu AI) client."""
         try:
             from zhipuai import ZhipuAI
+
             self._client = ZhipuAI(api_key=self.config.api_key)
-        except ImportError:
+        except ImportError as exc:
             raise ImportError(
                 "ZhipuAI SDK not installed. Install with: pip install zhipuai"
-            )
+            ) from exc
 
     def _init_gemini(self):
         """Initialize Gemini client."""
         try:
             import google.generativeai as genai
+
             genai.configure(api_key=self.config.api_key)
             # Gemini doesn't use a client instance the same way
             self._client = genai
-        except ImportError:
+        except ImportError as exc:
             raise ImportError(
                 "Google Generative AI SDK not installed. Install with: pip install google-generativeai"
-            )
+            ) from exc
 
     def _init_openrouter(self):
         """Initialize OpenRouter client (uses OpenAI SDK with custom base)."""
         try:
             from openai import OpenAI
+
             self._client = OpenAI(
                 api_key=self.config.api_key,
                 base_url=self.config.base_url or "https://openrouter.ai/api/v1",
@@ -175,29 +178,35 @@ class LLMClient:
                     "X-Title": "AST-RAG TestGen",
                 },
             )
-        except ImportError:
+        except ImportError as exc:
             raise ImportError(
                 "OpenAI SDK not installed (required for OpenRouter). Install with: pip install openai"
-            )
+            ) from exc
 
     def _init_nvidia(self):
         """Initialize NVIDIA NIM client (uses OpenAI-compatible API)."""
         try:
             from openai import OpenAI
+
             self._client = OpenAI(
                 api_key=self.config.api_key,
                 base_url="https://integrate.api.nvidia.com/v1",
             )
-        except ImportError:
+        except ImportError as exc:
             raise ImportError(
                 "OpenAI SDK not installed (required for NVIDIA). Install with: pip install openai"
-            )
+            ) from exc
+
+    def _require_client(self) -> Any:
+        if self._client is None:
+            raise RuntimeError("LLM client is not initialized")
+        return self._client
 
     def generate_test(
         self,
         code_under_test: str,
         dependency_context: str,
-        system_prompt: Optional[str] = None,
+        system_prompt: str | None = None,
     ) -> str:
         """
         Generate unit test code for the given Java class.
@@ -237,9 +246,7 @@ class LLMClient:
         return """Eres un ingeniero de software Senior experto en Java y pruebas unitarias (JUnit 5 + Mockito).
 Tu objetivo es generar pruebas unitarias que COMPILEN A LA PRIMERA, logren alta cobertura de ramas y validen la lógica de negocio."""
 
-    def _build_user_prompt(
-        self, code_under_test: str, dependency_context: str
-    ) -> str:
+    def _build_user_prompt(self, code_under_test: str, dependency_context: str) -> str:
         """Build the user prompt with code and context."""
         return f"""A continuación, te proporciono la clase que debes probar (Code Under Test) y, de vital importancia, el CONTEXTO ESTÁTICO (dependencias) que nuestro motor AST ha recuperado del proyecto.
 
@@ -264,11 +271,10 @@ Para evitar alucinaciones, utiliza ÚNICAMENTE estos métodos y firmas cuando ne
 - NO uses aserciones genéricas como assertTrue(true). Verifica los valores de retorno exactos o las interacciones con los mocks (ej. verify(repo, times(1)).save(any())).
 - Asegúrate de importar todas las clases necesarias."""
 
-    def _call_anthropic(
-        self, system_prompt: str, user_prompt: str
-    ) -> str:
+    def _call_anthropic(self, system_prompt: str, user_prompt: str) -> str:
         """Call the Anthropic API."""
-        response = self._client.messages.create(
+        client = self._require_client()
+        response = client.messages.create(
             model=self.config.model,
             max_tokens=self.config.max_tokens,
             temperature=self.config.temperature,
@@ -277,11 +283,12 @@ Para evitar alucinaciones, utiliza ÚNICAMENTE estos métodos y firmas cuando ne
                 {"role": "user", "content": user_prompt},
             ],
         )
-        return response.content[0].text
+        return str(response.content[0].text)
 
     def _call_openai(self, system_prompt: str, user_prompt: str) -> str:
         """Call the OpenAI API."""
-        response = self._client.chat.completions.create(
+        client = self._require_client()
+        response = client.chat.completions.create(
             model=self.config.model,
             max_tokens=self.config.max_tokens,
             temperature=self.config.temperature,
@@ -290,12 +297,13 @@ Para evitar alucinaciones, utiliza ÚNICAMENTE estos métodos y firmas cuando ne
                 {"role": "user", "content": user_prompt},
             ],
         )
-        return response.choices[0].message.content
+        return str(response.choices[0].message.content or "")
 
     def _call_glm(self, system_prompt: str, user_prompt: str) -> str:
         """Call the GLM (Zhipu AI) API."""
+        client = self._require_client()
         try:
-            response = self._client.chat.completions.create(
+            response = client.chat.completions.create(
                 model=self.config.model,
                 max_tokens=self.config.max_tokens,
                 temperature=self.config.temperature,
@@ -305,8 +313,8 @@ Para evitar alucinaciones, utiliza ÚNICAMENTE estos métodos y firmas cuando ne
                     {"role": "user", "content": user_prompt},
                 ],
             )
-            return response.choices[0].message.content
-        except Exception as e:
+            return str(response.choices[0].message.content or "")
+        except Exception:
             # Try legacy API format
             return self._call_glm_legacy(system_prompt, user_prompt)
 
@@ -318,7 +326,8 @@ Para evitar alucinaciones, utiliza ÚNICAMENTE estos métodos y firmas cuando ne
 
     def _call_gemini(self, system_prompt: str, user_prompt: str) -> str:
         """Call the Gemini API."""
-        model = self._client.GenerativeModel(self.config.model)
+        client = self._require_client()
+        model = client.GenerativeModel(self.config.model)
 
         # Gemini uses a different prompt structure - combine system and user
         combined_prompt = f"{system_prompt}\n\n{user_prompt}"
@@ -331,11 +340,12 @@ Para evitar alucinaciones, utiliza ÚNICAMENTE estos métodos y firmas cuando ne
                 "top_p": self.config.top_p,
             },
         )
-        return response.text
+        return str(response.text)
 
     def _call_openrouter(self, system_prompt: str, user_prompt: str) -> str:
         """Call the OpenRouter API (OpenAI-compatible)."""
-        response = self._client.chat.completions.create(
+        client = self._require_client()
+        response = client.chat.completions.create(
             model=self.config.model,
             max_tokens=self.config.max_tokens,
             temperature=self.config.temperature,
@@ -346,13 +356,16 @@ Para evitar alucinaciones, utiliza ÚNICAMENTE estos métodos y firmas cuando ne
             extra_headers={
                 "HTTP-Referer": "https://github.com/ast-rag-testgen",
                 "X-Title": "AST-RAG TestGen",
-            } if not self._client.default_headers else None,
+            }
+            if not client.default_headers
+            else None,
         )
-        return response.choices[0].message.content
+        return str(response.choices[0].message.content or "")
 
     def _call_nvidia(self, system_prompt: str, user_prompt: str) -> str:
         """Call the NVIDIA NIM API (OpenAI-compatible)."""
-        response = self._client.chat.completions.create(
+        client = self._require_client()
+        response = client.chat.completions.create(
             model=self.config.model,
             max_tokens=self.config.max_tokens,
             temperature=self.config.temperature,
@@ -361,10 +374,10 @@ Para evitar alucinaciones, utiliza ÚNICAMENTE estos métodos y firmas cuando ne
                 {"role": "user", "content": user_prompt},
             ],
         )
-        return response.choices[0].message.content
+        return str(response.choices[0].message.content or "")
 
 
-def get_available_providers() -> List[str]:
+def get_available_providers() -> list[str]:
     """Return list of available LLM providers."""
     return list(LLMClient.DEFAULT_MODELS.keys())
 
@@ -376,7 +389,6 @@ def get_default_model(provider: str) -> str:
 
 if __name__ == "__main__":
     # Example usage
-    import sys
 
     code = """
 @Service
@@ -416,10 +428,10 @@ public class EmailService {
     print("Available providers:", get_available_providers())
 
     for provider in providers:
-        print(f"\n{'='*60}")
+        print(f"\n{'=' * 60}")
         print(f"Testing provider: {provider}")
         print(f"Default model: {get_default_model(provider)}")
-        print(f"{'='*60}")
+        print(f"{'=' * 60}")
 
         try:
             client = LLMClient(LLMConfig(provider=provider))

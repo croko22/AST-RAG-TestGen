@@ -4,8 +4,6 @@ Handles file discovery and class location.
 """
 
 from pathlib import Path
-from typing import List, Optional, Dict
-import fnmatch
 
 from .parser import ParsedJavaClass, extract_dependencies_from_file
 
@@ -27,10 +25,10 @@ class JavaFileRetriever:
         if not self.project_root.exists():
             raise FileNotFoundError(f"Project root not found: {project_root}")
 
-        self._java_files_cache: Optional[List[Path]] = None
-        self._class_index: Optional[Dict[str, Path]] = None
+        self._java_files_cache: list[Path] | None = None
+        self._class_index: dict[str, Path] | None = None
 
-    def _scan_java_files(self) -> List[Path]:
+    def _scan_java_files(self) -> list[Path]:
         """Scan and cache all Java files in the project."""
         if self._java_files_cache is None:
             self._java_files_cache = []
@@ -59,7 +57,7 @@ class JavaFileRetriever:
                     # Skip files that can't be parsed
                     continue
 
-    def find_file_by_class_name(self, class_name: str) -> Optional[str]:
+    def find_file_by_class_name(self, class_name: str) -> str | None:
         """
         Find a Java file by its class name.
 
@@ -70,10 +68,12 @@ class JavaFileRetriever:
             Path to the Java file, or None if not found
         """
         self._build_class_index()
+        if self._class_index is None:
+            return None
         file_path = self._class_index.get(class_name)
         return str(file_path) if file_path else None
 
-    def find_files_by_pattern(self, pattern: str) -> List[str]:
+    def find_files_by_pattern(self, pattern: str) -> list[str]:
         """
         Find Java files matching a glob pattern.
 
@@ -85,7 +85,7 @@ class JavaFileRetriever:
         """
         return [str(f) for f in self.project_root.glob(pattern)]
 
-    def get_all_java_files(self) -> List[str]:
+    def get_all_java_files(self) -> list[str]:
         """
         Get all Java files in the project (excluding tests).
 
@@ -94,7 +94,7 @@ class JavaFileRetriever:
         """
         return [str(f) for f in self._scan_java_files()]
 
-    def parse_file(self, file_path: str) -> Optional[ParsedJavaClass]:
+    def parse_file(self, file_path: str) -> ParsedJavaClass | None:
         """
         Parse a Java file and return its parsed representation.
 
@@ -125,9 +125,7 @@ class DependencyResolver:
         """
         self.retriever = retriever
 
-    def resolve_dependencies(
-        self, class_name: str, max_depth: int = 2
-    ) -> List[ParsedJavaClass]:
+    def resolve_dependencies(self, class_name: str, max_depth: int = 2) -> list[ParsedJavaClass]:
         """
         Recursively resolve dependencies for a class.
 
@@ -184,9 +182,11 @@ class DependencyResolver:
             lines.append(f"package {parsed.package};")
             lines.append("")
 
-        class_type = "interface" if "interface" in class_name or any(
-            "interface" in imp for imp in parsed.imports
-        ) else "class"
+        class_type = (
+            "interface"
+            if "interface" in class_name or any("interface" in imp for imp in parsed.imports)
+            else "class"
+        )
         lines.append(f"public {class_type} {parsed.name} {{")
 
         for method in parsed.methods:

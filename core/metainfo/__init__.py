@@ -4,19 +4,20 @@ Based on RefTest's Metainfo Database approach for structured
 code entity storage and efficient retrieval.
 """
 
+from .builder import BuildResult, MetainfoBuilder
+from .database import MetainfoDatabase
 from .schemas import (
     ClassInfo,
-    MethodInfo,
     FieldInfo,
+    MethodInfo,
     PackageInfo,
-    TestInfo,
-    TestBundle,
-    ReferenceRelationship,
-    ReferencePhase,
     ReferenceMethodSet,
+    ReferencePhase,
+    ReferenceRelationship,
     ScopeGraph,
+    TestBundle,
+    TestInfo,
 )
-from .database import MetainfoDatabase
 
 __all__ = [
     "ClassInfo",
@@ -30,4 +31,6 @@ __all__ = [
     "ReferenceMethodSet",
     "ScopeGraph",
     "MetainfoDatabase",
+    "MetainfoBuilder",
+    "BuildResult",
 ]

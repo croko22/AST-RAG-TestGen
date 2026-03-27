@@ -10,16 +10,13 @@ It orchestrates the 4-step pipeline:
 4. Prompt Builder: Assemble dynamic prompt and send to LLM
 """
 
-import sys
 import argparse
+import sys
 from pathlib import Path
-from dotenv import load_dotenv
 
-# Load environment variables
-load_dotenv()
-
-from core import JavaFileRetriever, DependencyResolver, PromptBuilder
-from llm import LLMClient, LLMConfig, get_available_providers, get_default_model
+from core.prompt_builder import PromptBuilder
+from core.retriever import DependencyResolver, JavaFileRetriever
+from llm.client import LLMClient, LLMConfig, get_available_providers
 
 
 def generate_test_for_file(
@@ -44,21 +41,21 @@ def generate_test_for_file(
     Returns:
         Generated test code as string
     """
-    print(f"\n{'='*60}")
-    print(f"AST-RAG TestGen")
-    print(f"{'='*60}")
+    print(f"\n{'=' * 60}")
+    print("AST-RAG TestGen")
+    print(f"{'=' * 60}")
     print(f"\n📁 File: {java_file_path}")
     print(f"📦 Project: {java_project_path}")
     print(f"🤖 LLM: {llm_provider}/{llm_model}")
 
     # Step 1: Initialize retriever and resolver
-    print(f"\n[1/4] 📥 Initializing retriever...")
+    print("\n[1/4] 📥 Initializing retriever...")
     retriever = JavaFileRetriever(java_project_path)
     resolver = DependencyResolver(retriever)
     prompt_builder = PromptBuilder(retriever, resolver)
 
     # Step 2: Parse the file and extract dependencies
-    print(f"[2/4] 🔍 Parsing Java file and extracting dependencies...")
+    print("[2/4] 🔍 Parsing Java file and extracting dependencies...")
     parsed = retriever.parse_file(java_file_path)
     if not parsed:
         raise ValueError(f"Could not parse file: {java_file_path}")
@@ -76,7 +73,7 @@ def generate_test_for_file(
     print(f"    Context length: {len(dependency_context)} chars")
 
     # Step 4: Generate test with LLM
-    print(f"[4/4] 🤖 Generating test with LLM...")
+    print("[4/4] 🤖 Generating test with LLM...")
     llm_config = LLMConfig(
         provider=llm_provider,
         model=llm_model,
@@ -111,6 +108,46 @@ def generate_test_for_file(
 
 def main():
     """Main entry point."""
+    parser = build_arg_parser()
+    args = parser.parse_args()
+
+    # Check if files exist
+    if not Path(args.java_file).exists():
+        print(f"Error: Java file not found: {args.java_file}", file=sys.stderr)
+        sys.exit(1)
+
+    if not Path(args.project_path).exists():
+        print(f"Error: Project path not found: {args.project_path}", file=sys.stderr)
+        sys.exit(1)
+
+    try:
+        test_code = generate_test_for_file(
+            java_file_path=args.java_file,
+            java_project_path=args.project_path,
+            output_dir=args.output,
+            max_dependencies=args.max_deps,
+            llm_provider=args.provider,
+            llm_model=args.model,
+        )
+
+        if args.print:
+            print("\n" + "=" * 60)
+            print("GENERATED TEST:")
+            print("=" * 60)
+            print(test_code)
+
+        print(f"\n✨ Done! Test saved to {args.output}/{Path(args.java_file).stem}Test.java")
+
+    except Exception as e:
+        print(f"\n❌ Error: {e}", file=sys.stderr)
+        import traceback
+
+        traceback.print_exc()
+        sys.exit(1)
+
+
+def build_arg_parser() -> argparse.ArgumentParser:
+    """Build command-line argument parser."""
     parser = argparse.ArgumentParser(
         description="AST-RAG TestGen: Generate unit tests using AST-based RAG",
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -170,41 +207,7 @@ Examples:
         action="store_true",
         help="Print the generated test to stdout",
     )
-
-    args = parser.parse_args()
-
-    # Check if files exist
-    if not Path(args.java_file).exists():
-        print(f"Error: Java file not found: {args.java_file}", file=sys.stderr)
-        sys.exit(1)
-
-    if not Path(args.project_path).exists():
-        print(f"Error: Project path not found: {args.project_path}", file=sys.stderr)
-        sys.exit(1)
-
-    try:
-        test_code = generate_test_for_file(
-            java_file_path=args.java_file,
-            java_project_path=args.project_path,
-            output_dir=args.output,
-            max_dependencies=args.max_deps,
-            llm_provider=args.provider,
-            llm_model=args.model,
-        )
-
-        if args.print:
-            print("\n" + "="*60)
-            print("GENERATED TEST:")
-            print("="*60)
-            print(test_code)
-
-        print(f"\n✨ Done! Test saved to {args.output}/{Path(args.java_file).stem}Test.java")
-
-    except Exception as e:
-        print(f"\n❌ Error: {e}", file=sys.stderr)
-        import traceback
-        traceback.print_exc()
-        sys.exit(1)
+    return parser
 
 
 if __name__ == "__main__":
