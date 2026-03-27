@@ -12,7 +12,32 @@ It orchestrates the 4-step pipeline:
 
 import argparse
 import sys
+from collections.abc import Callable
 from pathlib import Path
+from typing import cast
+
+# Backward-compatible patch targets for tests and external callers.
+# Keep these lazy to avoid hard failures when optional LLM deps are missing.
+LLMClient = None
+LLMConfig = None
+get_available_providers = None
+
+
+def _ensure_llm_symbols() -> None:
+    """Lazily populate main-module LLM symbols if available."""
+    global LLMClient, LLMConfig, get_available_providers
+
+    if LLMConfig is not None and get_available_providers is not None:
+        return
+
+    from llm import client as llm_client_module
+
+    if LLMClient is None:
+        LLMClient = llm_client_module.LLMClient
+    if LLMConfig is None:
+        LLMConfig = llm_client_module.LLMConfig
+    if get_available_providers is None:
+        get_available_providers = llm_client_module.get_available_providers
 
 
 def generate_test_for_file(
@@ -81,7 +106,9 @@ def generate_test_for_file(
 
     # Step 4: Generate test with LLM
     print("[4/4] 🤖 Generating test with LLM...")
-    from llm.client import LLMClient, LLMConfig
+    _ensure_llm_symbols()
+    assert LLMConfig is not None
+    assert LLMClient is not None
 
     llm_config = LLMConfig(
         provider=llm_provider,
@@ -160,9 +187,9 @@ def main():
 def build_arg_parser() -> argparse.ArgumentParser:
     """Build command-line argument parser."""
     try:
-        from llm.client import get_available_providers
-
-        available_providers = get_available_providers()
+        _ensure_llm_symbols()
+        available_providers_fn = cast(Callable[[], list[str]], get_available_providers)
+        available_providers = available_providers_fn()
     except ModuleNotFoundError:
         available_providers = ["anthropic", "openai", "glm", "gemini", "openrouter", "nvidia"]
 
