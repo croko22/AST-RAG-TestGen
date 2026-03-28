@@ -64,6 +64,14 @@ class MethodInfo(BaseModel):
     original_string: str | None = Field(None, description="Original source code snippet")
     throws: list[str] = Field(default_factory=list, description="List of thrown exceptions")
     is_constructor: bool = Field(default=False, description="Whether this is a constructor")
+    signature: str | None = Field(
+        None,
+        description="Normalized method signature (e.g., (), (String,int))",
+    )
+    legacy_uri: str | None = Field(
+        None,
+        description="Legacy URI without signature (e.g., com.example.Service.doWork)",
+    )
 
     @field_validator("visibility")
     @classmethod

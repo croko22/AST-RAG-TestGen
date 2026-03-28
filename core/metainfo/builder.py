@@ -90,21 +90,27 @@ class MetainfoBuilder:
             result.packages_saved += 1
 
         for method in parsed.methods:
+            parameters = [
+                {"name": f"arg{i}", "type": param_type}
+                for i, param_type in enumerate(method.parameters)
+            ]
+            signature = MetainfoDatabase.build_method_signature(parameters)
             self.database.save_method(
                 MethodInfo(
-                    uri=f"{class_uri}.{method.name}",
+                    uri=MetainfoDatabase.build_canonical_method_uri(
+                        class_uri, method.name, signature
+                    ),
                     name=method.name,
                     class_uri=class_uri,
                     visibility=method.visibility,
                     return_type=method.return_type,
-                    parameters=[
-                        {"name": f"arg{i}", "type": param_type}
-                        for i, param_type in enumerate(method.parameters)
-                    ],
+                    parameters=parameters,
                     modifiers=self._build_modifiers(method.visibility, method.is_static),
                     is_static=method.is_static,
                     docstring=None,
                     original_string=None,
+                    signature=signature,
+                    legacy_uri=MetainfoDatabase.build_legacy_method_uri(class_uri, method.name),
                 )
             )
             result.methods_saved += 1

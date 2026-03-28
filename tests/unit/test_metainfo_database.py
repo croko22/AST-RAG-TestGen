@@ -1,5 +1,6 @@
 """Unit tests for Metainfo Database module."""
 
+import sqlite3
 from pathlib import Path
 
 import pytest
@@ -82,6 +83,115 @@ class TestMetainfoDB:
         db = MetainfoDatabase(db_path)
         assert Path(db_path).exists()
         db.close()
+
+    def test_schema_migrations_are_idempotent(self, tmp_path):
+        """Running initialization multiple times does not duplicate migrations."""
+        db_path = str(tmp_path / "idempotent.db")
+
+        first = MetainfoDatabase(db_path)
+        first.close()
+        second = MetainfoDatabase(db_path)
+        second.close()
+
+        with sqlite3.connect(db_path) as conn:
+            migration_rows = conn.execute(
+                "SELECT version FROM schema_migrations ORDER BY version"
+            ).fetchall()
+            migration_versions = [row[0] for row in migration_rows]
+            method_columns = conn.execute("PRAGMA table_info(methods)").fetchall()
+
+        assert migration_versions == ["20260328_001_add_method_signature"]
+        assert [col[1] for col in method_columns].count("signature") == 1
+        assert [col[1] for col in method_columns].count("legacy_uri") == 1
+
+    def test_forward_migration_upgrades_old_schema(self, tmp_path):
+        """Old DB schema is upgraded in-place with migration ledger entry."""
+        db_path = tmp_path / "forward.db"
+        with sqlite3.connect(db_path) as conn:
+            conn.execute(
+                """
+                CREATE TABLE classes (
+                    uri TEXT PRIMARY KEY,
+                    name TEXT NOT NULL,
+                    file_path TEXT NOT NULL,
+                    package TEXT,
+                    superclasses TEXT,
+                    super_interfaces TEXT,
+                    class_docstring TEXT,
+                    original_string TEXT,
+                    is_abstract INTEGER DEFAULT 0,
+                    is_interface INTEGER DEFAULT 0,
+                    is_record INTEGER DEFAULT 0
+                )
+            """
+            )
+            conn.execute(
+                """
+                CREATE TABLE methods (
+                    uri TEXT PRIMARY KEY,
+                    name TEXT NOT NULL,
+                    class_uri TEXT NOT NULL,
+                    visibility TEXT NOT NULL,
+                    return_type TEXT,
+                    parameters TEXT,
+                    modifiers TEXT,
+                    is_static INTEGER DEFAULT 0,
+                    docstring TEXT,
+                    original_string TEXT,
+                    throws TEXT,
+                    is_constructor INTEGER DEFAULT 0,
+                    FOREIGN KEY (class_uri) REFERENCES classes(uri) ON DELETE CASCADE
+                )
+            """
+            )
+            conn.execute(
+                """
+                INSERT INTO classes (uri, name, file_path, package)
+                VALUES (?, ?, ?, ?)
+            """,
+                (
+                    "com.example.LegacyService",
+                    "LegacyService",
+                    "src/main/java/com/example/LegacyService.java",
+                    "com.example",
+                ),
+            )
+            conn.execute(
+                """
+                INSERT INTO methods
+                (uri, name, class_uri, visibility, return_type, parameters, modifiers, is_static, throws, is_constructor)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """,
+                (
+                    "com.example.LegacyService.compute",
+                    "compute",
+                    "com.example.LegacyService",
+                    "public",
+                    "int",
+                    "[]",
+                    "[]",
+                    0,
+                    "[]",
+                    0,
+                ),
+            )
+            conn.commit()
+
+        db = MetainfoDatabase(str(db_path))
+        method = db.get_method("com.example.LegacyService.compute")
+        db.close()
+
+        with sqlite3.connect(db_path) as conn:
+            migration_rows = conn.execute(
+                "SELECT version FROM schema_migrations ORDER BY version"
+            ).fetchall()
+            method_columns = conn.execute("PRAGMA table_info(methods)").fetchall()
+
+        assert method is not None
+        assert method.uri == "com.example.LegacyService.compute"
+        assert [row[0] for row in migration_rows] == ["20260328_001_add_method_signature"]
+        assert "signature" in [col[1] for col in method_columns]
+        assert "legacy_uri" in [col[1] for col in method_columns]
 
     def test_connection_pragmas_are_applied(self, db):
         """Connection-level PRAGMAs should be enabled for safety/performance."""
@@ -262,6 +372,47 @@ class TestMetainfoDB:
         method_names = [m.name for m in methods]
         assert "getData" in method_names
         assert "setData" in method_names
+
+    def test_method_uri_strategy_prevents_overload_collisions(self, db):
+        """Overloaded methods should have unique canonical URIs."""
+        class_uri = "com.example.OverloadService"
+        self._seed_class(db, class_uri)
+
+        db.save_method(
+            MethodInfo(
+                uri=f"{class_uri}.process",
+                name="process",
+                class_uri=class_uri,
+                visibility="public",
+                return_type="void",
+                parameters=[{"name": "arg0", "type": "String"}],
+                docstring=None,
+                original_string=None,
+            )
+        )
+        db.save_method(
+            MethodInfo(
+                uri=f"{class_uri}.process",
+                name="process",
+                class_uri=class_uri,
+                visibility="public",
+                return_type="void",
+                parameters=[{"name": "arg0", "type": "int"}],
+                docstring=None,
+                original_string=None,
+            )
+        )
+
+        methods = db.get_methods_by_class(class_uri)
+        uris = {method.uri for method in methods}
+        signatures = {method.signature for method in methods}
+        legacy_uris = {method.legacy_uri for method in methods}
+
+        assert len(methods) == 2
+        assert f"{class_uri}.process(String)" in uris
+        assert f"{class_uri}.process(int)" in uris
+        assert signatures == {"(String)", "(int)"}
+        assert legacy_uris == {f"{class_uri}.process"}
 
     def test_get_fields_by_class(self, db):
         """Test retrieving all fields for a class."""

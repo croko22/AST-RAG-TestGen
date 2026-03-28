@@ -7,6 +7,7 @@ with fast lookups via indexing.
 import json
 import sqlite3
 from contextlib import contextmanager
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
@@ -20,6 +21,15 @@ from .schemas import (
     TestBundle,
     TestInfo,
 )
+
+
+@dataclass(frozen=True)
+class SchemaMigration:
+    """Single schema migration unit."""
+
+    version: str
+    description: str
+    statements: tuple[str, ...]
 
 
 class MetainfoDatabase:
@@ -86,7 +96,26 @@ class MetainfoDatabase:
                 owned_conn.commit()
 
     def _create_schema(self):
-        """Create database tables if they don't exist."""
+        """Create database tables if they don't exist and run migrations."""
+        self._create_legacy_schema_if_needed()
+        self._run_migrations()
+
+    @staticmethod
+    def _migrations() -> tuple[SchemaMigration, ...]:
+        """Ordered schema migrations for metainfo database."""
+        return (
+            SchemaMigration(
+                version="20260328_001_add_method_signature",
+                description="Add canonical method signature columns for overload-safe URIs",
+                statements=(
+                    "ALTER TABLE methods ADD COLUMN signature TEXT",
+                    "ALTER TABLE methods ADD COLUMN legacy_uri TEXT",
+                ),
+            ),
+        )
+
+    def _create_legacy_schema_if_needed(self) -> None:
+        """Create legacy schema tables/indexes if absent (pre-migration baseline)."""
         with self._get_connection() as conn:
             cursor = conn.cursor()
 
@@ -217,6 +246,107 @@ class MetainfoDatabase:
 
             conn.commit()
 
+    def _run_migrations(self) -> None:
+        """Run pending schema migrations exactly once."""
+        with self._get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute(
+                """
+                CREATE TABLE IF NOT EXISTS schema_migrations (
+                    version TEXT PRIMARY KEY,
+                    applied_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                    description TEXT
+                )
+            """
+            )
+
+            applied_rows = cursor.execute("SELECT version FROM schema_migrations").fetchall()
+            applied_versions = {row["version"] for row in applied_rows}
+
+            for migration in self._migrations():
+                if migration.version in applied_versions:
+                    continue
+
+                try:
+                    conn.execute("BEGIN")
+                    for statement in migration.statements:
+                        if self._should_skip_statement(conn, statement):
+                            continue
+                        cursor.execute(statement)
+                    cursor.execute(
+                        "INSERT INTO schema_migrations (version, description) VALUES (?, ?)",
+                        (migration.version, migration.description),
+                    )
+                except Exception:
+                    conn.rollback()
+                    raise
+                else:
+                    conn.commit()
+
+            cursor.execute("CREATE INDEX IF NOT EXISTS idx_methods_legacy_uri ON methods(legacy_uri)")
+            cursor.execute(
+                "CREATE INDEX IF NOT EXISTS idx_methods_class_name_sig ON methods(class_uri, name, signature)"
+            )
+            conn.commit()
+
+    @staticmethod
+    def _should_skip_statement(conn: sqlite3.Connection, statement: str) -> bool:
+        """Skip known additive statements already reflected in schema."""
+        normalized = " ".join(statement.strip().split()).lower()
+        if "alter table methods add column signature" in normalized:
+            return MetainfoDatabase._column_exists(conn, "methods", "signature")
+        if "alter table methods add column legacy_uri" in normalized:
+            return MetainfoDatabase._column_exists(conn, "methods", "legacy_uri")
+        return False
+
+    @staticmethod
+    def _column_exists(conn: sqlite3.Connection, table_name: str, column_name: str) -> bool:
+        """Return True when a table already has a column."""
+        rows = conn.execute(f"PRAGMA table_info({table_name})").fetchall()
+        return any(row[1] == column_name for row in rows)
+
+    @staticmethod
+    def build_method_signature(parameters: list[dict[str, str]]) -> str:
+        """Build normalized signature from method parameters."""
+        if not parameters:
+            return "()"
+        parts = [MetainfoDatabase._normalize_type(param.get("type", "")) for param in parameters]
+        return f"({','.join(parts)})"
+
+    @staticmethod
+    def build_legacy_method_uri(class_uri: str, method_name: str) -> str:
+        """Build legacy method URI format (collision-prone)."""
+        return f"{class_uri}.{method_name}"
+
+    @staticmethod
+    def build_canonical_method_uri(class_uri: str, method_name: str, signature: str) -> str:
+        """Build canonical overload-safe method URI format."""
+        if signature == "()":
+            return f"{class_uri}.{method_name}"
+        return f"{class_uri}.{method_name}{signature}"
+
+    @staticmethod
+    def _normalize_type(type_name: str) -> str:
+        """Normalize parameter types for stable signatures."""
+        compact = "".join(type_name.split())
+        if "<" not in compact:
+            return compact
+
+        normalized = []
+        depth = 0
+        for char in compact:
+            if char == '<':
+                depth += 1
+                normalized.append(char)
+            elif char == '>':
+                depth = max(depth - 1, 0)
+                normalized.append(char)
+            elif char == ',' and depth > 0:
+                normalized.append(',')
+            else:
+                normalized.append(char)
+        return "".join(normalized)
+
     # CRUD operations for Classes
     def save_class(self, class_info: ClassInfo, conn: sqlite3.Connection | None = None) -> None:
         """Save or update a class."""
@@ -283,13 +413,25 @@ class MetainfoDatabase:
     # CRUD operations for Methods
     def save_method(self, method_info: MethodInfo, conn: sqlite3.Connection | None = None) -> None:
         """Save or update a method."""
+        signature = method_info.signature or self.build_method_signature(method_info.parameters)
+        canonical_uri = self.build_canonical_method_uri(method_info.class_uri, method_info.name, signature)
+        legacy_uri = method_info.legacy_uri or self.build_legacy_method_uri(
+            method_info.class_uri, method_info.name
+        )
+
+        input_uri = method_info.uri
+        if input_uri and "(" in input_uri and input_uri.endswith(")"):
+            canonical_uri = input_uri
+        elif input_uri and input_uri != canonical_uri:
+            legacy_uri = input_uri
+
         with self._write_cursor(conn) as cursor:
             cursor.execute(
                 """
                 INSERT INTO methods
                 (uri, name, class_uri, visibility, return_type, parameters,
-                 modifiers, is_static, docstring, original_string, throws, is_constructor)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                 modifiers, is_static, docstring, original_string, throws, is_constructor, signature, legacy_uri)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 ON CONFLICT(uri) DO UPDATE SET
                     name = excluded.name,
                     class_uri = excluded.class_uri,
@@ -301,10 +443,12 @@ class MetainfoDatabase:
                     docstring = excluded.docstring,
                     original_string = excluded.original_string,
                     throws = excluded.throws,
-                    is_constructor = excluded.is_constructor
+                    is_constructor = excluded.is_constructor,
+                    signature = excluded.signature,
+                    legacy_uri = excluded.legacy_uri
             """,
                 (
-                    method_info.uri,
+                    canonical_uri,
                     method_info.name,
                     method_info.class_uri,
                     method_info.visibility,
@@ -316,6 +460,8 @@ class MetainfoDatabase:
                     method_info.original_string,
                     json.dumps(method_info.throws),
                     1 if method_info.is_constructor else 0,
+                    signature,
+                    legacy_uri,
                 ),
             )
 
@@ -324,6 +470,14 @@ class MetainfoDatabase:
         with self._get_connection() as conn:
             cursor = conn.cursor()
             cursor.execute("SELECT * FROM methods WHERE uri = ?", (uri,))
+            row = cursor.fetchone()
+            if row:
+                return self._row_to_method(row)
+
+            cursor.execute(
+                "SELECT * FROM methods WHERE legacy_uri = ? ORDER BY uri LIMIT 1",
+                (uri,),
+            )
             row = cursor.fetchone()
             if row:
                 return self._row_to_method(row)
@@ -648,6 +802,8 @@ class MetainfoDatabase:
             original_string=row["original_string"],
             throws=MetainfoDatabase._from_json(row["throws"], []),
             is_constructor=bool(row["is_constructor"]),
+            signature=row["signature"] if "signature" in row.keys() else None,
+            legacy_uri=row["legacy_uri"] if "legacy_uri" in row.keys() else None,
         )
 
     @staticmethod
