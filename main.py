@@ -8,6 +8,10 @@ It orchestrates the 4-step pipeline:
 2. RAG (Retriever): Find dependency files in the Java project
 3. Slicer: Extract method signatures from dependencies
 4. Prompt Builder: Assemble dynamic prompt and send to LLM
+
+Supports two modes:
+- Legacy mode: Generate test for a single Java file
+- Benchmark mode: Run benchmarks using a manifest file
 """
 
 import argparse
@@ -142,12 +146,73 @@ def generate_test_for_file(
     return test_code
 
 
-def main():
-    """Main entry point."""
-    parser = build_arg_parser()
-    args = parser.parse_args()
+def run_benchmark_mode(manifest_path: str, output_dir: str, dry_run: bool = False) -> int:
+    """
+    Run benchmark mode using a manifest file.
 
-    # Check if files exist
+    Args:
+        manifest_path: Path to benchmark manifest (JSON or TOML)
+        output_dir: Directory for benchmark outputs
+        dry_run: If True, skip actual generation
+
+    Returns:
+        Exit code (0 on success, 1 on failure)
+    """
+    from benchmark.manifest import ManifestValidationError, load_manifest
+    from benchmark.planner import plan_runs
+    from benchmark.reporter import build_report, export_thesis_metrics_csv
+    from benchmark.runner import execute_runs
+
+    print(f"\n{'=' * 60}")
+    print("AST-RAG Benchmark Mode")
+    print(f"{'=' * 60}")
+    print(f"\n📋 Manifest: {manifest_path}")
+    print(f"📁 Output: {output_dir}")
+
+    try:
+        manifest = load_manifest(manifest_path)
+        print(f"\n✅ Manifest loaded (version {manifest.manifest_version})")
+    except ManifestValidationError as e:
+        print(f"\n❌ Error loading manifest: {e}", file=sys.stderr)
+        return 1
+
+    print("\n[1/3] 📊 Planning runs...")
+    plans = plan_runs(manifest)
+    print(f"    Planned {len(plans)} runs")
+
+    print("\n[2/3] ⚙️ Executing runs...")
+    results = execute_runs(
+        plans,
+        output_dir,
+        dry_run=dry_run,
+        eval_config=manifest.evaluation,
+    )
+
+    success_count = sum(1 for r in results if r.status == "ok")
+    print(f"    Completed: {success_count}/{len(results)} successful")
+
+    print("\n[3/3] 📝 Generating reports...")
+    bundle = build_report(results, manifest, output_dir)
+    print(f"    Results: {bundle.results_path}")
+    print(f"    Summary: {bundle.summary_path}")
+    print(f"    Report: {bundle.report_path}")
+
+    csv_path = export_thesis_metrics_csv(results, output_dir)
+    print(f"    Thesis Metrics: {csv_path}")
+
+    print("\n✨ Benchmark complete!")
+    return 0
+
+
+def legacy_main(args: argparse.Namespace) -> None:
+    """
+    Execute the legacy single-file generation mode.
+
+    This preserves the original behavior for backward compatibility.
+
+    Args:
+        args: Parsed arguments from legacy CLI
+    """
     if not Path(args.java_file).exists():
         print(f"Error: Java file not found: {args.java_file}", file=sys.stderr)
         sys.exit(1)
@@ -184,6 +249,21 @@ def main():
         sys.exit(1)
 
 
+def main():
+    """Main entry point."""
+    parser = build_arg_parser()
+    args = parser.parse_args()
+
+    if getattr(args, "benchmark_manifest", None):
+        return run_benchmark_mode(
+            manifest_path=args.benchmark_manifest,
+            output_dir=args.benchmark_output,
+            dry_run=getattr(args, "benchmark_dry_run", False),
+        )
+
+    legacy_main(args)
+
+
 def build_arg_parser() -> argparse.ArgumentParser:
     """Build command-line argument parser."""
     try:
@@ -215,14 +295,40 @@ Examples:
 
   # Specify custom output directory
   python main.py service.java project/ --output ./my_tests
+
+  # Run benchmark mode
+  python main.py --benchmark-manifest benchmark.yaml --benchmark-output ./benchmark_results
         """,
     )
+
+    parser.add_argument(
+        "--benchmark-manifest",
+        dest="benchmark_manifest",
+        metavar="PATH",
+        help="Path to benchmark manifest (JSON or TOML). Enables benchmark mode.",
+    )
+    parser.add_argument(
+        "--benchmark-output",
+        dest="benchmark_output",
+        metavar="DIR",
+        default="./benchmark_results",
+        help="Output directory for benchmark results (default: ./benchmark_results)",
+    )
+    parser.add_argument(
+        "--benchmark-dry-run",
+        dest="benchmark_dry_run",
+        action="store_true",
+        help="Run benchmark without actual generation (for testing)",
+    )
+
     parser.add_argument(
         "java_file",
+        nargs="?",
         help="Path to the Java file to generate tests for",
     )
     parser.add_argument(
         "project_path",
+        nargs="?",
         help="Root path of the Java project (for dependency resolution)",
     )
     parser.add_argument(
@@ -262,6 +368,7 @@ Examples:
         action="store_true",
         help="Enable experimental reftest parity flow (default: disabled)",
     )
+
     return parser
 
 

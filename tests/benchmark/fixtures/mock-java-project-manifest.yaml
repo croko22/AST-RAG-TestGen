@@ -1,0 +1,36 @@
+manifest_version: 1
+project_root: ../../mock-java-project
+
+dataset:
+  - id: usuario-service
+    java_file: src/main/java/com/example/demo/service/UsuarioService.java
+  - id: producto-service
+    java_file: src/main/java/com/example/demo/service/ProductoService.java
+  - id: pedido-service
+    java_file: src/main/java/com/example/demo/service/PedidoService.java
+
+matrix:
+  providers:
+    - name: anthropic
+      model: claude-3-5-sonnet-20241022
+    - name: openai
+      model: gpt-4-turbo
+
+run:
+  trials: 1
+  seed: 42
+  max_dependencies: 10
+  timeout_seconds: 300
+  retry_count: 0
+  concurrency: 1
+
+evaluation:
+  compile_cmd: mvn -q -DskipTests compile
+  test_cmd: mvn -q test
+  coverage_cmd: null
+
+scoring:
+  weights:
+    success: 0.5
+    coverage: 0.3
+    latency: 0.2
