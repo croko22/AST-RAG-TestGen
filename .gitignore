@@ -50,6 +50,14 @@ htmlcov/
 .coverage
 coverage.xml
 .pytest_cache/
+.mypy_cache/
+
+# Generated outputs and benchmark artifacts
+results/
+tests_generados/
+campaigns/**/results/
+campaigns/**/results-*/
+campaigns/**/repos/
 
 # Conda
 .conda/

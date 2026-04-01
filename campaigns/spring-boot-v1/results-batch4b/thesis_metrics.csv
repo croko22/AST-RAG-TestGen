@@ -1,2 +1,0 @@
-model,success_rate,avg_latency_sec,coverage_pct,score
-nvidia/meta/llama-3.1-405b-instruct,1.0000,93.71,0.00,0.6375
