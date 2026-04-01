@@ -3,7 +3,11 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any
+from typing import Any, Literal
+
+
+PreflightSeverity = Literal["error", "warning"]
+ProvenanceStatus = Literal["ok", "unavailable"]
 
 
 @dataclass(slots=True)
@@ -17,6 +21,32 @@ class EvalMetrics:
     coverage_reason: str | None = None
     failure_type: str | None = None
     failure_message: str | None = None
+
+
+@dataclass(slots=True)
+class PreflightFinding:
+    """Structured manifest preflight finding."""
+
+    code: str
+    severity: PreflightSeverity
+    manifest_path: str
+    message: str
+    remediation: str
+
+
+@dataclass(slots=True)
+class ProvenanceRecord:
+    """Captured git provenance metadata for a dataset target."""
+
+    repo_id: str
+    repo_path: str
+    requested_ref: str | None
+    resolved_commit: str | None
+    branch: str | None
+    dirty: bool | None
+    status: ProvenanceStatus
+    reason: str | None
+    captured_at: str
 
 
 @dataclass(slots=True)

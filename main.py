@@ -158,7 +158,11 @@ def run_benchmark_mode(manifest_path: str, output_dir: str, dry_run: bool = Fals
     Returns:
         Exit code (0 on success, 1 on failure)
     """
-    from benchmark.manifest import ManifestValidationError, load_manifest
+    from benchmark.manifest import (
+        ManifestValidationError,
+        load_manifest,
+        validate_manifest_preflight,
+    )
     from benchmark.planner import plan_runs
     from benchmark.reporter import build_report, export_thesis_metrics_csv
     from benchmark.runner import execute_runs
@@ -174,6 +178,22 @@ def run_benchmark_mode(manifest_path: str, output_dir: str, dry_run: bool = Fals
         print(f"\n✅ Manifest loaded (version {manifest.manifest_version})")
     except ManifestValidationError as e:
         print(f"\n❌ Error loading manifest: {e}", file=sys.stderr)
+        return 1
+
+    preflight_findings = validate_manifest_preflight(manifest)
+    preflight_errors = [finding for finding in preflight_findings if finding.severity == "error"]
+    preflight_warnings = [finding for finding in preflight_findings if finding.severity == "warning"]
+
+    if preflight_warnings:
+        print("\n⚠️ Preflight warnings:")
+        for warning in preflight_warnings:
+            print(f"    - [{warning.code}] {warning.message}")
+
+    if preflight_errors:
+        print("\n❌ Preflight errors:", file=sys.stderr)
+        for error in preflight_errors:
+            print(f"    - [{error.code}] {error.message}", file=sys.stderr)
+            print(f"      remediation: {error.remediation}", file=sys.stderr)
         return 1
 
     print("\n[1/3] 📊 Planning runs...")
@@ -192,10 +212,16 @@ def run_benchmark_mode(manifest_path: str, output_dir: str, dry_run: bool = Fals
     print(f"    Completed: {success_count}/{len(results)} successful")
 
     print("\n[3/3] 📝 Generating reports...")
-    bundle = build_report(results, manifest, output_dir)
+    bundle = build_report(
+        results,
+        manifest,
+        output_dir,
+        preflight_findings=preflight_findings,
+    )
     print(f"    Results: {bundle.results_path}")
     print(f"    Summary: {bundle.summary_path}")
     print(f"    Report: {bundle.report_path}")
+    print(f"    Provenance: {bundle.provenance_path}")
 
     csv_path = export_thesis_metrics_csv(results, output_dir)
     print(f"    Thesis Metrics: {csv_path}")

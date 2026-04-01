@@ -4,12 +4,13 @@ from __future__ import annotations
 
 import csv
 import json
+import subprocess
 from datetime import datetime
 from pathlib import Path
 from typing import Any
 
 from benchmark.schemas import BenchmarkManifest, ScoringConfig
-from benchmark.types import RunResult
+from benchmark.types import PreflightFinding, ProvenanceRecord, RunResult
 
 
 class ReportBundle:
@@ -20,16 +21,19 @@ class ReportBundle:
         results_path: Path,
         summary_path: Path,
         report_path: Path,
+        provenance_path: Path,
     ) -> None:
         self.results_path = results_path
         self.summary_path = summary_path
         self.report_path = report_path
+        self.provenance_path = provenance_path
 
 
 def build_report(
     results: list[RunResult],
     manifest: BenchmarkManifest,
     output_dir: Path | str,
+    preflight_findings: list[PreflightFinding] | None = None,
 ) -> ReportBundle:
     """
     Generate complete benchmark report bundle.
@@ -50,11 +54,17 @@ def build_report(
     output_path = Path(output_dir)
     output_path.mkdir(parents=True, exist_ok=True)
 
-    results_data = _build_results_json(results, manifest)
+    findings = preflight_findings or []
+    provenance_records = collect_provenance_records(manifest)
+    provenance_data = _build_provenance_json(manifest, provenance_records)
+    provenance_path = output_path / "provenance.json"
+    provenance_path.write_text(json.dumps(provenance_data, indent=2), encoding="utf-8")
+
+    results_data = _build_results_json(results, manifest, findings, provenance_path, provenance_records)
     results_path = output_path / "results.json"
     results_path.write_text(json.dumps(results_data, indent=2), encoding="utf-8")
 
-    summary_data = _build_summary_json(results, manifest)
+    summary_data = _build_summary_json(results, manifest, findings, provenance_path, provenance_records)
     summary_path = output_path / "summary.json"
     summary_path.write_text(json.dumps(summary_data, indent=2), encoding="utf-8")
 
@@ -66,12 +76,16 @@ def build_report(
         results_path=results_path,
         summary_path=summary_path,
         report_path=report_path,
+        provenance_path=provenance_path,
     )
 
 
 def _build_results_json(
     results: list[RunResult],
     manifest: BenchmarkManifest,
+    preflight_findings: list[PreflightFinding],
+    provenance_path: Path,
+    provenance_records: list[ProvenanceRecord],
 ) -> dict[str, Any]:
     """Build machine-readable results JSON."""
     return {
@@ -79,6 +93,14 @@ def _build_results_json(
         "manifest_version": manifest.manifest_version,
         "total_runs": len(results),
         "runs": [_serialize_run_result(r) for r in results],
+        "metadata": {
+            "preflight": _serialize_preflight(preflight_findings),
+            "diagnostics": _compute_diagnostics(results, preflight_findings),
+            "provenance": {
+                "path": str(provenance_path),
+                "status_counts": _count_provenance_statuses(provenance_records),
+            },
+        },
     }
 
 
@@ -109,17 +131,208 @@ def _serialize_run_result(result: RunResult) -> dict[str, Any]:
 def _build_summary_json(
     results: list[RunResult],
     manifest: BenchmarkManifest,
+    preflight_findings: list[PreflightFinding] | None = None,
+    provenance_path: Path | None = None,
+    provenance_records: list[ProvenanceRecord] | None = None,
 ) -> dict[str, Any]:
     """Build summary JSON with aggregated statistics and rankings."""
     stats = _compute_statistics(results)
     rankings = _compute_rankings(results, manifest.scoring)
+
+    findings = preflight_findings or []
+    records = provenance_records or []
 
     return {
         "generated_at": datetime.utcnow().isoformat() + "Z",
         "statistics": stats,
         "rankings": rankings,
         "scoring_weights": manifest.scoring.weights.model_dump(),
+        "diagnostics": _compute_diagnostics(results, findings),
+        "preflight": _serialize_preflight(findings),
+        "provenance": {
+            "path": str(provenance_path) if provenance_path else None,
+            "status_counts": _count_provenance_statuses(records),
+        },
     }
+
+
+def _compute_diagnostics(
+    results: list[RunResult],
+    preflight_findings: list[PreflightFinding],
+) -> dict[str, int]:
+    """Compute campaign diagnostics for fidelity hardening surfacing."""
+    return {
+        "preflight_warning_count": sum(1 for f in preflight_findings if f.severity == "warning"),
+        "coverage_fallback_count": sum(1 for r in results if r.metrics.coverage_source == "stdout_regex"),
+        "coverage_unavailable_count": sum(1 for r in results if r.metrics.coverage_reason == "coverage_unavailable"),
+    }
+
+
+def _serialize_preflight(findings: list[PreflightFinding]) -> dict[str, Any]:
+    """Serialize preflight findings with split severities."""
+    warnings = [f for f in findings if f.severity == "warning"]
+    errors = [f for f in findings if f.severity == "error"]
+    return {
+        "warning_count": len(warnings),
+        "error_count": len(errors),
+        "findings": [
+            {
+                "code": f.code,
+                "severity": f.severity,
+                "manifest_path": f.manifest_path,
+                "message": f.message,
+                "remediation": f.remediation,
+            }
+            for f in findings
+        ],
+    }
+
+
+def _count_provenance_statuses(records: list[ProvenanceRecord]) -> dict[str, int]:
+    """Count provenance record statuses."""
+    ok_count = sum(1 for record in records if record.status == "ok")
+    unavailable_count = sum(1 for record in records if record.status == "unavailable")
+    return {
+        "ok": ok_count,
+        "unavailable": unavailable_count,
+        "total": len(records),
+    }
+
+
+def _build_provenance_json(
+    manifest: BenchmarkManifest,
+    records: list[ProvenanceRecord],
+) -> dict[str, Any]:
+    """Build campaign-level provenance sidecar payload."""
+    return {
+        "generated_at": datetime.utcnow().isoformat() + "Z",
+        "manifest_version": manifest.manifest_version,
+        "records": [
+            {
+                "repo_id": record.repo_id,
+                "repo_path": record.repo_path,
+                "requested_ref": record.requested_ref,
+                "resolved_commit": record.resolved_commit,
+                "branch": record.branch,
+                "dirty": record.dirty,
+                "status": record.status,
+                "reason": record.reason,
+                "captured_at": record.captured_at,
+            }
+            for record in records
+        ],
+    }
+
+
+def collect_provenance_records(manifest: BenchmarkManifest) -> list[ProvenanceRecord]:
+    """Capture git provenance for each dataset target repository path."""
+    project_root = Path(manifest.project_root)
+    records: list[ProvenanceRecord] = []
+
+    for dataset in manifest.dataset:
+        java_file_path = project_root / dataset.java_file
+        repo_path = _resolve_repo_root(java_file_path)
+        captured_at = datetime.utcnow().isoformat() + "Z"
+
+        if repo_path is None:
+            records.append(
+                ProvenanceRecord(
+                    repo_id=dataset.id,
+                    repo_path=str(java_file_path.parent),
+                    requested_ref=None,
+                    resolved_commit=None,
+                    branch=None,
+                    dirty=None,
+                    status="unavailable",
+                    reason="PROVENANCE_NOT_GIT_REPO",
+                    captured_at=captured_at,
+                )
+            )
+            continue
+
+        commit = _git_value(repo_path, ["rev-parse", "HEAD"])
+        branch = _git_value(repo_path, ["rev-parse", "--abbrev-ref", "HEAD"])
+        dirty = _git_is_dirty(repo_path)
+
+        if commit is None:
+            records.append(
+                ProvenanceRecord(
+                    repo_id=dataset.id,
+                    repo_path=str(repo_path),
+                    requested_ref=None,
+                    resolved_commit=None,
+                    branch=branch,
+                    dirty=dirty,
+                    status="unavailable",
+                    reason="PROVENANCE_GIT_RESOLUTION_FAILED",
+                    captured_at=captured_at,
+                )
+            )
+            continue
+
+        records.append(
+            ProvenanceRecord(
+                repo_id=dataset.id,
+                repo_path=str(repo_path),
+                requested_ref=None,
+                resolved_commit=commit,
+                branch=branch,
+                dirty=dirty,
+                status="ok",
+                reason=None,
+                captured_at=captured_at,
+            )
+        )
+
+    return records
+
+
+def _resolve_repo_root(path: Path) -> Path | None:
+    """Resolve nearest git repository root for a path."""
+    current = path if path.is_dir() else path.parent
+    for candidate in (current, *current.parents):
+        if (candidate / ".git").exists():
+            return candidate
+    return None
+
+
+def _git_value(repo_root: Path, args: list[str]) -> str | None:
+    """Return git command stdout value or None."""
+    try:
+        proc = subprocess.run(
+            ["git", *args],
+            cwd=str(repo_root),
+            capture_output=True,
+            text=True,
+            timeout=5,
+            check=False,
+        )
+    except (OSError, subprocess.TimeoutExpired):
+        return None
+
+    if proc.returncode != 0:
+        return None
+    value = proc.stdout.strip()
+    return value or None
+
+
+def _git_is_dirty(repo_root: Path) -> bool | None:
+    """Return dirty state or None when git status cannot be resolved."""
+    try:
+        proc = subprocess.run(
+            ["git", "status", "--porcelain"],
+            cwd=str(repo_root),
+            capture_output=True,
+            text=True,
+            timeout=5,
+            check=False,
+        )
+    except (OSError, subprocess.TimeoutExpired):
+        return None
+
+    if proc.returncode != 0:
+        return None
+    return bool(proc.stdout.strip())
 
 
 def _compute_statistics(results: list[RunResult]) -> dict[str, Any]:

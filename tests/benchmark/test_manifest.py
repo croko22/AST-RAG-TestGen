@@ -6,7 +6,12 @@ import json
 
 import pytest
 
-from benchmark.manifest import ManifestValidationError, load_manifest
+from benchmark.manifest import (
+    ManifestValidationError,
+    load_manifest,
+    validate_manifest_preflight,
+)
+from benchmark.schemas import BenchmarkManifest
 
 
 def _base_manifest() -> dict[str, object]:
@@ -101,3 +106,42 @@ def test_load_manifest_wrong_type_reports_field_path(tmp_path):
     message = str(exc_info.value)
     assert "run.trials" in message
     assert "Input should be a valid integer" in message
+
+
+def test_validate_manifest_preflight_hard_fail_provider_credential_missing(monkeypatch):
+    manifest = BenchmarkManifest.model_validate(_base_manifest())
+    monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
+    monkeypatch.setattr("shutil.which", lambda tool: "/usr/bin/mock" if tool in {"java", "mvn"} else None)
+
+    findings = validate_manifest_preflight(manifest)
+
+    assert any(f.code == "MANIFEST_PROVIDER_CREDENTIAL_MISSING" and f.severity == "error" for f in findings)
+
+
+def test_validate_manifest_preflight_warn_only_expected_test_parent_missing(monkeypatch, tmp_path):
+    project_root = tmp_path / "project"
+    java_src = project_root / "src/main/java/com/example/demo/service"
+    java_src.mkdir(parents=True)
+    (java_src / "UsuarioService.java").write_text("class UsuarioService {}", encoding="utf-8")
+
+    manifest_data = _base_manifest()
+    manifest_data["project_root"] = str(project_root)
+    manifest_data["dataset"][0]["expected_test_path"] = "missing/tests/UsuarioServiceTest.java"
+    manifest = load_manifest_from_dict(tmp_path, manifest_data)
+
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "test-key")
+    monkeypatch.setattr("shutil.which", lambda tool: "/usr/bin/mock" if tool in {"java", "mvn"} else None)
+
+    findings = validate_manifest_preflight(manifest)
+
+    warning_codes = {f.code for f in findings if f.severity == "warning"}
+    error_codes = {f.code for f in findings if f.severity == "error"}
+    assert "MANIFEST_EXPECTED_TEST_PARENT_MISSING" in warning_codes
+    assert "MANIFEST_EXPECTED_TEST_PARENT_MISSING" not in error_codes
+
+
+def load_manifest_from_dict(tmp_path, data):
+    path = tmp_path / "manifest.json"
+    path.write_text(json.dumps(data), encoding="utf-8")
+    return load_manifest(path)
+

@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import json
+import os
+import shutil
 import subprocess
 import sys
 import tomllib
@@ -12,10 +14,21 @@ from typing import Any
 from pydantic import ValidationError
 
 from benchmark.schemas import BenchmarkManifest, ToolchainVersions
+from benchmark.types import PreflightFinding
 
 
 class ManifestValidationError(ValueError):
     """Raised when manifest parsing or schema validation fails."""
+
+
+_PROVIDER_ENV_KEYS: dict[str, str] = {
+    "anthropic": "ANTHROPIC_API_KEY",
+    "openai": "OPENAI_API_KEY",
+    "glm": "GLM_API_KEY",
+    "gemini": "GEMINI_API_KEY",
+    "nvidia": "NVIDIA_API_KEY",
+    "openrouter": "OPENROUTER_API_KEY",
+}
 
 
 def _read_manifest_data(path: Path) -> dict[str, Any]:
@@ -140,3 +153,92 @@ def create_manifest_with_toolchain(
         manifest_data["scoring"] = scoring
 
     return BenchmarkManifest.model_validate(manifest_data)
+
+
+def validate_manifest_preflight(manifest: BenchmarkManifest) -> list[PreflightFinding]:
+    """Validate manifest/runtime prerequisites with fail-warn taxonomy."""
+    findings: list[PreflightFinding] = []
+    project_root = Path(manifest.project_root)
+
+    if not project_root.exists():
+        findings.append(
+            PreflightFinding(
+                code="MANIFEST_PATH_MISSING",
+                severity="error",
+                manifest_path="project_root",
+                message=f"Project root does not exist: {project_root}",
+                remediation="Set project_root to an existing repository path.",
+            )
+        )
+
+    for index, dataset in enumerate(manifest.dataset):
+        java_path = project_root / dataset.java_file
+        if not java_path.exists():
+            findings.append(
+                PreflightFinding(
+                    code="MANIFEST_DATASET_FILE_MISSING",
+                    severity="error",
+                    manifest_path=f"dataset[{index}].java_file",
+                    message=f"Dataset Java file not found: {java_path}",
+                    remediation="Fix dataset.java_file to point at an existing Java source file.",
+                )
+            )
+
+        if dataset.expected_test_path:
+            expected_test_parent = (project_root / dataset.expected_test_path).parent
+            if not expected_test_parent.exists():
+                findings.append(
+                    PreflightFinding(
+                        code="MANIFEST_EXPECTED_TEST_PARENT_MISSING",
+                        severity="warning",
+                        manifest_path=f"dataset[{index}].expected_test_path",
+                        message=(
+                            "Expected test parent directory is missing: "
+                            f"{expected_test_parent}"
+                        ),
+                        remediation="Create the parent folder or update expected_test_path.",
+                    )
+                )
+
+    for index, provider in enumerate(manifest.matrix.providers):
+        provider_name = provider.name.lower()
+        env_key = _PROVIDER_ENV_KEYS.get(provider_name)
+        if env_key is None:
+            findings.append(
+                PreflightFinding(
+                    code="MANIFEST_PROVIDER_UNKNOWN",
+                    severity="error",
+                    manifest_path=f"matrix.providers[{index}].name",
+                    message=f"Unknown provider '{provider.name}'.",
+                    remediation=(
+                        "Use one of: "
+                        + ", ".join(sorted(_PROVIDER_ENV_KEYS.keys()))
+                    ),
+                )
+            )
+            continue
+
+        if not os.getenv(env_key):
+            findings.append(
+                PreflightFinding(
+                    code="MANIFEST_PROVIDER_CREDENTIAL_MISSING",
+                    severity="error",
+                    manifest_path=f"matrix.providers[{index}].name",
+                    message=f"Missing credential env var {env_key} for provider '{provider.name}'.",
+                    remediation=f"Export {env_key} before running benchmark mode.",
+                )
+            )
+
+    for tool in ("java", "mvn"):
+        if shutil.which(tool) is None:
+            findings.append(
+                PreflightFinding(
+                    code="MANIFEST_TOOLCHAIN_MISSING",
+                    severity="error",
+                    manifest_path="toolchain",
+                    message=f"Required toolchain executable '{tool}' was not found in PATH.",
+                    remediation=f"Install '{tool}' and ensure it is available in PATH.",
+                )
+            )
+
+    return findings

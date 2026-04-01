@@ -244,12 +244,13 @@ class TestRunBenchmarkMode:
     """Test the run_benchmark_mode function directly."""
 
     @patch("benchmark.manifest.load_manifest")
+    @patch("benchmark.manifest.validate_manifest_preflight")
     @patch("benchmark.planner.plan_runs")
     @patch("benchmark.runner.execute_runs")
     @patch("benchmark.reporter.build_report")
     @patch("benchmark.reporter.export_thesis_metrics_csv")
     def test_run_benchmark_mode_success(
-        self, mock_csv, mock_report, mock_execute, mock_plan, mock_load
+        self, mock_csv, mock_report, mock_execute, mock_plan, mock_preflight, mock_load
     ):
         """run_benchmark_mode should complete all phases."""
         from benchmark.schemas import BenchmarkManifest
@@ -258,6 +259,7 @@ class TestRunBenchmarkMode:
         mock_manifest.manifest_version = 1
         mock_manifest.evaluation = MagicMock()
         mock_load.return_value = mock_manifest
+        mock_preflight.return_value = []
         mock_plan.return_value = [MagicMock(), MagicMock()]
         mock_result1 = MagicMock(status="ok", latency_ms=1000, provider="anthropic", model="claude-3-5-sonnet-20241022", metrics=MagicMock(coverage_pct=None))
         mock_result2 = MagicMock(status="ok", latency_ms=2000, provider="anthropic", model="claude-3-5-sonnet-20241022", metrics=MagicMock(coverage_pct=None))
@@ -266,6 +268,7 @@ class TestRunBenchmarkMode:
             results_path=Path("results.json"),
             summary_path=Path("summary.json"),
             report_path=Path("report.md"),
+            provenance_path=Path("provenance.json"),
         )
         mock_csv.return_value = Path("thesis_metrics.csv")
 

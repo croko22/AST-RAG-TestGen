@@ -7,15 +7,17 @@ import json
 import pytest
 
 from benchmark.reporter import (
+    _compute_diagnostics,
     _compute_entry_score,
     _compute_rankings,
     _compute_statistics,
     _build_summary_json,
     build_report,
+    collect_provenance_records,
     load_results_from_dir,
 )
 from benchmark.schemas import BenchmarkManifest, ScoringConfig, ScoringWeights
-from benchmark.types import EvalMetrics, RunResult
+from benchmark.types import EvalMetrics, PreflightFinding, RunResult
 
 
 def _make_result(
@@ -244,6 +246,8 @@ def test_build_summary_json_structure():
     assert "statistics" in summary
     assert "rankings" in summary
     assert "scoring_weights" in summary
+    assert "diagnostics" in summary
+    assert "provenance" in summary
 
 
 def test_build_report_creates_files(tmp_path):
@@ -257,6 +261,7 @@ def test_build_report_creates_files(tmp_path):
     assert bundle.results_path.exists()
     assert bundle.summary_path.exists()
     assert bundle.report_path.exists()
+    assert bundle.provenance_path.exists()
 
 
 def test_build_report_results_json_content(tmp_path):
@@ -284,6 +289,7 @@ def test_build_report_summary_json_content(tmp_path):
     data = json.loads(bundle.summary_path.read_text(encoding="utf-8"))
     assert data["statistics"]["total_runs"] == 1
     assert len(data["rankings"]) == 1
+    assert "diagnostics" in data
 
 
 def test_build_report_markdown_has_tables(tmp_path):
@@ -361,3 +367,81 @@ def test_reporter_serializes_coverage_metadata_fields(tmp_path):
     assert "coverage_reason" in metrics
     assert metrics["coverage_pct"] is None
     assert metrics["coverage_reason"] == "coverage_unavailable"
+
+
+def test_build_report_persists_provenance_and_metadata(tmp_path):
+    project_root = tmp_path / "project"
+    service_dir = project_root / "src"
+    service_dir.mkdir(parents=True)
+    (service_dir / "Service.java").write_text("class Service {}", encoding="utf-8")
+
+    manifest = BenchmarkManifest(
+        manifest_version=1,
+        project_root=str(project_root),
+        dataset=[{"id": "svc", "java_file": "src/Service.java"}],
+        matrix={"providers": [{"name": "test", "model": "test"}]},
+        evaluation={"compile_cmd": "echo compile", "test_cmd": "echo test"},
+    )
+    results = [_make_result("r1", "p1", "m1", "d1", 1, coverage_pct=40.0)]
+
+    bundle = build_report(results, manifest, tmp_path)
+
+    provenance = json.loads(bundle.provenance_path.read_text(encoding="utf-8"))
+    assert provenance["records"][0]["repo_id"] == "svc"
+    assert provenance["records"][0]["status"] == "unavailable"
+
+    summary_data = json.loads(bundle.summary_path.read_text(encoding="utf-8"))
+    assert "diagnostics" in summary_data
+    assert "provenance" in summary_data
+    assert summary_data["provenance"]["path"].endswith("provenance.json")
+
+
+def test_collect_provenance_records_git_success(monkeypatch, tmp_path):
+    project_root = tmp_path / "project"
+    src_dir = project_root / "src"
+    src_dir.mkdir(parents=True)
+    (src_dir / "Service.java").write_text("class Service {}", encoding="utf-8")
+
+    manifest = BenchmarkManifest(
+        manifest_version=1,
+        project_root=str(project_root),
+        dataset=[{"id": "svc", "java_file": "src/Service.java"}],
+        matrix={"providers": [{"name": "test", "model": "test"}]},
+        evaluation={"compile_cmd": "echo compile", "test_cmd": "echo test"},
+    )
+
+    monkeypatch.setattr("benchmark.reporter._resolve_repo_root", lambda _: project_root)
+    monkeypatch.setattr("benchmark.reporter._git_value", lambda _root, args: "main" if args[-1] == "HEAD" else "feature")
+    monkeypatch.setattr("benchmark.reporter._git_is_dirty", lambda _root: False)
+
+    records = collect_provenance_records(manifest)
+
+    assert len(records) == 1
+    assert records[0].status == "ok"
+    assert records[0].resolved_commit == "main"
+    assert records[0].dirty is False
+
+
+def test_compute_diagnostics_includes_preflight_and_coverage_counters():
+    results = [
+        _make_result("r1", "p1", "m1", "d1", 1, coverage_pct=10.0),
+        _make_result("r2", "p1", "m1", "d1", 2, coverage_pct=None),
+    ]
+    results[0].metrics.coverage_source = "stdout_regex"
+    results[1].metrics.coverage_reason = "coverage_unavailable"
+
+    findings = [
+        PreflightFinding(
+            code="MANIFEST_EXPECTED_TEST_PARENT_MISSING",
+            severity="warning",
+            manifest_path="dataset[0].expected_test_path",
+            message="warn",
+            remediation="fix",
+        )
+    ]
+
+    diagnostics = _compute_diagnostics(results, findings)
+
+    assert diagnostics["preflight_warning_count"] == 1
+    assert diagnostics["coverage_fallback_count"] == 1
+    assert diagnostics["coverage_unavailable_count"] == 1
