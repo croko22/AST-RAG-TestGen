@@ -1,0 +1,277 @@
+{
+  "generated_at": "2026-03-29T21:55:46.916846Z",
+  "manifest_version": 1,
+  "total_runs": 9,
+  "runs": [
+    {
+      "run_id": "run_358962c7e32a",
+      "status": "ok",
+      "latency_ms": 6297,
+      "metrics": {
+        "compile_pass": true,
+        "test_pass": true,
+        "coverage_pct": null,
+        "failure_type": null,
+        "failure_message": null
+      },
+      "output_path": "campaigns/spring-boot-v1/results/run_358962c7e32a/ApplicationTest.java",
+      "provider": "nvidia",
+      "model": "meta/llama-3.1-405b-instruct",
+      "dataset_id": "gsapp-application",
+      "trial": 1,
+      "config_snapshot": {
+        "run_id": "run_358962c7e32a",
+        "dataset_id": "gsapp-application",
+        "java_file": "gs-spring-boot/complete/src/main/java/com/example/springboot/Application.java",
+        "provider": "nvidia",
+        "model": "meta/llama-3.1-405b-instruct",
+        "trial": 1,
+        "seed": 42,
+        "max_dependencies": 10,
+        "timeout_seconds": 300,
+        "retry_count": 1,
+        "project_root": "campaigns/spring-boot-v1/repos"
+      }
+    },
+    {
+      "run_id": "run_d40a08d0c532",
+      "status": "ok",
+      "latency_ms": 3829,
+      "metrics": {
+        "compile_pass": true,
+        "test_pass": true,
+        "coverage_pct": null,
+        "failure_type": null,
+        "failure_message": null
+      },
+      "output_path": "campaigns/spring-boot-v1/results/run_d40a08d0c532/HelloControllerTest.java",
+      "provider": "nvidia",
+      "model": "meta/llama-3.1-405b-instruct",
+      "dataset_id": "gsapp-hellocontroller",
+      "trial": 1,
+      "config_snapshot": {
+        "run_id": "run_d40a08d0c532",
+        "dataset_id": "gsapp-hellocontroller",
+        "java_file": "gs-spring-boot/complete/src/main/java/com/example/springboot/HelloController.java",
+        "provider": "nvidia",
+        "model": "meta/llama-3.1-405b-instruct",
+        "trial": 1,
+        "seed": 42,
+        "max_dependencies": 10,
+        "timeout_seconds": 300,
+        "retry_count": 1,
+        "project_root": "campaigns/spring-boot-v1/repos"
+      }
+    },
+    {
+      "run_id": "run_8025187c0f94",
+      "status": "ok",
+      "latency_ms": 108853,
+      "metrics": {
+        "compile_pass": true,
+        "test_pass": true,
+        "coverage_pct": null,
+        "failure_type": null,
+        "failure_message": null
+      },
+      "output_path": "campaigns/spring-boot-v1/results/run_8025187c0f94/AuthenticationServiceTest.java",
+      "provider": "nvidia",
+      "model": "meta/llama-3.1-405b-instruct",
+      "dataset_id": "jwt-authservice",
+      "trial": 1,
+      "config_snapshot": {
+        "run_id": "run_8025187c0f94",
+        "dataset_id": "jwt-authservice",
+        "java_file": "spring-boot-3-jwt-security/src/main/java/com/alibou/security/auth/AuthenticationService.java",
+        "provider": "nvidia",
+        "model": "meta/llama-3.1-405b-instruct",
+        "trial": 1,
+        "seed": 42,
+        "max_dependencies": 10,
+        "timeout_seconds": 300,
+        "retry_count": 1,
+        "project_root": "campaigns/spring-boot-v1/repos"
+      }
+    },
+    {
+      "run_id": "run_7024d7a646f4",
+      "status": "ok",
+      "latency_ms": 157469,
+      "metrics": {
+        "compile_pass": true,
+        "test_pass": true,
+        "coverage_pct": null,
+        "failure_type": null,
+        "failure_message": null
+      },
+      "output_path": "campaigns/spring-boot-v1/results/run_7024d7a646f4/BookServiceTest.java",
+      "provider": "nvidia",
+      "model": "meta/llama-3.1-405b-instruct",
+      "dataset_id": "jwt-bookservice",
+      "trial": 1,
+      "config_snapshot": {
+        "run_id": "run_7024d7a646f4",
+        "dataset_id": "jwt-bookservice",
+        "java_file": "spring-boot-3-jwt-security/src/main/java/com/alibou/security/book/BookService.java",
+        "provider": "nvidia",
+        "model": "meta/llama-3.1-405b-instruct",
+        "trial": 1,
+        "seed": 42,
+        "max_dependencies": 10,
+        "timeout_seconds": 300,
+        "retry_count": 1,
+        "project_root": "campaigns/spring-boot-v1/repos"
+      }
+    },
+    {
+      "run_id": "run_268955c61ba7",
+      "status": "ok",
+      "latency_ms": 97444,
+      "metrics": {
+        "compile_pass": true,
+        "test_pass": true,
+        "coverage_pct": null,
+        "failure_type": null,
+        "failure_message": null
+      },
+      "output_path": "campaigns/spring-boot-v1/results/run_268955c61ba7/UserServiceTest.java",
+      "provider": "nvidia",
+      "model": "meta/llama-3.1-405b-instruct",
+      "dataset_id": "jwt-userservice",
+      "trial": 1,
+      "config_snapshot": {
+        "run_id": "run_268955c61ba7",
+        "dataset_id": "jwt-userservice",
+        "java_file": "spring-boot-3-jwt-security/src/main/java/com/alibou/security/user/UserService.java",
+        "provider": "nvidia",
+        "model": "meta/llama-3.1-405b-instruct",
+        "trial": 1,
+        "seed": 42,
+        "max_dependencies": 10,
+        "timeout_seconds": 300,
+        "retry_count": 1,
+        "project_root": "campaigns/spring-boot-v1/repos"
+      }
+    },
+    {
+      "run_id": "run_a1700b490008",
+      "status": "ok",
+      "latency_ms": 164958,
+      "metrics": {
+        "compile_pass": true,
+        "test_pass": true,
+        "coverage_pct": null,
+        "failure_type": null,
+        "failure_message": null
+      },
+      "output_path": "campaigns/spring-boot-v1/results-batch4b/run_a1700b490008/OwnerTest.java",
+      "provider": "nvidia",
+      "model": "meta/llama-3.1-405b-instruct",
+      "dataset_id": "petclinic-owner",
+      "trial": 1,
+      "config_snapshot": {
+        "run_id": "run_a1700b490008",
+        "dataset_id": "petclinic-owner",
+        "java_file": "spring-petclinic/src/main/java/org/springframework/samples/petclinic/owner/Owner.java",
+        "provider": "nvidia",
+        "model": "meta/llama-3.1-405b-instruct",
+        "trial": 1,
+        "seed": 42,
+        "max_dependencies": 10,
+        "timeout_seconds": 300,
+        "retry_count": 1,
+        "project_root": "campaigns/spring-boot-v1/repos"
+      }
+    },
+    {
+      "run_id": "run_700b900f2ac7",
+      "status": "ok",
+      "latency_ms": 145643,
+      "metrics": {
+        "compile_pass": true,
+        "test_pass": true,
+        "coverage_pct": null,
+        "failure_type": null,
+        "failure_message": null
+      },
+      "output_path": "campaigns/spring-boot-v1/results-batch4b/run_700b900f2ac7/PetTest.java",
+      "provider": "nvidia",
+      "model": "meta/llama-3.1-405b-instruct",
+      "dataset_id": "petclinic-pet",
+      "trial": 1,
+      "config_snapshot": {
+        "run_id": "run_700b900f2ac7",
+        "dataset_id": "petclinic-pet",
+        "java_file": "spring-petclinic/src/main/java/org/springframework/samples/petclinic/owner/Pet.java",
+        "provider": "nvidia",
+        "model": "meta/llama-3.1-405b-instruct",
+        "trial": 1,
+        "seed": 42,
+        "max_dependencies": 10,
+        "timeout_seconds": 300,
+        "retry_count": 1,
+        "project_root": "campaigns/spring-boot-v1/repos"
+      }
+    },
+    {
+      "run_id": "run_ce50eabb184d",
+      "status": "ok",
+      "latency_ms": 32524,
+      "metrics": {
+        "compile_pass": true,
+        "test_pass": true,
+        "coverage_pct": null,
+        "failure_type": null,
+        "failure_message": null
+      },
+      "output_path": "campaigns/spring-boot-v1/results-batch4b/run_ce50eabb184d/VetTest.java",
+      "provider": "nvidia",
+      "model": "meta/llama-3.1-405b-instruct",
+      "dataset_id": "petclinic-vet",
+      "trial": 1,
+      "config_snapshot": {
+        "run_id": "run_ce50eabb184d",
+        "dataset_id": "petclinic-vet",
+        "java_file": "spring-petclinic/src/main/java/org/springframework/samples/petclinic/vet/Vet.java",
+        "provider": "nvidia",
+        "model": "meta/llama-3.1-405b-instruct",
+        "trial": 1,
+        "seed": 42,
+        "max_dependencies": 10,
+        "timeout_seconds": 300,
+        "retry_count": 1,
+        "project_root": "campaigns/spring-boot-v1/repos"
+      }
+    },
+    {
+      "run_id": "run_2119f0e70e9a",
+      "status": "ok",
+      "latency_ms": 31725,
+      "metrics": {
+        "compile_pass": true,
+        "test_pass": true,
+        "coverage_pct": null,
+        "failure_type": null,
+        "failure_message": null
+      },
+      "output_path": "campaigns/spring-boot-v1/results-batch4b/run_2119f0e70e9a/VisitTest.java",
+      "provider": "nvidia",
+      "model": "meta/llama-3.1-405b-instruct",
+      "dataset_id": "petclinic-visit",
+      "trial": 1,
+      "config_snapshot": {
+        "run_id": "run_2119f0e70e9a",
+        "dataset_id": "petclinic-visit",
+        "java_file": "spring-petclinic/src/main/java/org/springframework/samples/petclinic/owner/Visit.java",
+        "provider": "nvidia",
+        "model": "meta/llama-3.1-405b-instruct",
+        "trial": 1,
+        "seed": 42,
+        "max_dependencies": 10,
+        "timeout_seconds": 300,
+        "retry_count": 1,
+        "project_root": "campaigns/spring-boot-v1/repos"
+      }
+    }
+  ]
+}

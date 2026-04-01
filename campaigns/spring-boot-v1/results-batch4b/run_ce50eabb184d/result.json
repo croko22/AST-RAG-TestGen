@@ -1,0 +1,30 @@
+{
+  "run_id": "run_ce50eabb184d",
+  "status": "ok",
+  "latency_ms": 32524,
+  "metrics": {
+    "compile_pass": true,
+    "test_pass": true,
+    "coverage_pct": null,
+    "failure_type": null,
+    "failure_message": null
+  },
+  "output_path": "campaigns/spring-boot-v1/results-batch4b/run_ce50eabb184d/VetTest.java",
+  "provider": "nvidia",
+  "model": "meta/llama-3.1-405b-instruct",
+  "dataset_id": "petclinic-vet",
+  "trial": 1,
+  "config_snapshot": {
+    "run_id": "run_ce50eabb184d",
+    "dataset_id": "petclinic-vet",
+    "java_file": "spring-petclinic/src/main/java/org/springframework/samples/petclinic/vet/Vet.java",
+    "provider": "nvidia",
+    "model": "meta/llama-3.1-405b-instruct",
+    "trial": 1,
+    "seed": 42,
+    "max_dependencies": 10,
+    "timeout_seconds": 300,
+    "retry_count": 1,
+    "project_root": "campaigns/spring-boot-v1/repos"
+  }
+}

@@ -1,0 +1,103 @@
+# Spring Boot Benchmark Campaign v1
+# First real benchmark run for thesis comparison RAG vs RL
+# 
+# Campaign Scope:
+# - 3-5 Spring Boot repositories with Maven build
+# - Evaluate test generation quality on service-layer classes
+# - Generate thesis-ready metrics (success rate, latency, coverage)
+
+manifest_version: 1
+
+campaign:
+  name: "spring-boot-v1"
+  description: "First benchmark campaign comparing RAG vs RL test generation on Spring Boot projects"
+  created: "2026-03-29"
+  version: "1.0.0"
+
+# Repository targets - 4 Spring Boot projects of varying complexity
+repositories:
+  - id: "petclinic"
+    name: "spring-petclinic"
+    url: "https://github.com/spring-projects/spring-petclinic.git"
+    branch: "main"
+    size: "small"
+    description: "Classic Spring PetClinic demo application"
+    # Services identified for testing
+    service_paths:
+      - "src/main/java/org/springframework/samples/petclinic/service/OwnerService.java"
+      - "src/main/java/org/springframework/samples/petclinic/service/PetService.java"
+      - "src/main/java/org/springframework/samples/petclinic/service/VetService.java"
+      - "src/main/java/org/springframework/samples/petclinic/service/VisitService.java"
+
+  - id: "gs-spring-boot"
+    name: "gs-spring-boot"
+    url: "https://github.com/spring-guides/gs-spring-boot.git"
+    branch: "main"
+    size: "small"
+    description: "Spring Getting Started - Building Spring Boot Applications"
+    service_paths:
+      - "complete/src/main/java/com/example/springboot/Application.java"
+      - "complete/src/main/java/com/example/springboot/service/BookingService.java"
+
+  - id: "jwt-security"
+    name: "spring-boot-3-jwt-security"
+    url: "https://github.com/ali-bouali/spring-boot-3-jwt-security.git"
+    branch: "main"
+    size: "small-medium"
+    description: "Spring Boot 3 JWT Security with Spring Security 6"
+    service_paths:
+      - "src/main/java/com/bouali/security/service/AuthService.java"
+      - "src/main/java/com/bouali/security/service/UserService.java"
+
+  - id: "tutorials"
+    name: "tutorials"
+    url: "https://github.com/eugenp/tutorials.git"
+    branch: "master"
+    size: "large"
+    description: "Extensive tutorials collection with Spring modules"
+    # Subset of services for testing
+    service_paths:
+      - "spring-boot-modules/spring-boot-2/src/test/java/com/baeldung/boot/springboot2jpa/BookRepositoryLiveTest.java"
+
+# Run Matrix Configuration
+matrix:
+  providers:
+    - name: "anthropic"
+      model: "claude-3-5-sonnet-20241022"
+      temperature: 0.3
+      max_tokens: 4096
+
+# Execution Configuration
+run:
+  trials: 1  # Single trial per repo for v1
+  seed: 42
+  max_dependencies: 10
+  timeout_seconds: 300
+  retry_count: 1
+  concurrency: 1  # Sequential execution to avoid rate limits
+
+# Evaluation Commands
+evaluation:
+  compile_cmd: "mvn compile -q"
+  test_cmd: "mvn test -q"
+  coverage_cmd: "mvn test -Dcoverage=true"
+
+# Scoring Weights
+scoring:
+  weights:
+    success: 0.5
+    coverage: 0.3
+    latency: 0.2
+
+# Toolchain - will be captured at runtime (see run.sh)
+toolchain:
+  python_version: "capture"
+  java_version: "capture"
+  maven_version: "capture"
+  ast_rag_version: "1.0.0"
+
+# Output Configuration
+output:
+  base_dir: "./campaigns/spring-boot-v1/results"
+  format: "json"
+  include_raw_responses: false
