@@ -5,7 +5,7 @@ from __future__ import annotations
 import csv
 import json
 import subprocess
-from datetime import datetime
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -89,7 +89,7 @@ def _build_results_json(
 ) -> dict[str, Any]:
     """Build machine-readable results JSON."""
     return {
-        "generated_at": datetime.utcnow().isoformat() + "Z",
+        "generated_at": _utc_iso_z(),
         "manifest_version": manifest.manifest_version,
         "total_runs": len(results),
         "runs": [_serialize_run_result(r) for r in results],
@@ -143,7 +143,7 @@ def _build_summary_json(
     records = provenance_records or []
 
     return {
-        "generated_at": datetime.utcnow().isoformat() + "Z",
+        "generated_at": _utc_iso_z(),
         "statistics": stats,
         "rankings": rankings,
         "scoring_weights": manifest.scoring.weights.model_dump(),
@@ -205,7 +205,7 @@ def _build_provenance_json(
 ) -> dict[str, Any]:
     """Build campaign-level provenance sidecar payload."""
     return {
-        "generated_at": datetime.utcnow().isoformat() + "Z",
+        "generated_at": _utc_iso_z(),
         "manifest_version": manifest.manifest_version,
         "records": [
             {
@@ -232,7 +232,7 @@ def collect_provenance_records(manifest: BenchmarkManifest) -> list[ProvenanceRe
     for dataset in manifest.dataset:
         java_file_path = project_root / dataset.java_file
         repo_path = _resolve_repo_root(java_file_path)
-        captured_at = datetime.utcnow().isoformat() + "Z"
+        captured_at = _utc_iso_z()
 
         if repo_path is None:
             records.append(
@@ -469,7 +469,7 @@ def _build_markdown_report(
     lines = [
         "# Benchmark Report",
         "",
-        f"**Generated:** {datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S')} UTC",
+        f"**Generated:** {_utc_now().strftime('%Y-%m-%d %H:%M:%S')} UTC",
         f"**Manifest Version:** {manifest.manifest_version}",
         "",
         "## Summary Statistics",
@@ -522,6 +522,16 @@ def _build_markdown_report(
     lines.append("")
 
     return "\n".join(lines)
+
+
+def _utc_now() -> datetime:
+    """Return timezone-aware UTC datetime."""
+    return datetime.now(UTC)
+
+
+def _utc_iso_z() -> str:
+    """Serialize current UTC datetime with a trailing Z suffix."""
+    return _utc_now().isoformat().replace("+00:00", "Z")
 
 
 def load_results_from_dir(

@@ -276,6 +276,7 @@ def test_build_report_results_json_content(tmp_path):
     assert data["total_runs"] == 1
     assert len(data["runs"]) == 1
     assert data["runs"][0]["run_id"] == "r1"
+    assert data["generated_at"].endswith("Z")
 
 
 def test_build_report_summary_json_content(tmp_path):
@@ -290,6 +291,7 @@ def test_build_report_summary_json_content(tmp_path):
     assert data["statistics"]["total_runs"] == 1
     assert len(data["rankings"]) == 1
     assert "diagnostics" in data
+    assert data["generated_at"].endswith("Z")
 
 
 def test_build_report_markdown_has_tables(tmp_path):
@@ -302,6 +304,7 @@ def test_build_report_markdown_has_tables(tmp_path):
 
     content = bundle.report_path.read_text(encoding="utf-8")
     assert "# Benchmark Report" in content
+    assert " UTC" in content
     assert "| Rank |" in content
     assert "| Run ID |" in content
 
@@ -387,8 +390,10 @@ def test_build_report_persists_provenance_and_metadata(tmp_path):
     bundle = build_report(results, manifest, tmp_path)
 
     provenance = json.loads(bundle.provenance_path.read_text(encoding="utf-8"))
+    assert provenance["generated_at"].endswith("Z")
     assert provenance["records"][0]["repo_id"] == "svc"
     assert provenance["records"][0]["status"] == "unavailable"
+    assert provenance["records"][0]["captured_at"].endswith("Z")
 
     summary_data = json.loads(bundle.summary_path.read_text(encoding="utf-8"))
     assert "diagnostics" in summary_data

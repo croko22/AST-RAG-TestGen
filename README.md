@@ -30,6 +30,8 @@ pip install -e .
 pip install -e .[dev]
 ```
 
+Use `pip install -e .[dev]` as the canonical local setup before running lint and type checks.
+
 #### Using conda
 
 ```bash
@@ -303,14 +305,14 @@ pytest tests/benchmark/
 ### Linting
 
 ```bash
-ruff check .
-ruff format --check .
+python -m ruff check core llm main.py
+python -m ruff format --check core llm main.py
 ```
 
 ### Type Checking
 
 ```bash
-mypy core llm main.py
+python -m mypy core llm main.py
 ```
 
 ### Coverage
