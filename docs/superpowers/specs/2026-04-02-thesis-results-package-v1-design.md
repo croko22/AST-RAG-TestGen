@@ -72,8 +72,6 @@ CES exclusion rules:
 - derived summaries that cannot be traced to source artifacts;
 - duplicate artifacts where canonical origin is ambiguous.
 
-## Data Flow and Acceptance Gates
-
 ## Data Flow
 
 1. **Collect**
@@ -101,11 +99,22 @@ CES exclusion rules:
 
 - **Gate A - Completeness:** Every included claim has at least one CES artifact reference.
 - **Gate B - Traceability:** Every CES reference in narrative resolves to exactly one Evidence Index row.
-- **Gate C - Non-overclaiming:** Claims do not exceed what referenced evidence can support.
+- **Gate C - Non-overclaiming:** Each claim statement includes an evidence-bound qualifier when evidence is partial or uncertain, and no claim introduces unsupported causal language.
 - **Gate D - Consistency:** Numbers, labels, and terminology are consistent across index, matrix, and narrative.
 - **Gate E - Reproducibility Metadata:** Provenance fields exist for all CES entries; missing fields fail the gate.
 
 Gate outcomes are binary pass/fail with mandatory remediation notes for failures.
+
+## Acceptance Criteria (Testable)
+
+- **AC1:** Evidence Index includes 100% of CES artifacts referenced by the Trace Matrix.
+- **AC2:** 100% of narrative evidence references resolve to one unique Evidence Index ID.
+- **AC3:** 100% of thesis-facing claims in scope appear in the Trace Matrix.
+- **AC4:** Every failed gate (A-E) has at least one remediation note and assigned owner role.
+- **AC5:** Manifest contains package version, snapshot timestamp, and explicit approver role attribution.
+- **AC6:** Any claim with partial evidence includes limitation language in the narrative.
+- **AC7:** Verification checklist is fully executable as yes/no checks without adding new criteria.
+- **AC8:** No section in this spec requires runtime/application code changes during design phase.
 
 ## Error Handling and Verification Checklist
 
