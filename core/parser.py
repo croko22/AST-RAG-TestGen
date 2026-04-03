@@ -33,6 +33,9 @@ class MethodSignature:
     name: str
     parameters: list[str]
     is_static: bool = False
+    is_private: bool = False
+    effective_loc: int = 0
+    is_in_inner_class: bool = False
 
 
 @dataclass
@@ -47,6 +50,16 @@ class ParsedJavaClass:
     fields: list[dict]
     file_path: str
     content: str
+
+    @property
+    def reftest_eligible_methods(self) -> list[MethodSignature]:
+        """
+        Return methods that meet RefTest dataset eligibility criteria.
+
+        Filters out private methods, trivial methods (1 or fewer effective
+        lines of code), and methods inside inner/anonymous classes.
+        """
+        return filter_reftest_methods(self.methods)
 
 
 class JavaParser:
@@ -234,13 +247,38 @@ class JavaParser:
                     if child2.type in ("class_body", "interface_body"):
                         for child3 in child2.children:
                             if child3.type == "method_declaration":
-                                method = self._parse_method_signature(child3)
+                                is_inner = self._is_inside_inner_class(child3)
+                                method = self._parse_method_signature(
+                                    child3, is_in_inner_class=is_inner
+                                )
                                 if method:
                                     methods.append(method)
+                            elif child3.type in (
+                                "class_declaration",
+                                "interface_declaration",
+                            ):
+                                # Recurse into inner classes
+                                for inner_body in child3.children:
+                                    if inner_body.type in (
+                                        "class_body",
+                                        "interface_body",
+                                    ):
+                                        for inner_member in inner_body.children:
+                                            if (
+                                                inner_member.type
+                                                == "method_declaration"
+                                            ):
+                                                method = self._parse_method_signature(
+                                                    inner_member, is_in_inner_class=True
+                                                )
+                                                if method:
+                                                    methods.append(method)
 
         return methods
 
-    def _parse_method_signature(self, method_node) -> MethodSignature | None:
+    def _parse_method_signature(
+        self, method_node, is_in_inner_class: bool = False
+    ) -> MethodSignature | None:
         """Parse a method declaration node into a MethodSignature."""
         visibility = "package-private"
         return_type = "void"
@@ -262,12 +300,16 @@ class JavaParser:
                 parameters = self._extract_parameters(child)
 
         if name:
+            effective_loc = self._compute_effective_loc(method_node)
             return MethodSignature(
                 visibility=visibility,
                 return_type=return_type,
                 name=name,
                 parameters=parameters,
                 is_static=is_static,
+                is_private=(visibility == "private"),
+                effective_loc=effective_loc,
+                is_in_inner_class=is_in_inner_class,
             )
         return None
 
@@ -277,6 +319,96 @@ class JavaParser:
             if child.type in ("public", "private", "protected"):
                 return str(child.type)
         return "package-private"
+
+    def _compute_effective_loc(self, method_node) -> int:
+        """
+        Count non-blank, non-comment lines in a method body.
+
+        Strips single-line comments (//), block comments (/* */),
+        and blank lines to produce the effective lines-of-code count.
+        """
+        body_text = None
+        for child in method_node.children:
+            if child.type == "block" or child.type == "method_body":
+                body_text = child.text.decode("utf-8")
+                break
+
+        if body_text is None:
+            return 0
+
+        count = 0
+        in_block_comment = False
+
+        for line in body_text.split("\n"):
+            stripped = line.strip()
+
+            # Skip blank lines
+            if not stripped:
+                continue
+
+            # Handle ongoing block comment
+            if in_block_comment:
+                if "*/" in stripped:
+                    # Rest of line after closing */ might be code
+                    after_close = stripped[stripped.index("*/") + 2 :].strip()
+                    in_block_comment = False
+                    if after_close and not after_close.startswith("//"):
+                        count += 1
+                continue
+
+            # Remove block comments on this line
+            while "/*" in stripped:
+                start = stripped.index("/*")
+                end = stripped.find("*/", start + 2)
+                if end != -1:
+                    # Block comment opens and closes on same line
+                    stripped = (stripped[:start] + stripped[end + 2 :]).strip()
+                else:
+                    # Block comment opens but doesn't close on this line
+                    stripped = stripped[:start].strip()
+                    in_block_comment = True
+                    break
+
+            if in_block_comment:
+                if stripped:
+                    # Code before the block comment still counts
+                    pass
+                else:
+                    continue
+
+            # Skip single-line comments
+            if stripped.startswith("//"):
+                continue
+
+            # Skip bare braces (just structural)
+            if stripped in ("{", "}", "{}"):
+                continue
+
+            # Remaining non-empty line is effective code
+            if stripped:
+                count += 1
+
+        return count
+
+    def _is_inside_inner_class(self, method_node) -> bool:
+        """
+        Check whether a method node is nested inside an inner class.
+
+        Walks up the tree from the method node. If we find a
+        class_declaration whose parent is also a class body belonging
+        to another class_declaration, the method is in an inner class.
+        """
+        node = method_node.parent
+        class_depth = 0
+
+        while node is not None:
+            if node.type in ("class_declaration", "interface_declaration"):
+                class_depth += 1
+                if class_depth > 1:
+                    return True
+            node = node.parent
+
+        return False
 
     def _extract_parameters(self, params_node) -> list[str]:
         """Extract parameter types from formal parameters node."""
@@ -323,6 +455,30 @@ class JavaParser:
         if field_type and field_name:
             return {"type": field_type, "name": field_name}
         return None
+
+
+def filter_reftest_methods(methods: list[MethodSignature]) -> list[MethodSignature]:
+    """
+    Filter methods according to RefTest dataset eligibility criteria.
+
+    Excludes:
+      - Private methods (is_private == True)
+      - Trivial methods with 1 or fewer effective lines of code
+      - Methods inside inner or anonymous classes
+
+    Args:
+        methods: List of MethodSignature objects to filter.
+
+    Returns:
+        Filtered list of MethodSignature objects meeting RefTest criteria.
+    """
+    return [
+        m
+        for m in methods
+        if not m.is_private
+        and m.effective_loc > 1
+        and not m.is_in_inner_class
+    ]
 
 
 def extract_dependencies_from_file(java_file_path: str) -> ParsedJavaClass:
