@@ -267,9 +267,15 @@ Para evitar alucinaciones, utiliza ÚNICAMENTE estos métodos y firmas cuando ne
 =========================================
 - Escribe ÚNICAMENTE el código Java de la clase de prueba. Nada de explicaciones, ni Markdown extra.
 - Usa JUnit 5 (org.junit.jupiter.api) y Mockito (org.mockito).
-- Haz mock de TODAS las dependencias inyectadas en la clase principal usando @Mock y @InjectMocks.
+- IMPORTACIONES CORRECTAS:
+  * JUnit 5: import org.junit.jupiter.api.Test; import org.junit.jupiter.api.BeforeEach; import org.junit.jupiter.api.extension.ExtendWith;
+  * Mockito: import org.mockito.Mock; import org.mockito.InjectMocks; import org.mockito.MockitoAnnotations; import org.mockito.junit.jupiter.MockitoExtension; import static org.mockito.Mockito.*;
+- Haz mock de las dependencias de la clase usando @Mock y @InjectMocks.
 - NO uses aserciones genéricas como assertTrue(true). Verifica los valores de retorno exactos o las interacciones con los mocks (ej. verify(repo, times(1)).save(any())).
-- Asegúrate de importar todas las clases necesarias."""
+- Asegúrate de importar todas las clases necesarias.
+- NO uses org.mockito.MockitoExtension, usa org.mockito.junit.jupiter.MockitoExtension.
+- NO uses org.mockito.ArgumentMatchers, usa static org.mockito.ArgumentMatchers.* o simplemente ArgumentMatchers.* si importas estáticamente.
+- CRÍTICO: Si la clase bajo prueba NO tiene dependencias inyectadas (es una clase de utilidad estática), instánciala directamente en el método de prueba con "new HelpFormatter()" y NO uses @InjectMocks."""
 
     def _call_anthropic(self, system_prompt: str, user_prompt: str) -> str:
         """Call the Anthropic API."""
