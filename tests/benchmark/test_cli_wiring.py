@@ -19,7 +19,8 @@ class TestBenchmarkModeDetection:
         args = parser.parse_args(["--benchmark-manifest", "bench.yaml"])
 
         assert args.benchmark_manifest == "bench.yaml"
-        assert args.benchmark_output == "./benchmark_results"
+        # Path is resolved to absolute path by config system
+        assert "benchmark_results" in args.benchmark_output
         assert args.benchmark_dry_run is False
 
     def test_benchmark_manifest_with_custom_output(self):

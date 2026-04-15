@@ -20,6 +20,13 @@ from collections.abc import Callable
 from pathlib import Path
 from typing import cast
 
+# Configuration management
+try:
+    from config import get_config
+    CONFIG_AVAILABLE = True
+except ImportError:
+    CONFIG_AVAILABLE = False
+
 # Rich for beautiful terminal output
 try:
     from rich.console import Console
@@ -430,6 +437,26 @@ def build_arg_parser() -> argparse.ArgumentParser:
     except ModuleNotFoundError:
         available_providers = ["anthropic", "openai", "glm", "gemini", "openrouter", "nvidia"]
 
+    # Load configuration for default values (keep as strings for CLI)
+    default_provider = "anthropic"
+    default_model = "claude-3-5-sonnet-20241022"
+    default_output = "./tests_generados"
+    default_max_deps = 10
+    default_benchmark_output = "./benchmark_results"
+
+    if CONFIG_AVAILABLE:
+        try:
+            config = get_config()
+            default_provider = config.llm.provider
+            default_model = config.llm.model
+            # Keep paths as strings for CLI
+            default_output = str(config.java.test_output_dir)
+            default_max_deps = config.java.max_dependencies
+            default_benchmark_output = str(config.benchmark.output_dir)
+        except Exception:
+            # Fall back to hardcoded defaults
+            pass
+
     parser = argparse.ArgumentParser(
         description="AST-RAG TestGen: Generate unit tests using AST-based RAG",
         formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -468,8 +495,8 @@ Examples:
         "--benchmark-output",
         dest="benchmark_output",
         metavar="DIR",
-        default="./benchmark_results",
-        help="Output directory for benchmark results (default: ./benchmark_results)",
+        default=default_benchmark_output,
+        help=f"Output directory for benchmark results (default: {default_benchmark_output})",
     )
     parser.add_argument(
         "--benchmark-dry-run",
@@ -490,25 +517,25 @@ Examples:
     )
     parser.add_argument(
         "--provider",
-        default="anthropic",
+        default=default_provider,
         choices=available_providers,
-        help=f"LLM provider. Available: {', '.join(available_providers)} (default: anthropic)",
+        help=f"LLM provider. Available: {', '.join(available_providers)} (default: {default_provider})",
     )
     parser.add_argument(
         "--model",
-        default="claude-3-5-sonnet-20241022",
-        help="LLM model to use (default: claude-3-5-sonnet-20241022)",
+        default=default_model,
+        help=f"LLM model to use (default: {default_model})",
     )
     parser.add_argument(
         "--output",
-        default="./tests_generados",
-        help="Output directory for generated tests (default: ./tests_generados)",
+        default=default_output,
+        help=f"Output directory for generated tests (default: {default_output})",
     )
     parser.add_argument(
         "--max-deps",
         type=int,
-        default=10,
-        help="Maximum number of dependencies to include (default: 10)",
+        default=default_max_deps,
+        help=f"Maximum number of dependencies to include (default: {default_max_deps})",
     )
     parser.add_argument(
         "--print",
@@ -534,6 +561,25 @@ Examples:
 # ============================================================================
 
 if TYPER_AVAILABLE and typer is not None:
+    # Load configuration for default values
+    default_provider = "anthropic"
+    default_model = "claude-3-5-sonnet-20241022"
+    default_output = "./tests_generados"
+    default_max_deps = 10
+    default_benchmark_output = "./benchmark_results"
+
+    if CONFIG_AVAILABLE:
+        try:
+            config = get_config()
+            default_provider = config.llm.provider
+            default_model = config.llm.model
+            default_output = str(config.java.test_output_dir)
+            default_max_deps = config.java.max_dependencies
+            default_benchmark_output = str(config.benchmark.output_dir)
+        except Exception:
+            # Fall back to hardcoded defaults
+            pass
+
     app = typer.Typer(
         name="ast-rag-testgen",
         help="Generate unit tests for Java using AST-based Retrieval-Augmented Generation",
@@ -544,10 +590,10 @@ if TYPER_AVAILABLE and typer is not None:
     def generate(
         java_file: str = typer.Argument(..., help="Path to the Java file to generate tests for"),
         project_path: str = typer.Argument(..., help="Root path of the Java project"),
-        provider: str = Opt("anthropic", "--provider", "-p", help="LLM provider (anthropic, openai, glm, gemini, nvidia, openrouter)"),
-        model: str = Opt("claude-3-5-sonnet-20241022", "--model", "-m", help="LLM model to use"),
-        output: str = Opt("./tests_generados", "--output", "-o", help="Output directory for generated tests"),
-        max_deps: int = Opt(10, "--max-deps", "-d", help="Maximum number of dependencies to include"),
+        provider: str = Opt(default_provider, "--provider", "-p", help="LLM provider (anthropic, openai, glm, gemini, nvidia, openrouter)"),
+        model: str = Opt(default_model, "--model", "-m", help="LLM model to use"),
+        output: str = Opt(default_output, "--output", "-o", help="Output directory for generated tests"),
+        max_deps: int = Opt(default_max_deps, "--max-deps", "-d", help="Maximum number of dependencies to include"),
         print_code: bool = Opt(False, "--print", help="Print the generated test to stdout"),
     ) -> None:
         """Generate a unit test for a Java file."""
@@ -580,7 +626,7 @@ if TYPER_AVAILABLE and typer is not None:
     @app.command()
     def benchmark(
         manifest: str = typer.Argument(..., help="Path to benchmark manifest (JSON or TOML)"),
-        output: str = Opt("./benchmark_results", "--output", "-o", help="Output directory for benchmark results"),
+        output: str = Opt(default_benchmark_output, "--output", "-o", help="Output directory for benchmark results"),
         dry_run: bool = Opt(False, "--dry-run", help="Run benchmark without actual generation"),
     ) -> None:
         """Run benchmarks using a manifest file."""

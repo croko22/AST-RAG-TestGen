@@ -4,7 +4,7 @@ Supports: Anthropic, OpenAI, GLM (Zhipu AI), Gemini, OpenRouter.
 """
 
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Any
 
 from dotenv import load_dotenv
@@ -12,10 +12,21 @@ from dotenv import load_dotenv
 # Load environment variables
 load_dotenv()
 
+# Import configuration
+try:
+    from config import get_config
+    CONFIG_AVAILABLE = True
+except ImportError:
+    CONFIG_AVAILABLE = False
+
 
 @dataclass
 class LLMConfig:
-    """Configuration for LLM API calls."""
+    """Configuration for LLM API calls.
+
+    This class provides backward compatibility while using the new
+    pydantic-settings configuration system when available.
+    """
 
     provider: str = "anthropic"
     model: str = "claude-3-5-sonnet-20241022"
@@ -29,6 +40,40 @@ class LLMConfig:
 
     def __post_init__(self):
         """Load API key from environment if not provided."""
+        # Try to use pydantic-settings configuration if available
+        if CONFIG_AVAILABLE and not self.api_key:
+            try:
+                config = get_config()
+                llm_config = config.llm
+
+                # Override with values from pydantic-settings if not explicitly set
+                if self.provider == "anthropic" and not self.api_key:
+                    self.api_key = llm_config.anthropic_api_key
+                elif self.provider == "openai" and not self.api_key:
+                    self.api_key = llm_config.openai_api_key
+                elif self.provider in ("glm", "zhipu") and not self.api_key:
+                    self.api_key = llm_config.glm_api_key
+                elif self.provider in ("gemini", "google") and not self.api_key:
+                    self.api_key = llm_config.gemini_api_key
+                elif self.provider == "openrouter" and not self.api_key:
+                    self.api_key = llm_config.openrouter_api_key
+                elif self.provider == "nvidia" and not self.api_key:
+                    self.api_key = llm_config.nvidia_api_key
+
+                # Set base_url for OpenRouter if not provided
+                if not self.base_url and self.provider == "openrouter":
+                    self.base_url = llm_config.base_url or "https://openrouter.ai/api/v1"
+
+                # Use provider_order from config if not set
+                if not self.provider_order and llm_config.provider_order:
+                    self.provider_order = llm_config.provider_order
+
+                return
+            except Exception:
+                # Fall back to manual environment variable loading
+                pass
+
+        # Manual environment variable loading (fallback)
         if not self.api_key:
             key_map = {
                 "anthropic": "ANTHROPIC_API_KEY",
