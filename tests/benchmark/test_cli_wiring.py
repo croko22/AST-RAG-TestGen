@@ -148,7 +148,7 @@ class TestBenchmarkModeExecution:
 class TestLegacyModeBackwardCompatibility:
     """Test that legacy mode is unchanged."""
 
-    @patch("main.legacy_main")
+    @patch("cli.legacy.legacy_main")
     def test_main_routes_to_legacy_mode_without_benchmark_flag(self, mock_legacy):
         """main() should call legacy_main() when no benchmark flag."""
         mock_legacy.return_value = None
@@ -172,7 +172,7 @@ class TestLegacyModeBackwardCompatibility:
 
         mock_legacy.assert_called_once()
 
-    @patch("main.legacy_main")
+    @patch("cli.legacy.legacy_main")
     def test_legacy_mode_preserves_all_legacy_args(self, mock_legacy):
         """Legacy mode should receive all original arguments."""
         captured_args = None
@@ -211,7 +211,7 @@ class TestLegacyModeBackwardCompatibility:
         assert captured_args.enable_reftest_parity is True
         assert captured_args.print is True
 
-    @patch("main.legacy_main")
+    @patch("cli.legacy.legacy_main")
     def test_legacy_mode_default_values(self, mock_legacy):
         """Legacy mode should use default values."""
         captured_args = None
@@ -322,12 +322,10 @@ class TestRunBenchmarkMode:
 
         assert result == 1
 
-    @patch("main.Path")
-    def test_run_benchmark_mode_manifest_not_found(self, mock_path):
+    @patch("orchestration.benchmark.run_benchmark_mode")
+    def test_run_benchmark_mode_manifest_not_found(self, mock_benchmark):
         """run_benchmark_mode should return error code when manifest not found."""
-        mock_path_instance = MagicMock()
-        mock_path_instance.exists.return_value = False
-        mock_path.return_value = mock_path_instance
+        mock_benchmark.return_value = 1
 
         result = main.run_benchmark_mode(
             manifest_path="missing.yaml",
