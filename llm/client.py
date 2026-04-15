@@ -266,16 +266,21 @@ Para evitar alucinaciones, utiliza ÚNICAMENTE estos métodos y firmas cuando ne
 3. REGLAS ESTRICTAS DE GENERACIÓN:
 =========================================
 - Escribe ÚNICAMENTE el código Java de la clase de prueba. Nada de explicaciones, ni Markdown extra.
-- Usa JUnit 5 (org.junit.jupiter.api) y Mockito (org.mockito).
+- Usa JUnit 4 (org.junit) para aserciones y ciclo de vida de tests.
 - IMPORTACIONES CORRECTAS:
-  * JUnit 5: import org.junit.jupiter.api.Test; import org.junit.jupiter.api.BeforeEach; import org.junit.jupiter.api.extension.ExtendWith;
-  * Mockito: import org.mockito.Mock; import org.mockito.InjectMocks; import org.mockito.MockitoAnnotations; import org.mockito.junit.jupiter.MockitoExtension; import static org.mockito.Mockito.*;
-- Haz mock de las dependencias de la clase usando @Mock y @InjectMocks.
-- NO uses aserciones genéricas como assertTrue(true). Verifica los valores de retorno exactos o las interacciones con los mocks (ej. verify(repo, times(1)).save(any())).
+  * JUnit 4: import org.junit.Test; import org.junit.Before;
+  * Aserciones: import static org.junit.Assert.*; (assertEquals, assertNotNull, assertTrue, assertFalse, assertNull)
+- NO uses Mockito (@Mock, @InjectMocks, mock(), when(), verify()) a menos que el proyecto explícitamente lo tenga como dependencia.
+- Para clases simples (Option, OptionGroup, etc.), crea instancias reales con "new Option(...)" en lugar de mockearlas.
+- Usa objetos reales en lugar de mocks para clases de datos simples.
+- NO uses aserciones genéricas como assertTrue(true). Verifica los valores de retorno exactos.
 - Asegúrate de importar todas las clases necesarias.
-- NO uses org.mockito.MockitoExtension, usa org.mockito.junit.jupiter.MockitoExtension.
-- NO uses org.mockito.ArgumentMatchers, usa static org.mockito.ArgumentMatchers.* o simplemente ArgumentMatchers.* si importas estáticamente.
-- CRÍTICO: Si la clase bajo prueba NO tiene dependencias inyectadas (es una clase de utilidad estática), instánciala directamente en el método de prueba con "new HelpFormatter()" y NO uses @InjectMocks."""
+- CRÍTICO: Reglas para instanciación:
+  * Si la clase bajo prueba tiene dependencias complejas (servicios, repositorios), considera usar mocks si están disponibles.
+  * Si la clase NO tiene dependencias o usa clases simples (POJOs), crea instancias reales con "new ClassName()".
+  * Instánciala directamente en @Before: "options = new Options();"
+  * Usa objetos reales en los tests: 'Option option = new Option("a", "alpha");'
+"""
 
     def _call_anthropic(self, system_prompt: str, user_prompt: str) -> str:
         """Call the Anthropic API."""

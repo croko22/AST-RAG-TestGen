@@ -38,6 +38,40 @@ def evaluate_run(
     failure_type: str | None = None
     failure_message: str | None = None
 
+    # Find the generated test file
+    test_files = list(run_path.glob("*.java"))
+    if not test_files:
+        failure_type = "error"
+        failure_message = "No test file found in run directory"
+        return EvalMetrics(
+            compile_pass=False,
+            test_pass=False,
+            coverage_pct=None,
+            failure_type=failure_type,
+            failure_message=failure_message,
+        )
+
+    test_file = test_files[0]
+
+    # Copy test file to the project's test directory
+    # Determine the target path based on the package
+    test_content = test_file.read_text(encoding="utf-8")
+    package_match = re.search(r'package\s+([\w.]+);', test_content)
+    if package_match:
+        package = package_match.group(1)
+        package_path = package.replace(".", "/")
+        target_dir = project_path / "src" / "test" / "java" / package_path
+    else:
+        # Default package
+        target_dir = project_path / "src" / "test" / "java"
+
+    target_dir.mkdir(parents=True, exist_ok=True)
+    target_file = target_dir / test_file.name
+
+    # Copy the test file
+    import shutil
+    shutil.copy2(test_file, target_file)
+
     compile_result = _execute_command(
         eval_config.compile_cmd,
         project_path,
@@ -87,8 +121,9 @@ def evaluate_run(
             coverage_stdout=coverage_result.stdout,
         )
     else:
+        coverage_pct = None
         coverage_source = None
-        coverage_reason = None
+        coverage_reason = "coverage_cmd_not_configured"
 
     return EvalMetrics(
         compile_pass=compile_pass,

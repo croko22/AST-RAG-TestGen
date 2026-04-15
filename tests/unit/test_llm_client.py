@@ -115,7 +115,7 @@ class TestLLMClient:
             client = LLMClient(LLMConfig(provider="anthropic", api_key="test-key"))
             prompt = client._build_user_prompt("code", "context")
 
-            assert "JUnit 5" in prompt
+            assert "JUnit 4" in prompt
             assert "Mockito" in prompt
             assert "@Mock" in prompt
             assert "NO uses aserciones genéricas" in prompt

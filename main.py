@@ -101,7 +101,9 @@ def print_error(message: str) -> None:
     """Print an error message."""
     console = get_console()
     if console:
-        console.print(Text(f"✗ {message}", style="bold red"), stderr=True)
+        # Rich Console doesn't support stderr parameter
+        # Print to stderr manually if needed
+        console.print(Text(f"✗ {message}", style="bold red"))
     else:
         print(f"✗ {message}", file=sys.stderr)
 

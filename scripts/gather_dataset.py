@@ -37,22 +37,22 @@ REPOS: list[dict[str, str | None]] = [
     {
         "name": "commons-cli",
         "url": "https://github.com/apache/commons-cli.git",
-        "tag": "rel/commons-cli-1.5.0",
+        "tag": "commons-cli-1.5.0",
     },
     {
         "name": "commons-collections4",
         "url": "https://github.com/apache/commons-collections.git",
-        "tag": "rel/commons-collections4-4.5.0-M1",
+        "tag": "rel/commons-collections-4.5.0",
     },
     {
         "name": "datafaker",
         "url": "https://github.com/datafaker-net/datafaker.git",
-        "tag": "1.9.0",
+        "tag": "v1.9.0",
     },
     {
         "name": "binance-connector",
         "url": "https://github.com/binance/binance-connector-java.git",
-        "tag": "v2.0.0",
+        "tag": None,  # No git tags; clone master
     },
     {"name": "jsoup", "url": "https://github.com/jhy/jsoup.git", "tag": None},
     {

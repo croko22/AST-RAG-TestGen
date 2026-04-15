@@ -34,6 +34,12 @@ def test_evaluate_run_prefers_jacoco_xml_over_stdout_fallback(tmp_path, monkeypa
         encoding="utf-8",
     )
 
+    # Create a dummy test file so evaluate_run() can proceed
+    (run_dir / "Test.java").write_text(
+        "package com.example;\n\npublic class Test {}",
+        encoding="utf-8",
+    )
+
     command_results = iter(
         [
             CommandResult(True, "", "", 0),
@@ -61,6 +67,12 @@ def test_evaluate_run_uses_stdout_fallback_when_artifact_missing(tmp_path, monke
     project_root.mkdir(parents=True)
     run_dir.mkdir(parents=True)
 
+    # Create a dummy test file so evaluate_run() can proceed
+    (run_dir / "Test.java").write_text(
+        "package com.example;\n\npublic class Test {}",
+        encoding="utf-8",
+    )
+
     command_results = iter(
         [
             CommandResult(True, "", "", 0),
@@ -87,6 +99,12 @@ def test_evaluate_run_sets_null_reason_for_out_of_range_fallback(tmp_path, monke
     run_dir = tmp_path / "run"
     project_root.mkdir(parents=True)
     run_dir.mkdir(parents=True)
+
+    # Create a dummy test file so evaluate_run() can proceed
+    (run_dir / "Test.java").write_text(
+        "package com.example;\n\npublic class Test {}",
+        encoding="utf-8",
+    )
 
     command_results = iter(
         [

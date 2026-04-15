@@ -53,6 +53,10 @@ class PromptBuilder:
         # Extract and resolve dependencies
         dependency_context = self._build_dependency_context(parsed, max_dependencies)
 
+        # Add public methods of the class under test to context
+        public_methods_context = self._build_public_methods_context(parsed)
+        dependency_context = public_methods_context + "\n" + dependency_context
+
         return code_under_test, dependency_context
 
     def _build_dependency_context(
@@ -113,6 +117,36 @@ class PromptBuilder:
                 if not signature.startswith(f"// Class {field_type} not found"):
                     lines.append(signature)
 
+        return "\n".join(lines)
+
+    def _build_public_methods_context(
+        self,
+        parsed_class: ParsedJavaClass,
+    ) -> str:
+        """
+        Build context with public methods of the class under test.
+
+        This helps the LLM know which methods it can safely call in tests.
+
+        Args:
+            parsed_class: Parsed Java class
+
+        Returns:
+            Formatted string with public methods
+        """
+        lines = []
+        lines.append(f"// MÉTODOS PÚBLICOS DE {parsed_class.name} (usa SOLO estos en los tests):")
+        lines.append("")
+
+        # Filter for public methods only
+        public_methods = [m for m in parsed_class.methods if m.visibility == "public"]
+
+        for method in public_methods:
+            params = ", ".join(method.parameters)
+            static = "static " if method.is_static else ""
+            lines.append(f"    public {static}{method.return_type} {method.name}({params});")
+
+        lines.append("")
         return "\n".join(lines)
 
     def format_method_signatures(self, class_name: str, methods: list[MethodSignature]) -> str:
