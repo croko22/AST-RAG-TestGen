@@ -20,11 +20,69 @@ from collections.abc import Callable
 from pathlib import Path
 from typing import cast
 
+# Rich for beautiful terminal output
+try:
+    from rich.console import Console
+    from rich.progress import Progress, SpinnerColumn, TextColumn, BarColumn, TimeRemainingColumn
+    from rich.syntax import Syntax
+    from rich.text import Text
+    RICH_AVAILABLE = True
+except ImportError:
+    RICH_AVAILABLE = False
+    Console = None  # type: ignore
+
 # Backward-compatible patch targets for tests and external callers.
 # Keep these lazy to avoid hard failures when optional LLM deps are missing.
 LLMClient = None
 LLMConfig = None
 get_available_providers = None
+
+
+def get_console() -> "Console | None":
+    """Get Rich console if available, otherwise None."""
+    if RICH_AVAILABLE and Console is not None:
+        return Console()
+    return None
+
+
+def print_header(title: str) -> None:
+    """Print a formatted header."""
+    console = get_console()
+    if console:
+        console.print(f"\n{'=' * 60}")
+        console.print(f"[bold cyan]{title}[/bold cyan]")
+        console.print(f"{'=' * 60}\n")
+    else:
+        print(f"\n{'=' * 60}")
+        print(title)
+        print(f"{'=' * 60}\n")
+
+
+def print_success(message: str) -> None:
+    """Print a success message."""
+    console = get_console()
+    if console:
+        console.print(Text(f"✓ {message}", style="bold green"))
+    else:
+        print(f"✓ {message}")
+
+
+def print_error(message: str) -> None:
+    """Print an error message."""
+    console = get_console()
+    if console:
+        console.print(Text(f"✗ {message}", style="bold red"), stderr=True)
+    else:
+        print(f"✗ {message}", file=sys.stderr)
+
+
+def print_info(message: str) -> None:
+    """Print an info message."""
+    console = get_console()
+    if console:
+        console.print(message)
+    else:
+        print(message)
 
 
 def _ensure_llm_symbols() -> None:
@@ -70,19 +128,24 @@ def generate_test_for_file(
     Returns:
         Generated test code as string
     """
-    print(f"\n{'=' * 60}")
-    print("AST-RAG TestGen")
-    print(f"{'=' * 60}")
-    print(f"\n📁 File: {java_file_path}")
-    print(f"📦 Project: {java_project_path}")
-    print(f"🤖 LLM: {llm_provider}/{llm_model}")
+    print_header("AST-RAG TestGen")
+
+    console = get_console()
+    if console:
+        console.print(f"📁 File: [cyan]{java_file_path}[/cyan]")
+        console.print(f"📦 Project: [cyan]{java_project_path}[/cyan]")
+        console.print(f"🤖 LLM: [cyan]{llm_provider}/{llm_model}[/cyan]")
+    else:
+        print(f"\n📁 File: {java_file_path}")
+        print(f"📦 Project: {java_project_path}")
+        print(f"🤖 LLM: {llm_provider}/{llm_model}")
 
     # Reserved feature flags for incremental rollout. Disabled by default and
     # intentionally no-op until their respective phases are implemented.
     _ = (enable_metainfo_db, enable_reftest_parity)
 
     # Step 1: Initialize retriever and resolver
-    print("\n[1/4] 📥 Initializing retriever...")
+    print_info("\n[1/4] 📥 Initializing retriever...")
     from core.prompt_builder import PromptBuilder
     from core.retriever import DependencyResolver, JavaFileRetriever
 
@@ -91,25 +154,38 @@ def generate_test_for_file(
     prompt_builder = PromptBuilder(retriever, resolver)
 
     # Step 2: Parse the file and extract dependencies
-    print("[2/4] 🔍 Parsing Java file and extracting dependencies...")
+    print_info("[2/4] 🔍 Parsing Java file and extracting dependencies...")
     parsed = retriever.parse_file(java_file_path)
     if not parsed:
         raise ValueError(f"Could not parse file: {java_file_path}")
-    print(f"    Class: {parsed.name}")
-    print(f"    Package: {parsed.package}")
-    print(f"    Methods: {len(parsed.methods)}")
-    print(f"    Dependencies: {len(parsed.dependencies)}")
+
+    console = get_console()
+    if console:
+        console.print(f"    Class: [green]{parsed.name}[/green]")
+        console.print(f"    Package: [green]{parsed.package}[/green]")
+        console.print(f"    Methods: [yellow]{len(parsed.methods)}[/yellow]")
+        console.print(f"    Dependencies: [yellow]{len(parsed.dependencies)}[/yellow]")
+    else:
+        print(f"    Class: {parsed.name}")
+        print(f"    Package: {parsed.package}")
+        print(f"    Methods: {len(parsed.methods)}")
+        print(f"    Dependencies: {len(parsed.dependencies)}")
 
     # Step 3: Build prompt with context
-    print(f"[3/4] 🧩 Building prompt with {max_dependencies} max dependencies...")
+    print_info(f"[3/4] 🧩 Building prompt with {max_dependencies} max dependencies...")
     code_under_test, dependency_context = prompt_builder.build_prompt(
         java_file_path, max_dependencies
     )
-    print(f"    Code length: {len(code_under_test)} chars")
-    print(f"    Context length: {len(dependency_context)} chars")
+
+    if console:
+        console.print(f"    Code length: [yellow]{len(code_under_test)}[/yellow] chars")
+        console.print(f"    Context length: [yellow]{len(dependency_context)}[/yellow] chars")
+    else:
+        print(f"    Code length: {len(code_under_test)} chars")
+        print(f"    Context length: {len(dependency_context)} chars")
 
     # Step 4: Generate test with LLM
-    print("[4/4] 🤖 Generating test with LLM...")
+    print_info("[4/4] 🤖 Generating test with LLM...")
     _ensure_llm_symbols()
     assert LLMConfig is not None
     assert LLMClient is not None
@@ -141,7 +217,7 @@ def generate_test_for_file(
     test_code = test_code.strip()
 
     test_file_path.write_text(test_code, encoding="utf-8")
-    print(f"\n✅ Test generated: {test_file_path}")
+    print_success(f"Test generated: {test_file_path}")
 
     return test_code
 
@@ -167,17 +243,21 @@ def run_benchmark_mode(manifest_path: str, output_dir: str, dry_run: bool = Fals
     from benchmark.reporter import build_report, export_thesis_metrics_csv
     from benchmark.runner import execute_runs
 
-    print(f"\n{'=' * 60}")
-    print("AST-RAG Benchmark Mode")
-    print(f"{'=' * 60}")
-    print(f"\n📋 Manifest: {manifest_path}")
-    print(f"📁 Output: {output_dir}")
+    print_header("AST-RAG Benchmark Mode")
+
+    console = get_console()
+    if console:
+        console.print(f"📋 Manifest: [cyan]{manifest_path}[/cyan]")
+        console.print(f"📁 Output: [cyan]{output_dir}[/cyan]")
+    else:
+        print(f"\n📋 Manifest: {manifest_path}")
+        print(f"📁 Output: {output_dir}")
 
     try:
         manifest = load_manifest(manifest_path)
-        print(f"\n✅ Manifest loaded (version {manifest.manifest_version})")
+        print_success(f"Manifest loaded (version {manifest.manifest_version})")
     except ManifestValidationError as e:
-        print(f"\n❌ Error loading manifest: {e}", file=sys.stderr)
+        print_error(f"Error loading manifest: {e}")
         return 1
 
     preflight_findings = validate_manifest_preflight(manifest)
@@ -185,41 +265,77 @@ def run_benchmark_mode(manifest_path: str, output_dir: str, dry_run: bool = Fals
     preflight_warnings = [finding for finding in preflight_findings if finding.severity == "warning"]
 
     if preflight_warnings:
-        print("\n⚠️ Preflight warnings:")
+        print_info("\n⚠️ Preflight warnings:")
         for warning in preflight_warnings:
-            print(f"    - [{warning.code}] {warning.message}")
+            print_info(f"    - [{warning.code}] {warning.message}")
 
     if preflight_errors:
-        print("\n❌ Preflight errors:", file=sys.stderr)
+        print_error("Preflight errors:")
         for error in preflight_errors:
-            print(f"    - [{error.code}] {error.message}", file=sys.stderr)
-            print(f"      remediation: {error.remediation}", file=sys.stderr)
+            print_error(f"    - [{error.code}] {error.message}")
+            print_error(f"      remediation: {error.remediation}")
         return 1
 
-    print("\n[1/3] 📊 Planning runs...")
+    print_info("\n[1/3] 📊 Planning runs...")
     plans = plan_runs(manifest)
-    print(f"    Planned {len(plans)} runs")
 
-    print("\n[2/3] ⚙️ Executing runs...")
-    results = execute_runs(
-        plans,
-        output_dir,
-        dry_run=dry_run,
-        eval_config=manifest.evaluation,
-    )
+    if console:
+        console.print(f"    Planned [yellow]{len(plans)}[/yellow] runs")
+    else:
+        print(f"    Planned {len(plans)} runs")
+
+    print_info("\n[2/3] ⚙️ Executing runs...")
+
+    # Use progress bar if rich is available
+    if RICH_AVAILABLE and Progress is not None:
+        with Progress(
+            SpinnerColumn(),
+            TextColumn("[progress.description]{task.description}"),
+            BarColumn(),
+            TextColumn("[progress.percentage]{task.percentage:>3.0f}%"),
+            TimeRemainingColumn(),
+        ) as progress:
+            task = progress.add_task("Running benchmarks...", total=len(plans))
+
+            results = []
+            for i, plan in enumerate(plans):
+                result = execute_runs(
+                    [plan],
+                    output_dir,
+                    dry_run=dry_run,
+                    eval_config=manifest.evaluation,
+                )
+                results.extend(result)
+                progress.update(task, advance=1)
+    else:
+        results = execute_runs(
+            plans,
+            output_dir,
+            dry_run=dry_run,
+            eval_config=manifest.evaluation,
+        )
 
     success_count = sum(1 for r in results if r.status == "ok")
-    print(f"    Completed: {success_count}/{len(results)} successful")
 
-    print("\n[3/3] 📝 Generating reports...")
+    if console:
+        console.print(f"    Completed: [green]{success_count}/{len(results)}[/green] successful")
+    else:
+        print(f"    Completed: {success_count}/{len(results)} successful")
+
+    print_info("\n[3/3] 📝 Generating reports...")
     bundle = build_report(
         results,
         manifest,
         output_dir,
         preflight_findings=preflight_findings,
     )
-    print(f"    Results: {bundle.results_path}")
-    print(f"    Summary: {bundle.summary_path}")
+
+    if console:
+        console.print(f"    Results: [cyan]{bundle.results_path}[/cyan]")
+        console.print(f"    Summary: [cyan]{bundle.summary_path}[/cyan]")
+    else:
+        print(f"    Results: {bundle.results_path}")
+        print(f"    Summary: {bundle.summary_path}")
     print(f"    Report: {bundle.report_path}")
     print(f"    Provenance: {bundle.provenance_path}")
 
