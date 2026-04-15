@@ -206,18 +206,45 @@ python main.py service.java project/ --print
 
 ```
 AST-RAG-TestGen/
-├── core/
-│   ├── parser.py            # Tree-sitter AST parsing
-│   ├── retriever.py         # Dependency resolution and indexing
+├── cli/                      # Command-line interfaces
+│   ├── modern.py            # Modern Typer-based CLI
+│   ├── legacy.py            # Legacy argparse-based CLI
+│   └── parser.py            # Argument parsing logic
+├── core/                    # Core parsing and retrieval
+│   ├── parsing/             # AST parsing layer
+│   │   ├── models.py        # Data models (ParsedJavaClass, etc.)
+│   │   └── parser.py        # Tree-sitter parser
+│   ├── filtering/           # Method filtering
+│   │   └── filters.py       # Filtering logic
+│   ├── extraction/          # Dependency extraction
+│   │   └── extractor.py     # Dependency resolver
+│   ├── parser.py            # Legacy parser (deprecated)
+│   ├── retriever.py         # Legacy retriever (deprecated)
 │   └── prompt_builder.py    # Dynamic prompt assembly
-├── llm/
-│   └── client.py            # Multi-provider LLM interface
-├── main.py                  # Main orchestrator
-├── pyproject.toml            # Project configuration and packaging
-├── requirements.txt          # Pip dependencies
-├── environment.yml           # Conda dependencies
-├── .env.template             # API key template
-└── tests_generados/          # Output directory
+├── llm/                     # LLM provider adapters
+│   ├── adapters/            # Provider-specific adapters
+│   │   ├── base.py          # Base adapter interface
+│   │   ├── anthropic.py     # Anthropic adapter
+│   │   ├── openai.py        # OpenAI adapter
+│   │   ├── glm.py           # GLM (Zhipu AI) adapter
+│   │   ├── gemini.py        # Gemini adapter
+│   │   ├── nvidia.py        # NVIDIA adapter
+│   │   └── openrouter.py    # OpenRouter adapter
+│   ├── client.py            # Legacy client (deprecated)
+│   └── client_new.py        # New client using adapters
+├── orchestration/           # Pipeline orchestration
+│   ├── generator.py         # Test generation orchestration
+│   └── benchmark.py         # Benchmark orchestration
+├── output/                  # Output handling
+│   └── console.py           # Rich console wrapper
+├── config/                  # Configuration management
+│   └── settings.py          # Pydantic settings
+├── main.py                  # Main entry point (46 lines)
+├── pyproject.toml           # Project configuration
+├── requirements.txt         # Pip dependencies
+├── environment.yml          # Conda dependencies
+├── .env.template            # API key template
+└── tests_generados/         # Output directory
 ```
 
 ## Development

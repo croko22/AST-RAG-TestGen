@@ -52,11 +52,58 @@ Generated Test Code → tests_generados/{ClassName}Test.java
 
 | Module | File | Responsibility |
 |--------|------|----------------|
-| Parser | `core/parser.py` | Extract AST using Tree-sitter: package, imports, class name, methods, fields, dependencies |
-| Retriever | `core/retriever.py` | Find Java files, build class→path index, resolve dependencies recursively with depth limit |
-| Prompt Builder | `core/prompt_builder.py` | Assemble prompt: full code under test + extracted method signatures |
-| LLM Client | `llm/client.py` | Multi-provider interface: Anthropic, OpenAI, GLM, Gemini, OpenRouter, NVIDIA |
-| Orchestrator | `main.py` | CLI entry point, coordinates pipeline, saves generated tests |
+| **CLI Layer** | `cli/` | Command-line interfaces (modern Typer + legacy argparse) |
+| **Parsing Layer** | `core/parsing/` | AST parsing with Tree-sitter: package, imports, class name, methods, fields |
+| **Filtering Layer** | `core/filtering/` | Method filtering logic (public, testable, etc.) |
+| **Extraction Layer** | `core/extraction/` | Dependency resolution and indexing |
+| **Prompt Builder** | `core/prompt_builder.py` | Assemble prompt: full code under test + extracted method signatures |
+| **LLM Adapters** | `llm/adapters/` | Provider-specific adapters (Anthropic, OpenAI, GLM, Gemini, NVIDIA, OpenRouter) |
+| **LLM Client** | `llm/client_new.py` | Multi-provider interface using adapter pattern |
+| **Orchestration** | `orchestration/` | Pipeline orchestration (generation + benchmark) |
+| **Output** | `output/` | Rich console output with fallback |
+| **Config** | `config/` | Pydantic-based configuration management |
+| **Entry Point** | `main.py` | Minimal entry point (46 lines) that routes to CLI modules |
+
+## Module Organization
+
+The codebase is organized into focused modules with clear separation of concerns:
+
+```
+cli/                    # Command-line interfaces
+├── modern.py           # Modern Typer-based CLI
+├── legacy.py           # Legacy argparse-based CLI
+└── parser.py           # Argument parsing logic
+
+core/                   # Core parsing and retrieval
+├── parsing/            # AST parsing layer
+│   ├── models.py       # Data models
+│   └── parser.py       # Tree-sitter parser
+├── filtering/          # Method filtering
+│   └── filters.py      # Filtering logic
+└── extraction/         # Dependency extraction
+    └── extractor.py    # Dependency resolver
+
+llm/                    # LLM provider adapters
+├── adapters/           # Provider-specific adapters
+│   ├── base.py         # Base adapter interface
+│   ├── anthropic.py    # Anthropic adapter
+│   ├── openai.py       # OpenAI adapter
+│   ├── glm.py          # GLM adapter
+│   ├── gemini.py       # Gemini adapter
+│   ├── nvidia.py       # NVIDIA adapter
+│   └── openrouter.py   # OpenRouter adapter
+└── client_new.py       # Multi-provider client
+
+orchestration/          # Pipeline orchestration
+├── generator.py        # Test generation orchestration
+└── benchmark.py        # Benchmark orchestration
+
+output/                 # Output handling
+└── console.py          # Rich console wrapper
+
+config/                 # Configuration management
+└── settings.py         # Pydantic settings
+```
 
 ## Key Characteristics
 

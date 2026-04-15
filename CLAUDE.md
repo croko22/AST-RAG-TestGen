@@ -29,25 +29,30 @@ python main.py providers
 
 AST-RAG TestGen is a 4-step pipeline for generating Java unit tests using AST-based context retrieval:
 
-1. **Extractor** (`core/parser.py`): Uses Tree-sitter to parse Java files and extract:
+1. **Parsing Layer** (`core/parsing/`): Uses Tree-sitter to parse Java files and extract:
    - Package declarations
    - Import statements
    - Class/interface names
    - Field declarations
    - Method signatures
 
-2. **Retriever** (`core/retriever.py`): Finds and resolves dependency files in the Java project
-   - `JavaFileRetriever`: Scans project for `.java` files
+2. **Extraction Layer** (`core/extraction/`): Finds and resolves dependency files in the Java project
    - `DependencyResolver`: Recursively resolves dependencies with depth limit
    - Builds class name to file path index
 
-3. **Prompt Builder** (`core/prompt_builder.py`): Assembles the dynamic prompt
+3. **Filtering Layer** (`core/filtering/`): Filters methods for test generation
+   - Public methods
+   - Testable methods
+   - Custom filtering rules
+
+4. **Prompt Builder** (`core/prompt_builder.py`): Assembles the dynamic prompt
    - Combines code under test with extracted method signatures
    - Formats context for LLM consumption
 
-4. **LLM Client** (`llm/client.py`): Multi-provider LLM interface
+5. **LLM Client** (`llm/client_new.py`): Multi-provider LLM interface using adapter pattern
    - Supports: anthropic, openai, glm, gemini, nvidia, openrouter
-   - Each provider has default models and API-specific handling
+   - Each provider has dedicated adapter in `llm/adapters/`
+   - Provider-specific API handling
    - NVIDIA and OpenRouter use OpenAI-compatible API
 
 ### Data Flow
@@ -91,6 +96,7 @@ If `rich` is not installed, the application falls back to plain text output.
 Detailed architecture and design documentation:
 
 - `docs/architecture/overview.md` - Complete pipeline overview and data flow
+- `docs/architecture/modular-refactoring.md` - Modular architecture refactoring details
 - `docs/architecture/parser-module.md` - Tree-sitter AST parsing details
 - `docs/architecture/retriever-module.md` - Dependency resolution and indexing
 - `docs/architecture/prompt-builder.md` - Context assembly strategy
@@ -104,13 +110,47 @@ Detailed architecture and design documentation:
 ## Project Structure
 
 ```
-core/           # AST parsing, retrieval, prompt building
-llm/            # LLM API clients (multi-provider)
-main.py          # Orchestrator entry point
-docs/            # Architecture, decisions, API contracts
-environment.yml   # Conda dependencies
-.env.template     # Environment variable template
-tests_generados/ # Output directory (gitignored)
+cli/                    # Command-line interfaces
+├── modern.py           # Modern Typer-based CLI
+├── legacy.py           # Legacy argparse-based CLI
+└── parser.py           # Argument parsing logic
+
+core/                   # Core parsing and retrieval
+├── parsing/            # AST parsing layer
+│   ├── models.py       # Data models
+│   └── parser.py       # Tree-sitter parser
+├── filtering/          # Method filtering
+│   └── filters.py      # Filtering logic
+├── extraction/         # Dependency extraction
+│   └── extractor.py    # Dependency resolver
+└── prompt_builder.py   # Dynamic prompt assembly
+
+llm/                    # LLM provider adapters
+├── adapters/           # Provider-specific adapters
+│   ├── base.py         # Base adapter interface
+│   ├── anthropic.py    # Anthropic adapter
+│   ├── openai.py       # OpenAI adapter
+│   ├── glm.py          # GLM adapter
+│   ├── gemini.py       # Gemini adapter
+│   ├── nvidia.py       # NVIDIA adapter
+│   └── openrouter.py   # OpenRouter adapter
+└── client_new.py       # Multi-provider client
+
+orchestration/          # Pipeline orchestration
+├── generator.py        # Test generation orchestration
+└── benchmark.py        # Benchmark orchestration
+
+output/                 # Output handling
+└── console.py          # Rich console wrapper
+
+config/                 # Configuration management
+└── settings.py         # Pydantic settings
+
+main.py                 # Main entry point (46 lines)
+docs/                   # Architecture, decisions, API contracts
+environment.yml         # Conda dependencies
+.env.template           # Environment variable template
+tests_generados/        # Output directory (gitignored)
 ```
 
 ## Testing
