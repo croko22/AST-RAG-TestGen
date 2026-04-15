@@ -61,6 +61,24 @@ At least one of the following LLM provider keys must be configured in `.env`:
 | OpenRouter | `OPENROUTER_API_KEY` |
 | NVIDIA | `NVIDIA_API_KEY` |
 
+### Optional Dependencies
+
+**Rich Terminal Output** (Recommended for better UX):
+
+The project includes `rich` for beautiful terminal output:
+- Progress bars for benchmarks
+- Formatted tables for results
+- Syntax highlighting for generated code
+- Color-coded success/error messages
+
+Rich is automatically installed with the main package. If you prefer plain output, you can uninstall it:
+
+```bash
+pip uninstall rich
+```
+
+The application will automatically fall back to plain text output.
+
 ## Usage
 
 ### Basic Command

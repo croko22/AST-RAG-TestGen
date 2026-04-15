@@ -69,6 +69,16 @@ Prompt → LLMClient → Generated Test
 - API keys: `ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, `GLM_API_KEY`, `GEMINI_API_KEY`, `NVIDIA_API_KEY`, `OPENROUTER_API_KEY`
 - Provider defaults: `LLM_PROVIDER`, `LLM_MODEL`
 
+## Terminal Output
+
+The project uses `rich` for beautiful terminal output:
+- **Progress bars** for benchmark execution
+- **Formatted tables** for results display
+- **Syntax highlighting** for generated code
+- **Color-coded messages** (green for success, red for errors, cyan for info)
+
+If `rich` is not installed, the application falls back to plain text output.
+
 ## Documentation
 
 Detailed architecture and design documentation:
