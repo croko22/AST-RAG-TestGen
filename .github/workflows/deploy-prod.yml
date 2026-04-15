@@ -1,0 +1,41 @@
+name: Production Deployment
+
+on:
+  push:
+    branches: [prod]
+
+jobs:
+  deploy:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .[dev]
+
+      - name: Run tests
+        run: pytest --cov=core --cov=llm --cov-report=xml --cov-report=term-missing
+
+      - name: Check coverage threshold
+        run: |
+          coverage report --fail-under=75
+
+      - name: Create deployment tag
+        run: |
+          git tag -a "prod-$(date +%Y%m%d-%H%M%S)" -m "Production deployment $(date)"
+          git push origin --tags
+
+      - name: Notify deployment
+        run: |
+          echo "🚀 Production deployment successful!"
+          echo "Branch: prod"
+          echo "Commit: ${{ github.sha }}"
