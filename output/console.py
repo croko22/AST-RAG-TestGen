@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 # Rich for beautiful terminal output
 try:
     from rich.console import Console
-    from rich.progress import Progress, SpinnerColumn, TextColumn, BarColumn, TimeRemainingColumn
+    from rich.progress import BarColumn, Progress, SpinnerColumn, TextColumn, TimeRemainingColumn
     from rich.syntax import Syntax
     from rich.text import Text
     RICH_AVAILABLE = True
@@ -185,7 +185,7 @@ class ProgressContextManager:
         self._task_id: str | None = None
         self._current = 0
 
-    def __enter__(self) -> "ProgressContextManager":
+    def __enter__(self) -> ProgressContextManager:
         """Enter progress context."""
         if self.use_rich and self.console and Progress is not None:
             self._progress = Progress(

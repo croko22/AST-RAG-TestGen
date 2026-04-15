@@ -7,23 +7,17 @@ from __future__ import annotations
 
 import os
 from dataclasses import dataclass
-from typing import Any
-
-from dotenv import load_dotenv
-
-# Load environment variables
-load_dotenv()
 
 # Import adapters
 from llm.adapters import (
     AnthropicAdapter,
     BaseLLMAdapter,
+    GeminiAdapter,
     GLMAdapter,
     LLMAdapterConfig,
     NVIDIAAdapter,
     OpenAIAdapter,
     OpenRouterAdapter,
-    GeminiAdapter,
 )
 
 

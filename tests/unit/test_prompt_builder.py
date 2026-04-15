@@ -1,11 +1,13 @@
 """Unit tests for prompt builder module."""
 
-import pytest
 import re
 from pathlib import Path
-from core import PromptBuilder, JavaFileRetriever, DependencyResolver
-from core.prompt_builder import build_test_prompt
+
+import pytest
+
+from core import PromptBuilder
 from core.parser import MethodSignature
+from core.prompt_builder import build_test_prompt
 
 
 class TestPromptBuilder:

@@ -1,8 +1,8 @@
 """Unit tests for retriever module."""
 
-import pytest
 from pathlib import Path
-from core import JavaFileRetriever, DependencyResolver
+
+from core import DependencyResolver, JavaFileRetriever
 
 
 class TestJavaFileRetriever:

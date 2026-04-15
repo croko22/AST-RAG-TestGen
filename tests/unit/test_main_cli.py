@@ -1,11 +1,12 @@
 """Unit tests for CLI flag handling in main module."""
 
 from argparse import Namespace
+from pathlib import Path
 
 import pytest
 
 import main
-from main import build_arg_parser
+from cli.parser import build_arg_parser
 
 
 class TestMainCli:
@@ -51,17 +52,16 @@ class TestMainCli:
             def parse_args(self):
                 return args
 
-        monkeypatch.setattr(main, "build_arg_parser", lambda: DummyParser())
+        monkeypatch.setattr("cli.legacy.build_arg_parser", lambda: DummyParser())
         monkeypatch.setattr(
-            main.Path,
+            Path,
             "exists",
             lambda p: False if str(p) == "missing.java" else True,
         )
 
-        with pytest.raises(SystemExit) as exc_info:
-            main.main()
+        exit_code = main.main()
 
-        assert exc_info.value.code == 1
+        assert exit_code == 1
         assert "Java file not found: missing.java" in capsys.readouterr().err
 
     def test_main_exits_when_project_path_is_missing(self, monkeypatch, capsys):
@@ -81,17 +81,16 @@ class TestMainCli:
             def parse_args(self):
                 return args
 
-        monkeypatch.setattr(main, "build_arg_parser", lambda: DummyParser())
+        monkeypatch.setattr("cli.legacy.build_arg_parser", lambda: DummyParser())
         monkeypatch.setattr(
-            main.Path,
+            Path,
             "exists",
             lambda p: False if str(p) == "missing-project" else True,
         )
 
-        with pytest.raises(SystemExit) as exc_info:
-            main.main()
+        exit_code = main.main()
 
-        assert exc_info.value.code == 1
+        assert exit_code == 1
         assert "Project path not found: missing-project/" in capsys.readouterr().err
 
     def test_main_runs_generator_and_prints_output_when_requested(self, monkeypatch, capsys):
@@ -111,8 +110,8 @@ class TestMainCli:
             def parse_args(self):
                 return args
 
-        monkeypatch.setattr(main, "build_arg_parser", lambda: DummyParser())
-        monkeypatch.setattr(main.Path, "exists", lambda _: True)
+        monkeypatch.setattr("cli.legacy.build_arg_parser", lambda: DummyParser())
+        monkeypatch.setattr(Path, "exists", lambda _: True)
 
         def fake_generate_test_for_file(**kwargs):
             assert kwargs["java_file_path"] == "service.java"
@@ -125,14 +124,14 @@ class TestMainCli:
             assert kwargs["enable_reftest_parity"] is True
             return "public class ServiceTest {}"
 
-        monkeypatch.setattr(main, "generate_test_for_file", fake_generate_test_for_file)
+        monkeypatch.setattr("orchestration.generator.generate_test_for_file", fake_generate_test_for_file)
 
-        main.main()
+        exit_code = main.main()
 
+        assert exit_code == 0
         output = capsys.readouterr().out
-        assert "GENERATED TEST:" in output
         assert "public class ServiceTest {}" in output
-        assert "Done! Test saved to ./tests_generados/serviceTest.java" in output
+        assert "Test saved to ./tests_generados/serviceTest.java" in output
 
     def test_main_exits_when_generation_raises_exception(self, monkeypatch, capsys):
         args = Namespace(
@@ -151,15 +150,14 @@ class TestMainCli:
             def parse_args(self):
                 return args
 
-        monkeypatch.setattr(main, "build_arg_parser", lambda: DummyParser())
-        monkeypatch.setattr(main.Path, "exists", lambda _: True)
+        monkeypatch.setattr("cli.legacy.build_arg_parser", lambda: DummyParser())
+        monkeypatch.setattr(Path, "exists", lambda _: True)
         def fake_generate_test_for_file(**_):
             raise RuntimeError("boom")
 
-        monkeypatch.setattr(main, "generate_test_for_file", fake_generate_test_for_file)
+        monkeypatch.setattr("orchestration.generator.generate_test_for_file", fake_generate_test_for_file)
 
-        with pytest.raises(SystemExit) as exc_info:
-            main.main()
+        exit_code = main.main()
 
-        assert exc_info.value.code == 1
+        assert exit_code == 1
         assert "Error: boom" in capsys.readouterr().err

@@ -4,11 +4,11 @@ from __future__ import annotations
 
 import json
 import signal
-import subprocess
 import time
 from pathlib import Path
 from typing import Any
 
+from benchmark.schemas import EvaluationConfig
 from benchmark.types import EvalMetrics, RunPlan, RunResult
 
 
@@ -77,8 +77,9 @@ def _execute_generation(
     Returns:
         Tuple of (output_path, latency_ms)
     """
-    from main import generate_test_for_file
     from pathlib import Path
+
+    from main import generate_test_for_file
 
     java_file = plan.java_file
     project_path = plan.project_root
@@ -87,7 +88,7 @@ def _execute_generation(
 
     start_time = time.monotonic()
 
-    test_code = generate_test_for_file(
+    generate_test_for_file(
         java_file_path=full_java_path,
         java_project_path=project_path,
         output_dir=str(output_dir),
@@ -117,7 +118,7 @@ def _run_with_timeout(
             self.seconds = seconds
             self.old_handler: signal.Handler | None = None
 
-        def __enter__(self) -> "TimeoutHandler":
+        def __enter__(self) -> TimeoutHandler:
             def handler(signum, frame):
                 raise TimeoutError(self.seconds, "unknown")
 
@@ -138,7 +139,7 @@ def execute_run(
     plan: RunPlan,
     base_output_dir: Path | str,
     dry_run: bool = False,
-    eval_config: "benchmark.schemas.EvaluationConfig | None" = None,
+    eval_config: EvaluationConfig | None = None,
 ) -> RunResult:
     """
     Execute a single benchmark run.
@@ -246,7 +247,7 @@ def execute_runs(
     plans: list[RunPlan],
     base_output_dir: Path | str,
     dry_run: bool = False,
-    eval_config: "benchmark.schemas.EvaluationConfig | None" = None,
+    eval_config: EvaluationConfig | None = None,
 ) -> list[RunResult]:
     """
     Execute multiple runs sequentially.

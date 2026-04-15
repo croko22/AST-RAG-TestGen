@@ -4,8 +4,6 @@ from argparse import Namespace
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
-import pytest
-
 import main
 from main import build_arg_parser
 
@@ -112,7 +110,7 @@ class TestBenchmarkModeExecution:
 
         with patch.object(main, "build_arg_parser") as mock_parser:
             mock_parser.return_value.parse_args.return_value = args
-            result = main.main()
+            main.main()
 
         mock_benchmark.assert_called_once_with(
             manifest_path="bench.yaml",

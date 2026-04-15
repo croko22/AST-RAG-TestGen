@@ -6,8 +6,6 @@ This module provides extraction logic for extracting dependencies from Java file
 
 from __future__ import annotations
 
-from pathlib import Path
-
 from core.parsing import JavaParser, ParsedJavaClass
 
 
@@ -49,7 +47,7 @@ def extract_dependencies_from_content(
     return parser.parse_content(content, file_path)
 
 
-def extract_test_methods(parsed_class: ParsedClass) -> list:
+def extract_test_methods(parsed_class: ParsedJavaClass) -> list:
     """
     Extract test methods from a parsed class.
 
@@ -62,6 +60,7 @@ def extract_test_methods(parsed_class: ParsedClass) -> list:
     Returns:
         List of test method signatures.
     """
+
     test_methods = []
     for method in parsed_class.methods:
         if method.name.startswith("test") and method.visibility == "public":

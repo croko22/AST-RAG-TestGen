@@ -7,6 +7,7 @@ This module provides the modern CLI interface with subcommands and auto-completi
 from __future__ import annotations
 
 import sys
+from collections.abc import Callable
 from typing import cast
 
 # Typer for modern CLI
@@ -48,7 +49,6 @@ def create_modern_cli():
         print_code: bool = Opt(False, "--print", help="Print the generated test to stdout"),
     ) -> None:
         """Generate a unit test for a Java file."""
-        from pathlib import Path
 
         output_manager = get_output()
 

@@ -7,8 +7,6 @@ separating business logic from CLI concerns.
 
 from __future__ import annotations
 
-from pathlib import Path
-
 from output import get_output
 
 
@@ -84,7 +82,13 @@ def run_benchmark_mode(
 
     # Use progress bar if rich is available
     if output.use_rich and output.console:
-        from rich.progress import Progress, SpinnerColumn, TextColumn, BarColumn, TimeRemainingColumn
+        from rich.progress import (
+            BarColumn,
+            Progress,
+            SpinnerColumn,
+            TextColumn,
+            TimeRemainingColumn,
+        )
 
         with Progress(
             SpinnerColumn(),
@@ -96,7 +100,7 @@ def run_benchmark_mode(
             task = progress.add_task("Running benchmarks...", total=len(plans))
 
             results = []
-            for i, plan in enumerate(plans):
+            for plan in plans:
                 result = execute_runs(
                     [plan],
                     output_dir,

@@ -4,8 +4,6 @@ from __future__ import annotations
 
 import json
 
-import pytest
-
 from benchmark.planner import plan_runs
 from benchmark.runner import (
     _create_run_workspace,
@@ -14,7 +12,7 @@ from benchmark.runner import (
     execute_runs,
 )
 from benchmark.schemas import BenchmarkManifest
-from benchmark.types import EvalMetrics, RunPlan, RunResult
+from benchmark.types import EvalMetrics, RunResult
 
 
 def _minimal_manifest() -> BenchmarkManifest:

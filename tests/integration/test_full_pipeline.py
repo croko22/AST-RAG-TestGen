@@ -1,10 +1,10 @@
 """Integration tests for the full AST-RAG pipeline."""
 
-import pytest
-from pathlib import Path
-from core import JavaFileRetriever, DependencyResolver, PromptBuilder
-from llm import LLMClient, LLMConfig
 from unittest.mock import Mock, patch
+
+import pytest
+
+from core import DependencyResolver, JavaFileRetriever, PromptBuilder
 
 
 class TestFullPipeline:
@@ -145,9 +145,9 @@ class UsuarioServiceTest {
 """
                 MockLLMClient.return_value = mock_instance
 
-                from main import generate_test_for_file
-
                 import tempfile
+
+                from main import generate_test_for_file
                 with tempfile.TemporaryDirectory() as output_dir:
                     test_code = generate_test_for_file(
                         java_file_path=service_file,

@@ -2,10 +2,6 @@
 
 from __future__ import annotations
 
-import json
-
-import pytest
-
 from benchmark.manifest import capture_toolchain_versions, create_manifest_with_toolchain
 from benchmark.reporter import export_thesis_metrics_csv
 from benchmark.schemas import ToolchainVersions

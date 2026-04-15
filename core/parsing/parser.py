@@ -6,7 +6,6 @@ This module provides the Tree-sitter based Java parser.
 
 from __future__ import annotations
 
-from pathlib import Path
 from typing import Any
 
 try:
@@ -18,7 +17,6 @@ except ImportError:
 
 from core.parsing.models import (
     FieldDeclaration,
-    JavaDependency,
     MethodSignature,
     ParsedJavaClass,
 )
@@ -64,7 +62,7 @@ class JavaParser:
         Returns:
             ParsedJavaClass with extracted information.
         """
-        with open(file_path, "r", encoding="utf-8") as f:
+        with open(file_path, encoding="utf-8") as f:
             content = f.read()
 
         return self.parse_content(content, file_path)
@@ -312,8 +310,6 @@ class JavaParser:
                 return 0
 
             body_node = body_nodes[0]
-            start_line = body_node.start_point[0]
-            end_line = body_node.end_point[0]
 
             # Get the content lines
             content_lines = body_node.text.split("\n")

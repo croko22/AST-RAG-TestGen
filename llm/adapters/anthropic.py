@@ -6,8 +6,6 @@ This module provides the Anthropic adapter implementation.
 
 from __future__ import annotations
 
-from typing import Any
-
 try:
     import anthropic
     ANTHROPIC_AVAILABLE = True

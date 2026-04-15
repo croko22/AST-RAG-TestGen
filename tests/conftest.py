@@ -1,11 +1,11 @@
 """Pytest configuration and shared fixtures."""
 
+
 import pytest
-from pathlib import Path
 
 # Try to import core modules, but don't fail if tree-sitter is not installed
 try:
-    from core import JavaFileRetriever, DependencyResolver
+    from core import DependencyResolver, JavaFileRetriever
     from llm import LLMClient, LLMConfig
 except ImportError:
     # tree-sitter not available - set to None for tests that don't need it

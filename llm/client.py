@@ -1,10 +1,12 @@
 """
 LLM client for interfacing with multiple LLM APIs.
-Supports: Anthropic, OpenAI, GLM (Zhipu AI), Gemini, OpenRouter.
+Supports: Anthropic, OpenAI, GLM (Zhipu AI), Gemini, OpenRouter, NVIDIA.
 """
 
+from __future__ import annotations
+
 import os
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Any
 
 from dotenv import load_dotenv

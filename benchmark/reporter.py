@@ -9,7 +9,7 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
-from benchmark.schemas import BenchmarkManifest, ScoringConfig
+from benchmark.schemas import BenchmarkManifest, ScoringConfig, ScoringWeights
 from benchmark.types import PreflightFinding, ProvenanceRecord, RunResult
 
 
@@ -413,7 +413,7 @@ def _compute_rankings(
 
 def _compute_entry_score(
     result: RunResult,
-    weights: "benchmark.schemas.ScoringWeights",
+    weights: ScoringWeights,
 ) -> float:
     """
     Compute weighted score for a single run result.

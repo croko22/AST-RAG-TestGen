@@ -6,7 +6,7 @@ import hashlib
 import itertools
 from typing import Any
 
-from benchmark.schemas import BenchmarkManifest, DatasetEntry, ProviderEntry
+from benchmark.schemas import BenchmarkManifest
 from benchmark.types import RunPlan
 
 

@@ -1,7 +1,9 @@
 """Unit tests for parser module."""
 
-import pytest
 from pathlib import Path
+
+import pytest
+
 from core import JavaParser, extract_dependencies_from_file
 
 

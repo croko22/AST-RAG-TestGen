@@ -13,23 +13,26 @@ from cli.parser import build_arg_parser
 from output import get_output
 
 
-def legacy_main(args) -> None:
+def legacy_main(args) -> int:
     """Execute the legacy single-file generation mode.
 
     This preserves the original behavior for backward compatibility.
 
     Args:
         args: Parsed arguments from legacy CLI.
+
+    Returns:
+        Exit code (0 on success, 1 on failure).
     """
     output = get_output()
 
     if not Path(args.java_file).exists():
         output.print_error(f"Java file not found: {args.java_file}")
-        sys.exit(1)
+        return 1
 
     if not Path(args.project_path).exists():
         output.print_error(f"Project path not found: {args.project_path}")
-        sys.exit(1)
+        return 1
 
     try:
         # Import orchestration modules
@@ -50,13 +53,14 @@ def legacy_main(args) -> None:
             output.print_code(test_code)
 
         output.print_success(f"Test saved to {args.output}/{Path(args.java_file).stem}Test.java")
+        return 0
 
     except Exception as e:
         output.print_error(f"Error: {e}")
         import traceback
 
         traceback.print_exc()
-        sys.exit(1)
+        return 1
 
 
 def run_legacy_cli() -> int:
@@ -80,5 +84,4 @@ def run_legacy_cli() -> int:
         )
 
     # Otherwise, run legacy mode
-    legacy_main(args)
-    return 0
+    return legacy_main(args)

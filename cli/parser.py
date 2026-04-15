@@ -7,8 +7,6 @@ This module provides argument parsing logic for both legacy and modern CLI.
 from __future__ import annotations
 
 import argparse
-from collections.abc import Callable
-from typing import cast
 
 # Configuration management
 try:

@@ -1,6 +1,5 @@
 """Unit tests for metainfo builder module."""
 
-from pathlib import Path
 from types import SimpleNamespace
 
 from core.metainfo.builder import MetainfoBuilder

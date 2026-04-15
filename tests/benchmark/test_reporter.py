@@ -7,11 +7,11 @@ import json
 import pytest
 
 from benchmark.reporter import (
+    _build_summary_json,
     _compute_diagnostics,
     _compute_entry_score,
     _compute_rankings,
     _compute_statistics,
-    _build_summary_json,
     build_report,
     collect_provenance_records,
     load_results_from_dir,

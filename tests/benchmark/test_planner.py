@@ -4,10 +4,8 @@ from __future__ import annotations
 
 import json
 
-import pytest
-
 from benchmark.manifest import load_manifest
-from benchmark.planner import plan_runs, _generate_run_id
+from benchmark.planner import _generate_run_id, plan_runs
 
 
 def _manifest_for_planner() -> dict:
@@ -58,7 +56,7 @@ def test_plan_runs_deterministic_ordering(tmp_path):
     plans2 = plan_runs(manifest)
 
     assert len(plans1) == len(plans2)
-    for p1, p2 in zip(plans1, plans2):
+    for p1, p2 in zip(plans1, plans2, strict=True):
         assert p1.run_id == p2.run_id
         assert p1.dataset_id == p2.dataset_id
         assert p1.provider == p2.provider
