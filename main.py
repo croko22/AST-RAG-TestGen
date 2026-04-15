@@ -13,7 +13,6 @@ Supports two modes:
 from __future__ import annotations
 
 import sys
-from pathlib import Path
 
 # Try to use modern CLI first, fall back to legacy
 try:
@@ -26,9 +25,9 @@ except ImportError:
 from cli import run_legacy_cli
 
 # Backward compatibility exports
-from cli.parser import build_arg_parser
-from orchestration.generator import generate_test_for_file
-from orchestration.benchmark import run_benchmark_mode
+from cli.parser import build_arg_parser  # noqa: F401
+from orchestration.benchmark import run_benchmark_mode  # noqa: F401
+from orchestration.generator import generate_test_for_file  # noqa: F401
 
 
 def main() -> int:
