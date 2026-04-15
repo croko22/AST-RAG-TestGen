@@ -62,6 +62,7 @@ def generate_test_for_file(
     output.print_info("[3/4] 📝 Building prompt...")
     code_under_test, dependency_signatures = _build_prompt(
         parsed_class=parsed_class,
+        project_path=Path(java_project_path),
         dependency_context=dependency_context,
         max_dependencies=max_dependencies,
     )
@@ -129,21 +130,22 @@ def _resolve_dependencies(parsed_class, project_path: Path, max_depth: int):
     from core.retriever import DependencyResolver, JavaFileRetriever
 
     retriever = JavaFileRetriever(project_path)
-    resolver = DependencyResolver(retriever, max_depth=max_depth)
+    resolver = DependencyResolver(retriever)
 
     dependencies = []
     for dep in parsed_class.imports:
-        resolved = resolver.resolve_dependencies(dep, project_path)
+        resolved = resolver.resolve_dependencies(dep, max_depth=max_depth)
         dependencies.extend(resolved)
 
     return dependencies
 
 
-def _build_prompt(parsed_class, dependency_context, max_dependencies):
+def _build_prompt(parsed_class, project_path, dependency_context, max_dependencies):
     """Build the prompt for LLM generation.
 
     Args:
         parsed_class: Parsed Java class.
+        project_path: Path to the Java project.
         dependency_context: Resolved dependencies.
         max_dependencies: Maximum number of dependencies to include.
 
@@ -151,11 +153,16 @@ def _build_prompt(parsed_class, dependency_context, max_dependencies):
         Tuple of (code under test, dependency signatures).
     """
     from core.prompt_builder import PromptBuilder
+    from core.retriever import DependencyResolver, JavaFileRetriever
 
-    builder = PromptBuilder()
+    retriever = JavaFileRetriever(project_path)
+    dependency_resolver = DependencyResolver(retriever)
+    builder = PromptBuilder(retriever, dependency_resolver)
+
+    # Get the java file path from the parsed class
+    java_file_path = parsed_class.file_path
     return builder.build_prompt(
-        parsed_class=parsed_class,
-        dependencies=dependency_context,
+        java_file_path=java_file_path,
         max_dependencies=max_dependencies,
     )
 
@@ -177,10 +184,7 @@ def _generate_test_with_llm(
     Returns:
         Generated test code.
     """
-    from llm import client as llm_client_module
-
-    LLMConfig = llm_client_module.LLMConfig
-    LLMClient = llm_client_module.LLMClient
+    from llm.client_new import LLMClient, LLMConfig
 
     llm_config = LLMConfig(
         provider=provider,

@@ -71,8 +71,9 @@ class TestBenchmarkModeDetection:
 class TestBenchmarkModeExecution:
     """Test that benchmark mode executes correctly."""
 
-    @patch("main.run_benchmark_mode")
-    def test_main_routes_to_benchmark_mode(self, mock_benchmark):
+    @patch("orchestration.benchmark.run_benchmark_mode")
+    @patch("cli.legacy.build_arg_parser")
+    def test_main_routes_to_benchmark_mode(self, mock_parser, mock_benchmark):
         """main() should call run_benchmark_mode when benchmark flag is provided."""
         mock_benchmark.return_value = 0
 
@@ -91,9 +92,8 @@ class TestBenchmarkModeExecution:
             print=False,
         )
 
-        with patch.object(main, "build_arg_parser") as mock_parser:
-            mock_parser.return_value.parse_args.return_value = args
-            result = main.main()
+        mock_parser.return_value.parse_args.return_value = args
+        result = main.main()
 
         mock_benchmark.assert_called_once_with(
             manifest_path="bench.yaml",
@@ -102,8 +102,9 @@ class TestBenchmarkModeExecution:
         )
         assert result == 0
 
-    @patch("main.run_benchmark_mode")
-    def test_main_routes_to_benchmark_mode_with_dry_run(self, mock_benchmark):
+    @patch("orchestration.benchmark.run_benchmark_mode")
+    @patch("cli.legacy.build_arg_parser")
+    def test_main_routes_to_benchmark_mode_with_dry_run(self, mock_parser, mock_benchmark):
         """main() should pass dry_run flag to benchmark mode."""
         mock_benchmark.return_value = 0
 
@@ -115,9 +116,8 @@ class TestBenchmarkModeExecution:
             project_path=None,
         )
 
-        with patch.object(main, "build_arg_parser") as mock_parser:
-            mock_parser.return_value.parse_args.return_value = args
-            main.main()
+        mock_parser.return_value.parse_args.return_value = args
+        main.main()
 
         mock_benchmark.assert_called_once_with(
             manifest_path="bench.yaml",
@@ -125,8 +125,9 @@ class TestBenchmarkModeExecution:
             dry_run=True,
         )
 
-    @patch("main.run_benchmark_mode")
-    def test_main_returns_benchmark_exit_code(self, mock_benchmark):
+    @patch("orchestration.benchmark.run_benchmark_mode")
+    @patch("cli.legacy.build_arg_parser")
+    def test_main_returns_benchmark_exit_code(self, mock_parser, mock_benchmark):
         """main() should return benchmark mode exit code."""
         mock_benchmark.return_value = 1
 
@@ -138,9 +139,8 @@ class TestBenchmarkModeExecution:
             project_path=None,
         )
 
-        with patch.object(main, "build_arg_parser") as mock_parser:
-            mock_parser.return_value.parse_args.return_value = args
-            result = main.main()
+        mock_parser.return_value.parse_args.return_value = args
+        result = main.main()
 
         assert result == 1
 
@@ -149,7 +149,8 @@ class TestLegacyModeBackwardCompatibility:
     """Test that legacy mode is unchanged."""
 
     @patch("cli.legacy.legacy_main")
-    def test_main_routes_to_legacy_mode_without_benchmark_flag(self, mock_legacy):
+    @patch("cli.legacy.build_arg_parser")
+    def test_main_routes_to_legacy_mode_without_benchmark_flag(self, mock_parser, mock_legacy):
         """main() should call legacy_main() when no benchmark flag."""
         mock_legacy.return_value = None
 
@@ -166,14 +167,14 @@ class TestLegacyModeBackwardCompatibility:
             print=False,
         )
 
-        with patch.object(main, "build_arg_parser") as mock_parser:
-            mock_parser.return_value.parse_args.return_value = args
-            main.main()
+        mock_parser.return_value.parse_args.return_value = args
+        main.main()
 
         mock_legacy.assert_called_once()
 
     @patch("cli.legacy.legacy_main")
-    def test_legacy_mode_preserves_all_legacy_args(self, mock_legacy):
+    @patch("cli.legacy.build_arg_parser")
+    def test_legacy_mode_preserves_all_legacy_args(self, mock_parser, mock_legacy):
         """Legacy mode should receive all original arguments."""
         captured_args = None
 
@@ -196,9 +197,8 @@ class TestLegacyModeBackwardCompatibility:
             print=True,
         )
 
-        with patch.object(main, "build_arg_parser") as mock_parser:
-            mock_parser.return_value.parse_args.return_value = args
-            main.main()
+        mock_parser.return_value.parse_args.return_value = args
+        main.main()
 
         assert captured_args is not None
         assert captured_args.java_file == "MyService.java"
@@ -212,7 +212,8 @@ class TestLegacyModeBackwardCompatibility:
         assert captured_args.print is True
 
     @patch("cli.legacy.legacy_main")
-    def test_legacy_mode_default_values(self, mock_legacy):
+    @patch("cli.legacy.build_arg_parser")
+    def test_legacy_mode_default_values(self, mock_parser, mock_legacy):
         """Legacy mode should use default values."""
         captured_args = None
 
@@ -235,9 +236,8 @@ class TestLegacyModeBackwardCompatibility:
             print=False,
         )
 
-        with patch.object(main, "build_arg_parser") as mock_parser:
-            mock_parser.return_value.parse_args.return_value = args
-            main.main()
+        mock_parser.return_value.parse_args.return_value = args
+        main.main()
 
         assert captured_args is not None
         assert captured_args.provider == "anthropic"

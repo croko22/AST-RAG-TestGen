@@ -124,7 +124,7 @@ class UsuarioServiceTest {
         mock_client.messages.create.return_value = mock_response
 
         with patch("llm.client.LLMClient._init_anthropic"):
-            with patch("main.LLMClient") as MockLLMClient:
+            with patch("llm.client_new.LLMClient") as MockLLMClient:
                 mock_instance = Mock()
                 mock_instance.generate_test.return_value = """
 import static org.junit.jupiter.api.Assertions.*;
@@ -151,7 +151,7 @@ class UsuarioServiceTest {
 
                 import tempfile
 
-                from main import generate_test_for_file
+                from orchestration.generator import generate_test_for_file
 
                 with tempfile.TemporaryDirectory() as output_dir:
                     test_code = generate_test_for_file(
