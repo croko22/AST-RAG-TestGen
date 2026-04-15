@@ -17,6 +17,7 @@ load_dotenv()
 # Import configuration
 try:
     from config import get_config
+
     CONFIG_AVAILABLE = True
 except ImportError:
     CONFIG_AVAILABLE = False

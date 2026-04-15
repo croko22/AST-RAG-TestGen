@@ -49,7 +49,11 @@ class BundleExtractor:
         """
         bundles = []
 
-        class_uri = f"{parsed_class.package}.{parsed_class.name}" if parsed_class.package else parsed_class.name
+        class_uri = (
+            f"{parsed_class.package}.{parsed_class.name}"
+            if parsed_class.package
+            else parsed_class.name
+        )
 
         for method in parsed_class.methods:
             if self._is_test_method(method):

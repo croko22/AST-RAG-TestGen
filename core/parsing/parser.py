@@ -11,6 +11,7 @@ from typing import Any
 try:
     import tree_sitter
     import tree_sitter_java
+
     TREE_SITTER_AVAILABLE = True
 except ImportError:
     TREE_SITTER_AVAILABLE = False

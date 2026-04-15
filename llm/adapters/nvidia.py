@@ -8,6 +8,7 @@ from __future__ import annotations
 
 try:
     import openai
+
     NVIDIA_AVAILABLE = True
 except ImportError:
     NVIDIA_AVAILABLE = False

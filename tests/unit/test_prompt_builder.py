@@ -11,7 +11,6 @@ from core.prompt_builder import build_test_prompt
 
 
 class TestPromptBuilder:
-
     def test_build_prompt_returns_tuple(self, retriever, resolver):
         """Test that build_prompt returns (code, context) tuple."""
         builder = PromptBuilder(retriever, resolver)
@@ -44,7 +43,7 @@ class TestPromptBuilder:
         service_file = f"{retriever.project_root}/src/main/java/com/example/Service.java"
         _, context = builder.build_prompt(service_file, max_dependencies=1)
 
-        class_matches = re.findall(r'// (\w+)', context)
+        class_matches = re.findall(r"// (\w+)", context)
         assert len(class_matches) <= 2
 
     def test_dependency_context_includes_method_names(self, retriever, resolver):
@@ -72,15 +71,15 @@ class TestPromptBuilder:
                 return_type="String",
                 name="getData",
                 parameters=["int id", "String filter"],
-                is_static=False
+                is_static=False,
             ),
             MethodSignature(
                 visibility="private",
                 return_type="void",
                 name="process",
                 parameters=[],
-                is_static=True
-            )
+                is_static=True,
+            ),
         ]
 
         result = builder.format_method_signatures("TestClass", methods)

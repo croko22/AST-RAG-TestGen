@@ -40,9 +40,7 @@ def _read_manifest_data(path: Path) -> dict[str, Any]:
     elif suffix in {".toml", ".tml"}:
         data = tomllib.loads(raw.decode("utf-8"))
     else:
-        raise ManifestValidationError(
-            f"Unsupported manifest format at {path}. Use .json or .toml"
-        )
+        raise ManifestValidationError(f"Unsupported manifest format at {path}. Use .json or .toml")
 
     if not isinstance(data, dict):
         raise ManifestValidationError(f"Manifest root must be an object: {path}")
@@ -74,9 +72,7 @@ def load_manifest(path: str | Path) -> BenchmarkManifest:
             f"Invalid JSON manifest at {manifest_path}: {exc.msg}"
         ) from exc
     except tomllib.TOMLDecodeError as exc:
-        raise ManifestValidationError(
-            f"Invalid TOML manifest at {manifest_path}: {exc}"
-        ) from exc
+        raise ManifestValidationError(f"Invalid TOML manifest at {manifest_path}: {exc}") from exc
 
     try:
         return BenchmarkManifest.model_validate(payload)
@@ -193,8 +189,7 @@ def validate_manifest_preflight(manifest: BenchmarkManifest) -> list[PreflightFi
                         severity="warning",
                         manifest_path=f"dataset[{index}].expected_test_path",
                         message=(
-                            "Expected test parent directory is missing: "
-                            f"{expected_test_parent}"
+                            f"Expected test parent directory is missing: {expected_test_parent}"
                         ),
                         remediation="Create the parent folder or update expected_test_path.",
                     )
@@ -210,10 +205,7 @@ def validate_manifest_preflight(manifest: BenchmarkManifest) -> list[PreflightFi
                     severity="error",
                     manifest_path=f"matrix.providers[{index}].name",
                     message=f"Unknown provider '{provider.name}'.",
-                    remediation=(
-                        "Use one of: "
-                        + ", ".join(sorted(_PROVIDER_ENV_KEYS.keys()))
-                    ),
+                    remediation=("Use one of: " + ", ".join(sorted(_PROVIDER_ENV_KEYS.keys()))),
                 )
             )
             continue

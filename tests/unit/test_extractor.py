@@ -7,7 +7,6 @@ from core.parser import MethodSignature, ParsedJavaClass
 
 
 class TestBundleExtractor:
-
     @pytest.fixture
     def extractor(self):
         return BundleExtractor()
@@ -21,9 +20,12 @@ class TestBundleExtractor:
             ("test_run", "run"),
             ("test", "test"),
             ("testsomething", "something"),
-            ("TestCalculate", "TestCalculate"), # Does not start with "test" exactly (case-sensitive for the heuristic)
+            (
+                "TestCalculate",
+                "TestCalculate",
+            ),  # Does not start with "test" exactly (case-sensitive for the heuristic)
             ("test_123", "123"),
-        ]
+        ],
     )
     def test_map_test_to_focal_method(self, extractor, test_name, expected_focal):
         """Test the heuristic for mapping test method names to focal methods."""
@@ -55,8 +57,8 @@ class TestBundleExtractor:
                 MethodSignature("public", "void", "testAdd", []),
                 MethodSignature("public", "void", "setUp", []),
                 MethodSignature("public", "void", "test_subtract", []),
-                MethodSignature("public", "void", "testMultiply", [])
-            ]
+                MethodSignature("public", "void", "testMultiply", []),
+            ],
         )
 
         bundles = extractor.extract_from_parsed_class(parsed_class)
@@ -85,9 +87,7 @@ class TestBundleExtractor:
             fields=[],
             file_path="CalculatorTest.java",
             content="...",
-            methods=[
-                MethodSignature("public", "void", "testAdd", [])
-            ]
+            methods=[MethodSignature("public", "void", "testAdd", [])],
         )
 
         bundles = extractor.extract_from_parsed_class(parsed_class)

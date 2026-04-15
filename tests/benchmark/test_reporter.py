@@ -108,7 +108,11 @@ def test_compute_statistics_avg_latency():
 
 def test_compute_entry_score_full_success():
     result = _make_result(
-        "r1", "p1", "m1", "d1", 1,
+        "r1",
+        "p1",
+        "m1",
+        "d1",
+        1,
         compile_pass=True,
         test_pass=True,
         coverage_pct=80.0,
@@ -120,14 +124,18 @@ def test_compute_entry_score_full_success():
     assert 0.0 <= score <= 1.0
     success_comp = 1.0 * 0.5
     coverage_comp = 0.8 * 0.3
-    latency_comp = (1.0 - 60/300) * 0.2
+    latency_comp = (1.0 - 60 / 300) * 0.2
     expected = (success_comp + coverage_comp + latency_comp) / 1.0
     assert abs(score - expected) < 0.001
 
 
 def test_compute_entry_score_partial_success():
     result = _make_result(
-        "r1", "p1", "m1", "d1", 1,
+        "r1",
+        "p1",
+        "m1",
+        "d1",
+        1,
         compile_pass=True,
         test_pass=False,
         latency_ms=30000,
@@ -137,14 +145,18 @@ def test_compute_entry_score_partial_success():
 
     assert 0.0 <= score <= 1.0
     success_comp = 0.5 * 0.5
-    latency_comp = (1.0 - 30/300) * 0.2
+    latency_comp = (1.0 - 30 / 300) * 0.2
     expected = (success_comp + latency_comp) / 1.0
     assert abs(score - expected) < 0.001
 
 
 def test_compute_entry_score_no_coverage():
     result = _make_result(
-        "r1", "p1", "m1", "d1", 1,
+        "r1",
+        "p1",
+        "m1",
+        "d1",
+        1,
         compile_pass=True,
         test_pass=True,
         coverage_pct=None,
@@ -153,7 +165,7 @@ def test_compute_entry_score_no_coverage():
     score = _compute_entry_score(result, weights)
 
     success_comp = 1.0 * 0.5
-    latency_comp = (1.0 - 50/300) * 0.2
+    latency_comp = (1.0 - 50 / 300) * 0.2
     expected = (success_comp + latency_comp) / 1.0
     assert abs(score - expected) < 0.001
 
@@ -318,24 +330,29 @@ def test_load_results_from_dir_with_results(tmp_path):
     run_dir = tmp_path / "run_001"
     run_dir.mkdir()
     result_file = run_dir / "result.json"
-    result_file.write_text(json.dumps({
-        "run_id": "run_001",
-        "status": "ok",
-        "latency_ms": 50000,
-        "metrics": {
-            "compile_pass": True,
-            "test_pass": True,
-            "coverage_pct": None,
-            "failure_type": None,
-            "failure_message": None,
-        },
-        "output_path": "/output/run_001",
-        "provider": "anthropic",
-        "model": "claude-3",
-        "dataset_id": "svc1",
-        "trial": 1,
-        "config_snapshot": {},
-    }), encoding="utf-8")
+    result_file.write_text(
+        json.dumps(
+            {
+                "run_id": "run_001",
+                "status": "ok",
+                "latency_ms": 50000,
+                "metrics": {
+                    "compile_pass": True,
+                    "test_pass": True,
+                    "coverage_pct": None,
+                    "failure_type": None,
+                    "failure_message": None,
+                },
+                "output_path": "/output/run_001",
+                "provider": "anthropic",
+                "model": "claude-3",
+                "dataset_id": "svc1",
+                "trial": 1,
+                "config_snapshot": {},
+            }
+        ),
+        encoding="utf-8",
+    )
 
     results = load_results_from_dir(tmp_path)
 
@@ -416,7 +433,10 @@ def test_collect_provenance_records_git_success(monkeypatch, tmp_path):
     )
 
     monkeypatch.setattr("benchmark.reporter._resolve_repo_root", lambda _: project_root)
-    monkeypatch.setattr("benchmark.reporter._git_value", lambda _root, args: "main" if args[-1] == "HEAD" else "feature")
+    monkeypatch.setattr(
+        "benchmark.reporter._git_value",
+        lambda _root, args: "main" if args[-1] == "HEAD" else "feature",
+    )
     monkeypatch.setattr("benchmark.reporter._git_is_dirty", lambda _root: False)
 
     records = collect_provenance_records(manifest)

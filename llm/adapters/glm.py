@@ -8,6 +8,7 @@ from __future__ import annotations
 
 try:
     import zhipuai
+
     GLM_AVAILABLE = True
 except ImportError:
     GLM_AVAILABLE = False

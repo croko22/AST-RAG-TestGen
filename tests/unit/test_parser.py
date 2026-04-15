@@ -8,7 +8,6 @@ from core import JavaParser, extract_dependencies_from_file
 
 
 class TestJavaParser:
-
     def test_parse_simple_class(self, sample_java_file):
         """Test parsing a simple Java class."""
         parser = JavaParser()
@@ -46,12 +45,15 @@ class TestJavaParser:
         with pytest.raises(FileNotFoundError):
             parser.parse_file("/nonexistent/Path.java")
 
-    @pytest.mark.parametrize("code,expected", [
-        ("public void test() {}", "public"),
-        ("private void test() {}", "private"),
-        ("protected void test() {}", "protected"),
-        ("void test() {}", "package-private"),
-    ])
+    @pytest.mark.parametrize(
+        "code,expected",
+        [
+            ("public void test() {}", "public"),
+            ("private void test() {}", "private"),
+            ("protected void test() {}", "protected"),
+            ("void test() {}", "package-private"),
+        ],
+    )
     def test_visibility_extraction(self, code, expected, tmp_path):
         """Test visibility modifier extraction with different modifiers."""
         file = tmp_path / "Test.java"

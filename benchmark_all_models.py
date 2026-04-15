@@ -12,7 +12,6 @@ MODELS = [
     {"provider": "nvidia", "model": "nvidia/llama-3.1-nemotron-70b-instruct"},
     {"provider": "nvidia", "model": "mistralai/mixtral-8x22b-instruct"},
     {"provider": "nvidia", "model": "google/gemma-2-27b-it"},
-
     # OpenRouter models
     {"provider": "openrouter", "model": "qwen/qwen-2.5-72b-instruct"},
     {"provider": "openrouter", "model": "deepseek/deepseek-chat"},
@@ -28,18 +27,18 @@ BASE_MANIFEST = {
         {
             "id": "commons-cli-helpformatter-createpadding",
             "java_file": "commons-cli/src/main/java/org/apache/commons/cli/HelpFormatter.java",
-            "expected_test_path": "commons-cli/src/test/java/org/apache/commons/cli/HelpFormatterTest.java"
+            "expected_test_path": "commons-cli/src/test/java/org/apache/commons/cli/HelpFormatterTest.java",
         },
         {
             "id": "commons-cli-helpformatter-printhelp",
             "java_file": "commons-cli/src/main/java/org/apache/commons/cli/HelpFormatter.java",
-            "expected_test_path": "commons-cli/src/test/java/org/apache/commons/cli/HelpFormatterTest.java"
+            "expected_test_path": "commons-cli/src/test/java/org/apache/commons/cli/HelpFormatterTest.java",
         },
         {
             "id": "commons-cli-options-create",
             "java_file": "commons-cli/src/main/java/org/apache/commons/cli/Options.java",
-            "expected_test_path": "commons-cli/src/test/java/org/apache/commons/cli/OptionsTest.java"
-        }
+            "expected_test_path": "commons-cli/src/test/java/org/apache/commons/cli/OptionsTest.java",
+        },
     ],
     "run": {
         "trials": 3,
@@ -47,47 +46,37 @@ BASE_MANIFEST = {
         "max_dependencies": 5,
         "timeout_seconds": 300,
         "retry_count": 0,
-        "concurrency": 1
+        "concurrency": 1,
     },
     "evaluation": {
         "compile_cmd": "cd commons-cli && mvn test-compile -q -Dmaven.compiler.source=1.8 -Dmaven.compiler.target=1.8",
         "test_cmd": "cd commons-cli && mvn test -q -Dmaven.compiler.source=1.8 -Dmaven.compiler.target=1.8",
-        "coverage_cmd": "cd commons-cli && mvn test -Dcoverage=true -Dmaven.compiler.source=1.8 -Dmaven.compiler.target=1.8"
+        "coverage_cmd": "cd commons-cli && mvn test -Dcoverage=true -Dmaven.compiler.source=1.8 -Dmaven.compiler.target=1.8",
     },
-    "scoring": {
-        "weights": {
-            "success": 0.5,
-            "coverage": 0.3,
-            "latency": 0.2
-        }
-    },
+    "scoring": {"weights": {"success": 0.5, "coverage": 0.3, "latency": 0.2}},
     "toolchain_versions": {
         "python_version": "3.12.0",
         "java_version": "openjdk 17.0.2",
         "maven_version": "Apache Maven 3.9.5",
-        "ast_rag_version": "1.0.0"
-    }
+        "ast_rag_version": "1.0.0",
+    },
 }
 
 
 def create_manifest(provider: str, model: str, output_path: Path) -> None:
     """Create a manifest for a specific model."""
     manifest = BASE_MANIFEST.copy()
-    manifest["matrix"] = {
-        "providers": [
-            {"name": provider, "model": model}
-        ]
-    }
+    manifest["matrix"] = {"providers": [{"name": provider, "model": model}]}
     output_path.write_text(json.dumps(manifest, indent=2), encoding="utf-8")
     print(f"Created manifest: {output_path}")
 
 
 def run_benchmark(manifest_path: Path, output_dir: Path) -> dict:
     """Run benchmark and return results."""
-    print(f"\n{'='*60}")
+    print(f"\n{'=' * 60}")
     print(f"Running benchmark: {manifest_path.name}")
     print(f"Output: {output_dir}")
-    print(f"{'='*60}\n")
+    print(f"{'=' * 60}\n")
 
     try:
         # Import benchmark modules
@@ -122,7 +111,7 @@ def run_benchmark(manifest_path: Path, output_dir: Path) -> dict:
         print("✓ Benchmark completed successfully")
         print(f"  Total runs: {len(results)}")
         passed = sum(1 for r in results if r.metrics.compile_pass)
-        print(f"  Compile pass: {passed}/{len(results)} ({passed/len(results)*100:.1f}%)")
+        print(f"  Compile pass: {passed}/{len(results)} ({passed / len(results) * 100:.1f}%)")
 
         return {
             "status": "success",
@@ -146,6 +135,7 @@ def run_benchmark(manifest_path: Path, output_dir: Path) -> dict:
     except Exception as e:
         print(f"✗ Benchmark failed with exception: {e}")
         import traceback
+
         traceback.print_exc()
         return {"status": "error", "error": str(e)}
 
@@ -165,9 +155,9 @@ def main():
         provider = model_config["provider"]
         model = model_config["model"]
 
-        print(f"\n{'#'*60}")
+        print(f"\n{'#' * 60}")
         print(f"# Model {i}/{len(MODELS)}: {provider}/{model}")
-        print(f"{'#'*60}")
+        print(f"{'#' * 60}")
 
         # Create manifest
         safe_model_name = model.replace("/", "_").replace(":", "_")
@@ -185,9 +175,9 @@ def main():
         summary_path.write_text(json.dumps(all_results, indent=2), encoding="utf-8")
 
     # Print final summary
-    print(f"\n{'='*60}")
+    print(f"\n{'=' * 60}")
     print("FINAL SUMMARY")
-    print(f"{'='*60}\n")
+    print(f"{'=' * 60}\n")
 
     for model_key, result in all_results.items():
         status = result.get("status", "unknown")
@@ -197,7 +187,7 @@ def main():
             results_list = result["results"]
             total = len(results_list)
             passed = sum(1 for r in results_list if r.get("metrics", {}).get("compile_pass", False))
-            print(f"  Compile pass: {passed}/{total} ({passed/total*100:.1f}%)")
+            print(f"  Compile pass: {passed}/{total} ({passed / total * 100:.1f}%)")
 
     print(f"\nFull results saved to: {results_dir / 'summary.json'}")
 

@@ -1,6 +1,5 @@
 """Pytest configuration and shared fixtures."""
 
-
 import pytest
 
 # Try to import core modules, but don't fail if tree-sitter is not installed
@@ -52,7 +51,9 @@ public class Service {
     }
 }
 """)
-    (src / "Repository.java").write_text("package com.example; public interface Repository { String findAll(); }")
+    (src / "Repository.java").write_text(
+        "package com.example; public interface Repository { String findAll(); }"
+    )
 
     return str(tmp_path)
 
@@ -81,7 +82,7 @@ def llm_config():
     return LLMConfig(
         provider="anthropic",  # Use mock in actual tests
         model="test-model",
-        api_key="test-key"
+        api_key="test-key",
     )
 
 

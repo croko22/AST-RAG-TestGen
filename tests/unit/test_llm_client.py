@@ -8,7 +8,6 @@ from llm import LLMClient, LLMConfig, get_available_providers, get_default_model
 
 
 class TestLLMConfig:
-
     def test_default_values(self):
         """Test default configuration values."""
         config = LLMConfig()
@@ -20,11 +19,7 @@ class TestLLMConfig:
 
     def test_custom_values(self):
         """Test custom configuration."""
-        config = LLMConfig(
-            provider="openai",
-            model="gpt-4",
-            temperature=0.7
-        )
+        config = LLMConfig(provider="openai", model="gpt-4", temperature=0.7)
         assert config.provider == "openai"
         assert config.model == "gpt-4"
         assert config.temperature == 0.7
@@ -37,47 +32,46 @@ class TestLLMConfig:
 
 
 class TestLLMClient:
-
     def test_init_anthropic_provider(self):
         """Test initialization with Anthropic provider."""
         mock_client = Mock()
-        with patch('llm.client.LLMClient._init_anthropic') as mock_init:
-            mock_init.side_effect = lambda: setattr(LLMClient, '_client_mock', mock_client)
+        with patch("llm.client.LLMClient._init_anthropic") as mock_init:
+            mock_init.side_effect = lambda: setattr(LLMClient, "_client_mock", mock_client)
             config = LLMConfig(provider="anthropic", api_key="test-key")
             LLMClient(config)
             mock_init.assert_called_once()
 
     def test_init_openai_provider(self):
         """Test initialization with OpenAI provider."""
-        with patch('llm.client.LLMClient._init_openai') as mock_init:
+        with patch("llm.client.LLMClient._init_openai") as mock_init:
             config = LLMConfig(provider="openai", api_key="test-key")
             LLMClient(config)
             mock_init.assert_called_once()
 
     def test_init_glm_provider(self):
         """Test initialization with GLM provider."""
-        with patch('llm.client.LLMClient._init_glm') as mock_init:
+        with patch("llm.client.LLMClient._init_glm") as mock_init:
             config = LLMConfig(provider="glm", api_key="test-key")
             LLMClient(config)
             mock_init.assert_called_once()
 
     def test_init_gemini_provider(self):
         """Test initialization with Gemini provider."""
-        with patch('llm.client.LLMClient._init_gemini') as mock_init:
+        with patch("llm.client.LLMClient._init_gemini") as mock_init:
             config = LLMConfig(provider="gemini", api_key="test-key")
             LLMClient(config)
             mock_init.assert_called_once()
 
     def test_init_openrouter_provider(self):
         """Test initialization with OpenRouter provider."""
-        with patch('llm.client.LLMClient._init_openrouter') as mock_init:
+        with patch("llm.client.LLMClient._init_openrouter") as mock_init:
             config = LLMConfig(provider="openrouter", api_key="test-key")
             LLMClient(config)
             mock_init.assert_called_once()
 
     def test_init_nvidia_provider(self):
         """Test initialization with NVIDIA provider."""
-        with patch('llm.client.LLMClient._init_nvidia') as mock_init:
+        with patch("llm.client.LLMClient._init_nvidia") as mock_init:
             config = LLMConfig(provider="nvidia", api_key="test-key")
             LLMClient(config)
             mock_init.assert_called_once()
@@ -90,7 +84,7 @@ class TestLLMClient:
 
     def test_build_system_prompt(self):
         """Test system prompt generation."""
-        with patch('llm.client.LLMClient._init_anthropic'):
+        with patch("llm.client.LLMClient._init_anthropic"):
             client = LLMClient(LLMConfig(provider="anthropic", api_key="test-key"))
             prompt = client._build_system_prompt()
 
@@ -100,7 +94,7 @@ class TestLLMClient:
 
     def test_build_user_prompt_structure(self):
         """Test user prompt has correct structure."""
-        with patch('llm.client.LLMClient._init_anthropic'):
+        with patch("llm.client.LLMClient._init_anthropic"):
             client = LLMClient(LLMConfig(provider="anthropic", api_key="test-key"))
             code = "public class Test {}"
             context = "// Context"
@@ -113,7 +107,7 @@ class TestLLMClient:
 
     def test_build_user_prompt_rules(self):
         """Test that generation rules are in prompt."""
-        with patch('llm.client.LLMClient._init_anthropic'):
+        with patch("llm.client.LLMClient._init_anthropic"):
             client = LLMClient(LLMConfig(provider="anthropic", api_key="test-key"))
             prompt = client._build_user_prompt("code", "context")
 
@@ -122,7 +116,7 @@ class TestLLMClient:
             assert "@Mock" in prompt
             assert "NO uses aserciones genéricas" in prompt
 
-    @patch('llm.client.LLMClient._init_anthropic')
+    @patch("llm.client.LLMClient._init_anthropic")
     def test_generate_test_uses_config(self, mock_init):
         """Test that generate_test uses config values."""
         mock_client = Mock()
@@ -135,7 +129,7 @@ class TestLLMClient:
             model="test-model",
             temperature=0.5,
             max_tokens=1000,
-            api_key="test-key"
+            api_key="test-key",
         )
         client = LLMClient(config)
         client._client = mock_client
@@ -150,7 +144,6 @@ class TestLLMClient:
 
 
 class TestUtilityFunctions:
-
     def test_get_available_providers(self):
         """Test that all expected providers are available."""
         providers = get_available_providers()
@@ -182,7 +175,7 @@ class TestUtilityFunctions:
         mock_response.choices = [Mock(message=Mock(content="public class Test {}"))]
         mock_client.chat.completions.create.return_value = mock_response
 
-        with patch('llm.client.LLMClient._init_openai'):
+        with patch("llm.client.LLMClient._init_openai"):
             config = LLMConfig(provider="openai", model="gpt-4", api_key="test-key")
             client = LLMClient(config)
             client._client = mock_client
@@ -196,7 +189,7 @@ class TestUtilityFunctions:
         mock_response.choices = [Mock(message=Mock(content="test output"))]
         mock_client.chat.completions.create.return_value = mock_response
 
-        with patch('llm.client.LLMClient._init_glm'):
+        with patch("llm.client.LLMClient._init_glm"):
             config = LLMConfig(provider="glm", api_key="test-key")
             client = LLMClient(config)
             client._client = mock_client
@@ -214,7 +207,7 @@ class TestUtilityFunctions:
         mock_client = Mock()
         mock_client.GenerativeModel.return_value = mock_model
 
-        with patch('llm.client.LLMClient._init_gemini'):
+        with patch("llm.client.LLMClient._init_gemini"):
             config = LLMConfig(provider="gemini", api_key="test-key")
             client = LLMClient(config)
             client._client = mock_client
@@ -228,7 +221,7 @@ class TestUtilityFunctions:
         mock_response.choices = [Mock(message=Mock(content="nvidia output"))]
         mock_client.chat.completions.create.return_value = mock_response
 
-        with patch('llm.client.LLMClient._init_nvidia'):
+        with patch("llm.client.LLMClient._init_nvidia"):
             config = LLMConfig(provider="nvidia", api_key="test-key")
             client = LLMClient(config)
             client._client = mock_client
@@ -238,9 +231,7 @@ class TestUtilityFunctions:
     def test_config_base_url(self):
         """Test LLMConfig with custom base_url."""
         config = LLMConfig(
-            provider="openrouter",
-            api_key="test-key",
-            base_url="https://custom.api/v1"
+            provider="openrouter", api_key="test-key", base_url="https://custom.api/v1"
         )
         assert config.base_url == "https://custom.api/v1"
 

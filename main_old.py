@@ -23,6 +23,7 @@ from typing import cast
 # Configuration management
 try:
     from config import get_config
+
     CONFIG_AVAILABLE = True
 except ImportError:
     CONFIG_AVAILABLE = False
@@ -33,6 +34,7 @@ try:
     from rich.progress import BarColumn, Progress, SpinnerColumn, TextColumn, TimeRemainingColumn
     from rich.syntax import Syntax
     from rich.text import Text
+
     RICH_AVAILABLE = True
 except ImportError:
     RICH_AVAILABLE = False
@@ -42,6 +44,7 @@ except ImportError:
 try:
     import typer
     from typer import Option as Opt
+
     TYPER_AVAILABLE = True
 except ImportError:
     TYPER_AVAILABLE = False
@@ -60,7 +63,11 @@ def _ensure_llm_symbols() -> None:
     """Lazily populate main-module LLM symbols if available."""
     global LLMClient, LLMConfig, get_available_providers, get_default_model
 
-    if LLMConfig is not None and get_available_providers is not None and get_default_model is not None:
+    if (
+        LLMConfig is not None
+        and get_available_providers is not None
+        and get_default_model is not None
+    ):
         return
 
     from llm import client as llm_client_module
@@ -284,7 +291,9 @@ def run_benchmark_mode(manifest_path: str, output_dir: str, dry_run: bool = Fals
 
     preflight_findings = validate_manifest_preflight(manifest)
     preflight_errors = [finding for finding in preflight_findings if finding.severity == "error"]
-    preflight_warnings = [finding for finding in preflight_findings if finding.severity == "warning"]
+    preflight_warnings = [
+        finding for finding in preflight_findings if finding.severity == "warning"
+    ]
 
     if preflight_warnings:
         print_info("\n⚠️ Preflight warnings:")
@@ -590,10 +599,19 @@ if TYPER_AVAILABLE and typer is not None:
     def generate(
         java_file: str = typer.Argument(..., help="Path to the Java file to generate tests for"),
         project_path: str = typer.Argument(..., help="Root path of the Java project"),
-        provider: str = Opt(default_provider, "--provider", "-p", help="LLM provider (anthropic, openai, glm, gemini, nvidia, openrouter)"),
+        provider: str = Opt(
+            default_provider,
+            "--provider",
+            "-p",
+            help="LLM provider (anthropic, openai, glm, gemini, nvidia, openrouter)",
+        ),
         model: str = Opt(default_model, "--model", "-m", help="LLM model to use"),
-        output: str = Opt(default_output, "--output", "-o", help="Output directory for generated tests"),
-        max_deps: int = Opt(default_max_deps, "--max-deps", "-d", help="Maximum number of dependencies to include"),
+        output: str = Opt(
+            default_output, "--output", "-o", help="Output directory for generated tests"
+        ),
+        max_deps: int = Opt(
+            default_max_deps, "--max-deps", "-d", help="Maximum number of dependencies to include"
+        ),
         print_code: bool = Opt(False, "--print", help="Print the generated test to stdout"),
     ) -> None:
         """Generate a unit test for a Java file."""
@@ -626,7 +644,12 @@ if TYPER_AVAILABLE and typer is not None:
     @app.command()
     def benchmark(
         manifest: str = typer.Argument(..., help="Path to benchmark manifest (JSON or TOML)"),
-        output: str = Opt(default_benchmark_output, "--output", "-o", help="Output directory for benchmark results"),
+        output: str = Opt(
+            default_benchmark_output,
+            "--output",
+            "-o",
+            help="Output directory for benchmark results",
+        ),
         dry_run: bool = Opt(False, "--dry-run", help="Run benchmark without actual generation"),
     ) -> None:
         """Run benchmarks using a manifest file."""

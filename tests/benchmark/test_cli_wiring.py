@@ -24,10 +24,14 @@ class TestBenchmarkModeDetection:
     def test_benchmark_manifest_with_custom_output(self):
         """Custom output directory should be accepted."""
         parser = build_arg_parser()
-        args = parser.parse_args([
-            "--benchmark-manifest", "bench.yaml",
-            "--benchmark-output", "./my_results",
-        ])
+        args = parser.parse_args(
+            [
+                "--benchmark-manifest",
+                "bench.yaml",
+                "--benchmark-output",
+                "./my_results",
+            ]
+        )
 
         assert args.benchmark_manifest == "bench.yaml"
         assert args.benchmark_output == "./my_results"
@@ -35,10 +39,13 @@ class TestBenchmarkModeDetection:
     def test_benchmark_dry_run_flag(self):
         """--benchmark-dry-run should be accepted."""
         parser = build_arg_parser()
-        args = parser.parse_args([
-            "--benchmark-manifest", "bench.yaml",
-            "--benchmark-dry-run",
-        ])
+        args = parser.parse_args(
+            [
+                "--benchmark-manifest",
+                "bench.yaml",
+                "--benchmark-dry-run",
+            ]
+        )
 
         assert args.benchmark_dry_run is True
 
@@ -262,8 +269,20 @@ class TestRunBenchmarkMode:
         mock_plan.return_value = [MagicMock(), MagicMock()]
 
         # execute_runs is called once per plan when rich is available (for progress bar)
-        mock_result1 = MagicMock(status="ok", latency_ms=1000, provider="anthropic", model="claude-3-5-sonnet-20241022", metrics=MagicMock(coverage_pct=None))
-        mock_result2 = MagicMock(status="ok", latency_ms=2000, provider="anthropic", model="claude-3-5-sonnet-20241022", metrics=MagicMock(coverage_pct=None))
+        mock_result1 = MagicMock(
+            status="ok",
+            latency_ms=1000,
+            provider="anthropic",
+            model="claude-3-5-sonnet-20241022",
+            metrics=MagicMock(coverage_pct=None),
+        )
+        mock_result2 = MagicMock(
+            status="ok",
+            latency_ms=2000,
+            provider="anthropic",
+            model="claude-3-5-sonnet-20241022",
+            metrics=MagicMock(coverage_pct=None),
+        )
         mock_execute.side_effect = [[mock_result1], [mock_result2]]
 
         mock_report.return_value = MagicMock(
@@ -325,10 +344,14 @@ class TestArgParserExamples:
     def test_example_benchmark_command_parses(self):
         """The documented benchmark example should parse."""
         parser = build_arg_parser()
-        args = parser.parse_args([
-            "--benchmark-manifest", "benchmark.yaml",
-            "--benchmark-output", "./benchmark_results",
-        ])
+        args = parser.parse_args(
+            [
+                "--benchmark-manifest",
+                "benchmark.yaml",
+                "--benchmark-output",
+                "./benchmark_results",
+            ]
+        )
 
         assert args.benchmark_manifest == "benchmark.yaml"
         assert args.benchmark_output == "./benchmark_results"
@@ -341,10 +364,15 @@ class TestArgParserExamples:
         assert args.java_file == "service.java"
         assert args.project_path == "project/"
 
-        args = parser.parse_args([
-            "service.java", "project/",
-            "--provider", "openai",
-            "--model", "gpt-4-turbo",
-        ])
+        args = parser.parse_args(
+            [
+                "service.java",
+                "project/",
+                "--provider",
+                "openai",
+                "--model",
+                "gpt-4-turbo",
+            ]
+        )
         assert args.provider == "openai"
         assert args.model == "gpt-4-turbo"

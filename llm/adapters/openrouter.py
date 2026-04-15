@@ -8,6 +8,7 @@ from __future__ import annotations
 
 try:
     import openai
+
     OPENROUTER_AVAILABLE = True
 except ImportError:
     OPENROUTER_AVAILABLE = False

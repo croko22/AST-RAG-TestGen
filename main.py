@@ -17,6 +17,7 @@ import sys
 # Try to use modern CLI first, fall back to legacy
 try:
     from cli import run_modern_cli
+
     MODERN_CLI_AVAILABLE = True
 except ImportError:
     MODERN_CLI_AVAILABLE = False

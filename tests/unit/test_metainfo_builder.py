@@ -94,7 +94,9 @@ def test_builder_includes_tests_when_enabled_and_updates_package(tmp_path):
 
     parser_map = {
         str(main_file): _parsed(name="AService", package="com.example", file_path=str(main_file)),
-        str(test_file): _parsed(name="BServiceTest", package="com.example", file_path=str(test_file)),
+        str(test_file): _parsed(
+            name="BServiceTest", package="com.example", file_path=str(test_file)
+        ),
     }
 
     db = MetainfoDatabase(str(tmp_path / "metainfo.db"))

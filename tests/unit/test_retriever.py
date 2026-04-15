@@ -6,7 +6,6 @@ from core import DependencyResolver, JavaFileRetriever
 
 
 class TestJavaFileRetriever:
-
     def test_initialization(self, mock_project_root):
         """Test retriever initializes with project root."""
         retriever = JavaFileRetriever(mock_project_root)
@@ -60,7 +59,6 @@ class TestJavaFileRetriever:
 
 
 class TestDependencyResolver:
-
     def test_initialization(self, retriever):
         """Test resolver initialization."""
         resolver = DependencyResolver(retriever)

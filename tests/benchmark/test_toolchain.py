@@ -43,12 +43,8 @@ def test_capture_toolchain_versions_returns_valid_structure():
 
 
 def test_create_manifest_with_toolchain(tmp_path):
-    dataset = [
-        {"id": "test-service", "java_file": "src/main/java/Test.java"}
-    ]
-    matrix = {
-        "providers": [{"name": "anthropic", "model": "claude-3-5-sonnet-20241022"}]
-    }
+    dataset = [{"id": "test-service", "java_file": "src/main/java/Test.java"}]
+    matrix = {"providers": [{"name": "anthropic", "model": "claude-3-5-sonnet-20241022"}]}
     evaluation = {
         "compile_cmd": "mvn compile",
         "test_cmd": "mvn test",

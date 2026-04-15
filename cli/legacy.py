@@ -6,7 +6,6 @@ This module provides the legacy CLI interface for backward compatibility.
 
 from __future__ import annotations
 
-import sys
 from pathlib import Path
 
 from cli.parser import build_arg_parser

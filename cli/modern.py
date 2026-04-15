@@ -14,6 +14,7 @@ from typing import cast
 try:
     import typer
     from typer import Option as Opt
+
     TYPER_AVAILABLE = True
 except ImportError:
     TYPER_AVAILABLE = False
@@ -42,10 +43,19 @@ def create_modern_cli():
     def generate(
         java_file: str = typer.Argument(..., help="Path to the Java file to generate tests for"),
         project_path: str = typer.Argument(..., help="Root path of the Java project"),
-        provider: str = Opt("anthropic", "--provider", "-p", help="LLM provider (anthropic, openai, glm, gemini, nvidia, openrouter)"),
+        provider: str = Opt(
+            "anthropic",
+            "--provider",
+            "-p",
+            help="LLM provider (anthropic, openai, glm, gemini, nvidia, openrouter)",
+        ),
         model: str = Opt("claude-3-5-sonnet-20241022", "--model", "-m", help="LLM model to use"),
-        output: str = Opt("./tests_generados", "--output", "-o", help="Output directory for generated tests"),
-        max_deps: int = Opt(10, "--max-deps", "-d", help="Maximum number of dependencies to include"),
+        output: str = Opt(
+            "./tests_generados", "--output", "-o", help="Output directory for generated tests"
+        ),
+        max_deps: int = Opt(
+            10, "--max-deps", "-d", help="Maximum number of dependencies to include"
+        ),
         print_code: bool = Opt(False, "--print", help="Print the generated test to stdout"),
     ) -> None:
         """Generate a unit test for a Java file."""
@@ -75,7 +85,9 @@ def create_modern_cli():
     @app.command()
     def benchmark(
         manifest: str = typer.Argument(..., help="Path to benchmark manifest (JSON or TOML)"),
-        output: str = Opt("./benchmark_results", "--output", "-o", help="Output directory for benchmark results"),
+        output: str = Opt(
+            "./benchmark_results", "--output", "-o", help="Output directory for benchmark results"
+        ),
         dry_run: bool = Opt(False, "--dry-run", help="Run benchmark without actual generation"),
     ) -> None:
         """Run benchmarks using a manifest file."""
@@ -96,9 +108,7 @@ def create_modern_cli():
             print("LLM symbols not available")
             return
 
-        available_providers = cast(
-            "Callable[[], list[str]]", get_available_providers
-        )()
+        available_providers = cast("Callable[[], list[str]]", get_available_providers)()
 
         output_manager = get_output()
 

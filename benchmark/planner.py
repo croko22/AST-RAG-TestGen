@@ -43,9 +43,7 @@ def plan_runs(manifest: BenchmarkManifest) -> list[RunPlan]:
         List of RunPlan entries in deterministic order
     """
     sorted_datasets = sorted(manifest.dataset, key=lambda d: d.id)
-    sorted_providers = sorted(
-        manifest.matrix.providers, key=lambda p: (p.name, p.model)
-    )
+    sorted_providers = sorted(manifest.matrix.providers, key=lambda p: (p.name, p.model))
 
     run_config = manifest.run
     project_root = manifest.project_root

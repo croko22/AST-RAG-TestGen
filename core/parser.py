@@ -264,10 +264,7 @@ class JavaParser:
                                         "interface_body",
                                     ):
                                         for inner_member in inner_body.children:
-                                            if (
-                                                inner_member.type
-                                                == "method_declaration"
-                                            ):
+                                            if inner_member.type == "method_declaration":
                                                 method = self._parse_method_signature(
                                                     inner_member, is_in_inner_class=True
                                                 )
@@ -473,11 +470,7 @@ def filter_reftest_methods(methods: list[MethodSignature]) -> list[MethodSignatu
         Filtered list of MethodSignature objects meeting RefTest criteria.
     """
     return [
-        m
-        for m in methods
-        if not m.is_private
-        and m.effective_loc > 1
-        and not m.is_in_inner_class
+        m for m in methods if not m.is_private and m.effective_loc > 1 and not m.is_in_inner_class
     ]
 
 

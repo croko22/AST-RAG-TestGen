@@ -111,11 +111,15 @@ def test_load_manifest_wrong_type_reports_field_path(tmp_path):
 def test_validate_manifest_preflight_hard_fail_provider_credential_missing(monkeypatch):
     manifest = BenchmarkManifest.model_validate(_base_manifest())
     monkeypatch.delenv("ANTHROPIC_API_KEY", raising=False)
-    monkeypatch.setattr("shutil.which", lambda tool: "/usr/bin/mock" if tool in {"java", "mvn"} else None)
+    monkeypatch.setattr(
+        "shutil.which", lambda tool: "/usr/bin/mock" if tool in {"java", "mvn"} else None
+    )
 
     findings = validate_manifest_preflight(manifest)
 
-    assert any(f.code == "MANIFEST_PROVIDER_CREDENTIAL_MISSING" and f.severity == "error" for f in findings)
+    assert any(
+        f.code == "MANIFEST_PROVIDER_CREDENTIAL_MISSING" and f.severity == "error" for f in findings
+    )
 
 
 def test_validate_manifest_preflight_warn_only_expected_test_parent_missing(monkeypatch, tmp_path):
@@ -130,7 +134,9 @@ def test_validate_manifest_preflight_warn_only_expected_test_parent_missing(monk
     manifest = load_manifest_from_dict(tmp_path, manifest_data)
 
     monkeypatch.setenv("ANTHROPIC_API_KEY", "test-key")
-    monkeypatch.setattr("shutil.which", lambda tool: "/usr/bin/mock" if tool in {"java", "mvn"} else None)
+    monkeypatch.setattr(
+        "shutil.which", lambda tool: "/usr/bin/mock" if tool in {"java", "mvn"} else None
+    )
 
     findings = validate_manifest_preflight(manifest)
 
@@ -144,4 +150,3 @@ def load_manifest_from_dict(tmp_path, data):
     path = tmp_path / "manifest.json"
     path.write_text(json.dumps(data), encoding="utf-8")
     return load_manifest(path)
-

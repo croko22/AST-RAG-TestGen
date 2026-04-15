@@ -60,11 +60,15 @@ def build_report(
     provenance_path = output_path / "provenance.json"
     provenance_path.write_text(json.dumps(provenance_data, indent=2), encoding="utf-8")
 
-    results_data = _build_results_json(results, manifest, findings, provenance_path, provenance_records)
+    results_data = _build_results_json(
+        results, manifest, findings, provenance_path, provenance_records
+    )
     results_path = output_path / "results.json"
     results_path.write_text(json.dumps(results_data, indent=2), encoding="utf-8")
 
-    summary_data = _build_summary_json(results, manifest, findings, provenance_path, provenance_records)
+    summary_data = _build_summary_json(
+        results, manifest, findings, provenance_path, provenance_records
+    )
     summary_path = output_path / "summary.json"
     summary_path.write_text(json.dumps(summary_data, indent=2), encoding="utf-8")
 
@@ -163,8 +167,12 @@ def _compute_diagnostics(
     """Compute campaign diagnostics for fidelity hardening surfacing."""
     return {
         "preflight_warning_count": sum(1 for f in preflight_findings if f.severity == "warning"),
-        "coverage_fallback_count": sum(1 for r in results if r.metrics.coverage_source == "stdout_regex"),
-        "coverage_unavailable_count": sum(1 for r in results if r.metrics.coverage_reason == "coverage_unavailable"),
+        "coverage_fallback_count": sum(
+            1 for r in results if r.metrics.coverage_source == "stdout_regex"
+        ),
+        "coverage_unavailable_count": sum(
+            1 for r in results if r.metrics.coverage_reason == "coverage_unavailable"
+        ),
     }
 
 
@@ -390,18 +398,19 @@ def _compute_rankings(
         avg_score = sum(scores) / len(scores)
         run_count = len(scores)
         success_count = sum(
-            1 for r in results
-            if r.provider == provider and r.model == model and r.status == "ok"
+            1 for r in results if r.provider == provider and r.model == model and r.status == "ok"
         )
 
-        ranked_entries.append({
-            "provider": provider,
-            "model": model,
-            "avg_score": round(avg_score, 4),
-            "run_count": run_count,
-            "success_count": success_count,
-            "success_rate": success_count / run_count if run_count > 0 else 0.0,
-        })
+        ranked_entries.append(
+            {
+                "provider": provider,
+                "model": model,
+                "avg_score": round(avg_score, 4),
+                "run_count": run_count,
+                "success_count": success_count,
+                "success_rate": success_count / run_count if run_count > 0 else 0.0,
+            }
+        )
 
     ranked_entries.sort(key=lambda e: (-e["avg_score"], -e["success_rate"]))
 
@@ -477,23 +486,27 @@ def _build_markdown_report(
     ]
 
     stats = summary.get("statistics", {})
-    lines.extend([
-        f"- **Total Runs:** {stats.get('total_runs', 0)}",
-        f"- **Successful:** {stats.get('success_count', 0)} ({stats.get('success_rate', 0):.1%})",
-        f"- **Timeouts:** {stats.get('timeout_count', 0)}",
-        f"- **Errors:** {stats.get('error_count', 0)}",
-        f"- **Avg Latency:** {stats.get('avg_latency_ms', 0):,}ms",
-        "",
-    ])
+    lines.extend(
+        [
+            f"- **Total Runs:** {stats.get('total_runs', 0)}",
+            f"- **Successful:** {stats.get('success_count', 0)} ({stats.get('success_rate', 0):.1%})",
+            f"- **Timeouts:** {stats.get('timeout_count', 0)}",
+            f"- **Errors:** {stats.get('error_count', 0)}",
+            f"- **Avg Latency:** {stats.get('avg_latency_ms', 0):,}ms",
+            "",
+        ]
+    )
 
     rankings = summary.get("rankings", [])
     if rankings:
-        lines.extend([
-            "## Rankings",
-            "",
-            "| Rank | Provider | Model | Avg Score | Success Rate | Runs |",
-            "|------|----------|-------|-----------|--------------|------|",
-        ])
+        lines.extend(
+            [
+                "## Rankings",
+                "",
+                "| Rank | Provider | Model | Avg Score | Success Rate | Runs |",
+                "|------|----------|-------|-----------|--------------|------|",
+            ]
+        )
         for entry in rankings:
             lines.append(
                 f"| {entry['rank']} | {entry['provider']} | "
@@ -502,12 +515,14 @@ def _build_markdown_report(
             )
         lines.append("")
 
-    lines.extend([
-        "## Run Details",
-        "",
-        "| Run ID | Provider | Model | Dataset | Status | Latency |",
-        "|--------|----------|-------|---------|--------|---------|",
-    ])
+    lines.extend(
+        [
+            "## Run Details",
+            "",
+            "| Run ID | Provider | Model | Dataset | Status | Latency |",
+            "|--------|----------|-------|---------|--------|---------|",
+        ]
+    )
     for result in results:
         status_emoji = {
             "ok": "✓",
@@ -660,40 +675,47 @@ def export_thesis_metrics_csv(
 
     with csv_path.open("w", newline="", encoding="utf-8") as f:
         writer = csv.writer(f)
-        writer.writerow([
-            "model",
-            "success_rate",
-            "avg_latency_sec",
-            "coverage_pct",
-            "score",
-        ])
+        writer.writerow(
+            [
+                "model",
+                "success_rate",
+                "avg_latency_sec",
+                "coverage_pct",
+                "score",
+            ]
+        )
 
         for (provider, model), stats in entry_stats.items():
             model_str = f"{provider}/{model}"
             success_rate = (
-                stats["success_count"] / stats["total_count"]
-                if stats["total_count"] > 0 else 0.0
+                stats["success_count"] / stats["total_count"] if stats["total_count"] > 0 else 0.0
             )
             avg_latency_sec = (
                 (stats["latency_sum"] / stats["latency_count"]) / 1000.0
-                if stats["latency_count"] > 0 else 0.0
+                if stats["latency_count"] > 0
+                else 0.0
             )
             coverage_pct = (
                 stats["coverage_sum"] / stats["coverage_count"]
-                if stats["coverage_count"] > 0 else 0.0
+                if stats["coverage_count"] > 0
+                else 0.0
             )
 
-            success_score = stats["success_count"] / stats["total_count"] if stats["total_count"] > 0 else 0.0
+            success_score = (
+                stats["success_count"] / stats["total_count"] if stats["total_count"] > 0 else 0.0
+            )
             coverage_score = coverage_pct / 100.0
             latency_score = 1.0 - min(avg_latency_sec / 300.0, 1.0)
             score = (success_score * 0.5) + (coverage_score * 0.3) + (latency_score * 0.2)
 
-            writer.writerow([
-                model_str,
-                f"{success_rate:.4f}",
-                f"{avg_latency_sec:.2f}",
-                f"{coverage_pct:.2f}",
-                f"{score:.4f}",
-            ])
+            writer.writerow(
+                [
+                    model_str,
+                    f"{success_rate:.4f}",
+                    f"{avg_latency_sec:.2f}",
+                    f"{coverage_pct:.2f}",
+                    f"{score:.4f}",
+                ]
+            )
 
     return csv_path

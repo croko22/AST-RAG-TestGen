@@ -85,6 +85,7 @@ REPOS: list[dict[str, str | None]] = [
 # Helpers
 # ---------------------------------------------------------------------------
 
+
 def sanitize_id(text: str) -> str:
     """Lowercase, replace non-alnum with hyphens, collapse duplicates."""
     text = text.lower()
@@ -135,11 +136,7 @@ def build_expected_test_path(java_file: str, repo_root: Path) -> str:
             and parts[src_idx + 1] == "main"
             and parts[src_idx + 2] == "java"
         ):
-            test_parts = (
-                parts[: src_idx]
-                + ("src", "test", "java")
-                + parts[src_idx + 3 :]
-            )
+            test_parts = parts[:src_idx] + ("src", "test", "java") + parts[src_idx + 3 :]
             test_path = Path(*test_parts)
             # Replace .java suffix with Test.java
             test_path = test_path.with_name(test_path.stem + "Test.java")
@@ -186,9 +183,7 @@ def scan_repo(repo: dict, repo_path: Path, parser: JavaParser) -> list[dict]:
         expected_test = build_expected_test_path(rel_path, repo_path)
 
         for method in eligible:
-            entry_id = sanitize_id(
-                f"{repo['name']}-{parsed.name}-{method.name}"
-            )
+            entry_id = sanitize_id(f"{repo['name']}-{parsed.name}-{method.name}")
             entries.append(
                 {
                     "id": entry_id,
@@ -205,10 +200,9 @@ def scan_repo(repo: dict, repo_path: Path, parser: JavaParser) -> list[dict]:
 # Main
 # ---------------------------------------------------------------------------
 
+
 def main() -> None:
-    ap = argparse.ArgumentParser(
-        description="Gather the RefTest 12-project dataset manifest"
-    )
+    ap = argparse.ArgumentParser(description="Gather the RefTest 12-project dataset manifest")
     ap.add_argument(
         "--repos-dir",
         default=str(_PROJECT_ROOT / "datasets" / "reftest-12"),

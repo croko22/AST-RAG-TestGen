@@ -96,7 +96,9 @@ class TestFullPipeline:
         """Test full pipeline with mocked LLM response."""
         mock_client = Mock()
         mock_response = Mock()
-        mock_response.content = [Mock(text="""
+        mock_response.content = [
+            Mock(
+                text="""
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import org.junit.jupiter.api.Test;
@@ -116,11 +118,13 @@ class UsuarioServiceTest {
         verify(usuarioRepository).save(u);
     }
 }
-""")]
+"""
+            )
+        ]
         mock_client.messages.create.return_value = mock_response
 
-        with patch('llm.client.LLMClient._init_anthropic'):
-            with patch('main.LLMClient') as MockLLMClient:
+        with patch("llm.client.LLMClient._init_anthropic"):
+            with patch("main.LLMClient") as MockLLMClient:
                 mock_instance = Mock()
                 mock_instance.generate_test.return_value = """
 import static org.junit.jupiter.api.Assertions.*;
@@ -148,6 +152,7 @@ class UsuarioServiceTest {
                 import tempfile
 
                 from main import generate_test_for_file
+
                 with tempfile.TemporaryDirectory() as output_dir:
                     test_code = generate_test_for_file(
                         java_file_path=service_file,
@@ -155,14 +160,16 @@ class UsuarioServiceTest {
                         output_dir=output_dir,
                         max_dependencies=5,
                         llm_provider="anthropic",
-                        llm_model="test-model"
+                        llm_model="test-model",
                     )
 
                 assert "UsuarioServiceTest" in test_code
                 assert "import org.junit.jupiter" in test_code
                 assert "verify(usuarioRepository)" in test_code
 
-    def test_dependency_resolution_depth_2_includes_repository(self, service_file, mock_java_project):
+    def test_dependency_resolution_depth_2_includes_repository(
+        self, service_file, mock_java_project
+    ):
         """Test that depth=2 includes repository interface."""
         retriever = JavaFileRetriever(mock_java_project)
         resolver = DependencyResolver(retriever)
@@ -171,9 +178,7 @@ class UsuarioServiceTest {
         dep_names = [dep.name for dep in deps]
 
         # UsuarioRepository should be in dependencies
-        assert "UsuarioRepository" in dep_names or any(
-            "Repository" in name for name in dep_names
-        )
+        assert "UsuarioRepository" in dep_names or any("Repository" in name for name in dep_names)
 
     def test_prompt_builder_limits_dependencies(self, service_file, mock_java_project):
         """Test that max_dependencies parameter works correctly."""
@@ -186,7 +191,8 @@ class UsuarioServiceTest {
 
         # Should truncate - count class names in comments
         import re
-        class_matches = re.findall(r'// (\w+)', context)
+
+        class_matches = re.findall(r"// (\w+)", context)
         # At most 1 actual dependency + possible truncation message
         assert len(class_matches) <= 2
 
@@ -197,8 +203,12 @@ class UsuarioServiceTest {
 
         # Create multiple interconnected files
         (src / "Entity.java").write_text("package com.example; public class Entity {}")
-        (src / "Repository.java").write_text("package com.example; public interface Repository { Entity findById(Long id); }")
-        (src / "Service.java").write_text("package com.example; public class Service { private Repository repo; public Entity get(Long id) { return repo.findById(id); } }")
+        (src / "Repository.java").write_text(
+            "package com.example; public interface Repository { Entity findById(Long id); }"
+        )
+        (src / "Service.java").write_text(
+            "package com.example; public class Service { private Repository repo; public Entity get(Long id) { return repo.findById(id); } }"
+        )
 
         retriever = JavaFileRetriever(str(tmp_path))
         resolver = DependencyResolver(retriever)

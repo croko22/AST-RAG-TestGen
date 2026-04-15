@@ -283,7 +283,9 @@ class MetainfoDatabase:
                 else:
                     conn.commit()
 
-            cursor.execute("CREATE INDEX IF NOT EXISTS idx_methods_legacy_uri ON methods(legacy_uri)")
+            cursor.execute(
+                "CREATE INDEX IF NOT EXISTS idx_methods_legacy_uri ON methods(legacy_uri)"
+            )
             cursor.execute(
                 "CREATE INDEX IF NOT EXISTS idx_methods_class_name_sig ON methods(class_uri, name, signature)"
             )
@@ -335,14 +337,14 @@ class MetainfoDatabase:
         normalized = []
         depth = 0
         for char in compact:
-            if char == '<':
+            if char == "<":
                 depth += 1
                 normalized.append(char)
-            elif char == '>':
+            elif char == ">":
                 depth = max(depth - 1, 0)
                 normalized.append(char)
-            elif char == ',' and depth > 0:
-                normalized.append(',')
+            elif char == "," and depth > 0:
+                normalized.append(",")
             else:
                 normalized.append(char)
         return "".join(normalized)
@@ -414,7 +416,9 @@ class MetainfoDatabase:
     def save_method(self, method_info: MethodInfo, conn: sqlite3.Connection | None = None) -> None:
         """Save or update a method."""
         signature = method_info.signature or self.build_method_signature(method_info.parameters)
-        canonical_uri = self.build_canonical_method_uri(method_info.class_uri, method_info.name, signature)
+        canonical_uri = self.build_canonical_method_uri(
+            method_info.class_uri, method_info.name, signature
+        )
         legacy_uri = method_info.legacy_uri or self.build_legacy_method_uri(
             method_info.class_uri, method_info.name
         )

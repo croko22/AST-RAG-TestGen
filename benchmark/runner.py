@@ -189,6 +189,7 @@ def execute_run(
 
         if eval_config is not None:
             from benchmark.evaluator import evaluate_run
+
             metrics = evaluate_run(run_dir, eval_config, plan.project_root)
             status = "ok" if metrics.failure_type is None else "failed"
         else:

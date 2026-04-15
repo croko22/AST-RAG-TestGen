@@ -11,6 +11,7 @@ import argparse
 # Configuration management
 try:
     from config import get_config
+
     CONFIG_AVAILABLE = True
 except ImportError:
     CONFIG_AVAILABLE = False
@@ -24,6 +25,7 @@ def build_arg_parser() -> argparse.ArgumentParser:
     """
     try:
         from llm import client as llm_client_module
+
         get_available_providers = llm_client_module.get_available_providers
         available_providers = get_available_providers()
     except (ModuleNotFoundError, AttributeError):

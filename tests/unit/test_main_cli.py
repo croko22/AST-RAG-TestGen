@@ -3,8 +3,6 @@
 from argparse import Namespace
 from pathlib import Path
 
-import pytest
-
 import main
 from cli.parser import build_arg_parser
 
@@ -124,7 +122,9 @@ class TestMainCli:
             assert kwargs["enable_reftest_parity"] is True
             return "public class ServiceTest {}"
 
-        monkeypatch.setattr("orchestration.generator.generate_test_for_file", fake_generate_test_for_file)
+        monkeypatch.setattr(
+            "orchestration.generator.generate_test_for_file", fake_generate_test_for_file
+        )
 
         exit_code = main.main()
 
@@ -152,10 +152,13 @@ class TestMainCli:
 
         monkeypatch.setattr("cli.legacy.build_arg_parser", lambda: DummyParser())
         monkeypatch.setattr(Path, "exists", lambda _: True)
+
         def fake_generate_test_for_file(**_):
             raise RuntimeError("boom")
 
-        monkeypatch.setattr("orchestration.generator.generate_test_for_file", fake_generate_test_for_file)
+        monkeypatch.setattr(
+            "orchestration.generator.generate_test_for_file", fake_generate_test_for_file
+        )
 
         exit_code = main.main()
 

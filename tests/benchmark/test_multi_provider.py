@@ -17,9 +17,7 @@ from benchmark.schemas import BenchmarkManifest
 # ---------------------------------------------------------------------------
 # Path constants
 # ---------------------------------------------------------------------------
-CAMPAIGN_DIR = os.path.join(
-    os.path.dirname(__file__), "..", "..", "campaigns", "spring-boot-v1"
-)
+CAMPAIGN_DIR = os.path.join(os.path.dirname(__file__), "..", "..", "campaigns", "spring-boot-v1")
 MANIFEST_MULTI_PATH = os.path.join(CAMPAIGN_DIR, "manifest-multi.json")
 MANIFEST_SINGLE_PATH = os.path.join(CAMPAIGN_DIR, "manifest.json")
 RUN_MULTI_PATH = os.path.join(CAMPAIGN_DIR, "run-multi.sh")
@@ -57,9 +55,7 @@ def run_multi_script() -> str:
 def test_manifest_multi_loads(manifest_multi_data):
     """manifest-multi.json parses as valid JSON and has 5 providers in matrix."""
     providers = manifest_multi_data["matrix"]["providers"]
-    assert len(providers) == 5, (
-        f"Expected 5 providers in matrix, found {len(providers)}"
-    )
+    assert len(providers) == 5, f"Expected 5 providers in matrix, found {len(providers)}"
 
 
 def test_manifest_multi_same_datasets(manifest_multi_data, manifest_single_data):
@@ -67,9 +63,7 @@ def test_manifest_multi_same_datasets(manifest_multi_data, manifest_single_data)
     multi_ids = [entry["id"] for entry in manifest_multi_data["dataset"]]
     single_ids = [entry["id"] for entry in manifest_single_data["dataset"]]
 
-    assert multi_ids == single_ids, (
-        f"Dataset mismatch: multi={multi_ids}, single={single_ids}"
-    )
+    assert multi_ids == single_ids, f"Dataset mismatch: multi={multi_ids}, single={single_ids}"
     assert len(multi_ids) == 9, f"Expected 9 datasets, found {len(multi_ids)}"
 
 
@@ -90,14 +84,11 @@ def test_manifest_multi_valid_schema(manifest_multi_data):
 
 def test_manifest_multi_provider_names(manifest_multi_data):
     """All expected provider names are present in manifest-multi.json."""
-    provider_names = {
-        entry["name"] for entry in manifest_multi_data["matrix"]["providers"]
-    }
+    provider_names = {entry["name"] for entry in manifest_multi_data["matrix"]["providers"]}
     expected = set(EXPECTED_PROVIDERS)
 
     assert provider_names == expected, (
-        f"Provider name mismatch: got {sorted(provider_names)}, "
-        f"expected {sorted(expected)}"
+        f"Provider name mismatch: got {sorted(provider_names)}, expected {sorted(expected)}"
     )
 
 
@@ -116,16 +107,12 @@ def test_run_multi_script_exists():
 def test_run_multi_script_has_all_providers(run_multi_script):
     """run-multi.sh contains entries for all 5 providers."""
     for provider in EXPECTED_PROVIDERS:
-        assert provider in run_multi_script, (
-            f"Provider '{provider}' not found in run-multi.sh"
-        )
+        assert provider in run_multi_script, f"Provider '{provider}' not found in run-multi.sh"
 
 
 def test_run_multi_script_has_dry_run(run_multi_script):
     """run-multi.sh supports the --dry-run flag."""
-    assert "--dry-run" in run_multi_script, (
-        "run-multi.sh does not reference --dry-run"
-    )
+    assert "--dry-run" in run_multi_script, "run-multi.sh does not reference --dry-run"
 
 
 def test_run_multi_script_has_api_key_checks(run_multi_script):
@@ -140,6 +127,5 @@ def test_run_multi_script_has_api_key_checks(run_multi_script):
 
     for provider, env_key in expected_keys.items():
         assert env_key in run_multi_script, (
-            f"API key env var '{env_key}' for provider '{provider}' "
-            f"not found in run-multi.sh"
+            f"API key env var '{env_key}' for provider '{provider}' not found in run-multi.sh"
         )

@@ -77,9 +77,7 @@ def test_plan_runs_sorted_by_dataset_then_provider_then_trial(tmp_path):
     for dataset_id in set(dataset_ids):
         dataset_plans = [p for p in plans if p.dataset_id == dataset_id]
         for provider_name in {"a-provider", "z-provider"}:
-            provider_plans = [
-                p for p in dataset_plans if p.provider == provider_name
-            ]
+            provider_plans = [p for p in dataset_plans if p.provider == provider_name]
             trials = [p.trial for p in provider_plans]
             assert trials == [1, 2]
 

@@ -56,7 +56,9 @@ def run_benchmark_mode(
 
     preflight_findings = validate_manifest_preflight(manifest)
     preflight_errors = [finding for finding in preflight_findings if finding.severity == "error"]
-    preflight_warnings = [finding for finding in preflight_findings if finding.severity == "warning"]
+    preflight_warnings = [
+        finding for finding in preflight_findings if finding.severity == "warning"
+    ]
 
     if preflight_warnings:
         output.print_info("\n⚠️ Preflight warnings:")

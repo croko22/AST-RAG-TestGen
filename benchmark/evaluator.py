@@ -56,7 +56,7 @@ def evaluate_run(
     # Copy test file to the project's test directory
     # Determine the target path based on the package
     test_content = test_file.read_text(encoding="utf-8")
-    package_match = re.search(r'package\s+([\w.]+);', test_content)
+    package_match = re.search(r"package\s+([\w.]+);", test_content)
     if package_match:
         package = package_match.group(1)
         package_path = package.replace(".", "/")
@@ -70,6 +70,7 @@ def evaluate_run(
 
     # Copy the test file
     import shutil
+
     shutil.copy2(test_file, target_file)
 
     compile_result = _execute_command(
@@ -80,7 +81,9 @@ def evaluate_run(
 
     if not compile_result.success:
         failure_type = "compile_failed"
-        failure_message = compile_result.stderr[:500] if compile_result.stderr else "Compilation failed"
+        failure_message = (
+            compile_result.stderr[:500] if compile_result.stderr else "Compilation failed"
+        )
         return EvalMetrics(
             compile_pass=False,
             test_pass=False,

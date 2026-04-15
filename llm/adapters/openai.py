@@ -8,6 +8,7 @@ from __future__ import annotations
 
 try:
     import openai
+
     OPENAI_AVAILABLE = True
 except ImportError:
     OPENAI_AVAILABLE = False

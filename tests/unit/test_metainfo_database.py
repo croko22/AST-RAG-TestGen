@@ -40,7 +40,6 @@ def db(db_path):
 
 
 class TestMetainfoDB:
-
     @staticmethod
     def _seed_class(db, class_uri: str) -> None:
         db.save_class(
@@ -529,8 +528,7 @@ class TestMetainfoDB:
 
         db.save_reference_relationship(ref_rel)
         retrieved = db.get_reference_relationship(
-            "com.example.Service.getData",
-            "com.example.Service.validateData"
+            "com.example.Service.getData", "com.example.Service.validateData"
         )
 
         assert retrieved is not None
@@ -651,7 +649,6 @@ class TestMetainfoDB:
 
 
 class TestClassModel:
-
     def test_class_info_validation(self):
         """Test ClassInfo validation."""
         # Valid class info
@@ -678,7 +675,6 @@ class TestClassModel:
 
 
 class TestMethodModel:
-
     def test_method_info_validation(self):
         """Test MethodInfo validation."""
         # Valid method info
@@ -724,7 +720,6 @@ class TestMethodModel:
 
 
 class TestReferenceRelationshipModel:
-
     def test_reference_relationship_normalizes_phases(self):
         """Primary phase is always included in phases set."""
         rel = ReferenceRelationship(
@@ -762,7 +757,6 @@ class TestReferenceRelationshipModel:
 
 
 class TestReferenceMethodSetModel:
-
     def test_all_methods(self):
         """Test getting all referenced method URIs."""
         ref_set = ReferenceMethodSet(
@@ -808,7 +802,6 @@ class TestReferenceMethodSetModel:
 
 
 class TestScopeGraphModel:
-
     def test_add_and_resolve_scope(self):
         """Test adding scopes and resolving references."""
         graph = ScopeGraph()
