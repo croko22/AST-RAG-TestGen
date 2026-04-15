@@ -9,13 +9,20 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 conda env create -f environment.yml
 conda activate ast-rag-testgen
 
-# Generate test for a Java file
+# Modern CLI (recommended)
+python main.py generate <java_file> <java_project_path> [options]
+python main.py benchmark <manifest> [options]
+python main.py providers
+
+# Legacy CLI (backward compatible)
 python main.py <java_file> <java_project_path> [options]
 
 # Examples:
-python main.py mock-java-project/src/main/java/com/example/demo/service/UsuarioService.java mock-java-project/
-python main.py service.java project/ --provider nvidia --model meta/llama-3.1-405b-instruct
-python main.py service.java project/ --output ./my_tests --max-deps 5
+python main.py generate UsuarioService.java mock-java-project/
+python main.py generate service.java project/ --provider nvidia --model meta/llama-3.1-405b-instruct
+python main.py generate service.java project/ --output ./my_tests --max-deps 5
+python main.py benchmark benchmark.yaml --output ./results
+python main.py providers
 ```
 
 ## Architecture

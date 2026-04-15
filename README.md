@@ -81,155 +81,67 @@ The application will automatically fall back to plain text output.
 
 ## Usage
 
-### Basic Command
+### Modern CLI (Recommended)
+
+AST-RAG TestGen now includes a modern CLI powered by Typer with auto-completion:
 
 ```bash
-python main.py <java_file> <java_project_path> [options]
+# Generate test for a Java file
+python main.py generate <java_file> <java_project_path> [options]
+
+# Run benchmarks
+python main.py benchmark <manifest> [options]
+
+# List available providers
+python main.py providers
+
+# Enable shell completion
+python main.py --install-completion
 ```
 
-Or using the installed CLI:
+#### Generate Command
 
 ```bash
-ast-rag-testgen <java_file> <java_project_path> [options]
-```
+# Basic usage
+python main.py generate UsuarioService.java mock-java-project/
 
-### Benchmark Mode
+# Use different provider
+python main.py generate service.java project/ --provider nvidia --model meta/llama-3.1-405b-instruct
 
-AST-RAG TestGen includes a benchmark mode for reproducible evaluation of test generation quality across different providers, models, and configurations.
+# Custom output directory
+python main.py generate service.java project/ --output ./my_tests
 
-```bash
-python main.py --benchmark-manifest <manifest_path> --benchmark-output <output_dir>
+# Limit dependencies
+python main.py generate service.java project/ --max-deps 5
+
+# Print to stdout
+python main.py generate service.java project/ --print
 ```
 
 #### Benchmark Command
 
 ```bash
 # Run benchmark with manifest
-python main.py --benchmark-manifest benchmark.yaml --benchmark-output ./results
+python main.py benchmark benchmark.yaml --output ./results
 
-# Dry run (skip LLM calls, test pipeline only)
-python main.py --benchmark-manifest benchmark.yaml --benchmark-output ./results --benchmark-dry-run
+# Dry run (skip LLM calls)
+python main.py benchmark benchmark.yaml --dry-run
 ```
 
-#### Benchmark Manifest Schema
+#### Providers Command
 
-The benchmark uses a manifest file to define the execution matrix, dataset, and evaluation criteria.
-
-**JSON Example:**
-```json
-{
-  "manifest_version": 1,
-  "project_root": "mock-java-project",
-  "dataset": [
-    {
-      "id": "usuario-service",
-      "java_file": "src/main/java/com/example/demo/service/UsuarioService.java"
-    }
-  ],
-  "matrix": {
-    "providers": [
-      {"name": "anthropic", "model": "claude-3-5-sonnet-20241022"},
-      {"name": "openai", "model": "gpt-4-turbo"}
-    ]
-  },
-  "run": {
-    "trials": 1,
-    "seed": 42,
-    "max_dependencies": 10,
-    "timeout_seconds": 300,
-    "retry_count": 0,
-    "concurrency": 1
-  },
-  "evaluation": {
-    "compile_cmd": "mvn -q -DskipTests compile",
-    "test_cmd": "mvn -q test",
-    "coverage_cmd": null
-  },
-  "scoring": {
-    "weights": {
-      "success": 0.5,
-      "coverage": 0.3,
-      "latency": 0.2
-    }
-  }
-}
+```bash
+# List all available providers and their default models
+python main.py providers
 ```
 
-**TOML Example:**
-```toml
-manifest_version = 1
-project_root = "mock-java-project"
+### Legacy CLI (Backward Compatible)
 
-[[dataset]]
-id = "usuario-service"
-java_file = "src/main/java/com/example/demo/service/UsuarioService.java"
+The legacy argparse-based CLI is still available for compatibility:
 
-[matrix]
-
-[[matrix.providers]]
-name = "anthropic"
-model = "claude-3-5-sonnet-20241022"
-
-[run]
-trials = 1
-seed = 42
-max_dependencies = 10
-timeout_seconds = 300
-
-[evaluation]
-compile_cmd = "mvn -q -DskipTests compile"
-test_cmd = "mvn -q test"
-
-[scoring]
-[scoring.weights]
-success = 0.5
-coverage = 0.3
-latency = 0.2
+```bash
+python main.py <java_file> <java_project_path> [options]
 ```
-
-#### Manifest Fields
-
-| Field | Type | Description |
-|-------|------|-------------|
-| `manifest_version` | integer | Must be `1` |
-| `project_root` | string | Path to Java project root |
-| `dataset` | array | List of Java files to generate tests for |
-| `dataset[].id` | string | Unique identifier for the entry |
-| `dataset[].java_file` | string | Relative path to Java source file |
-| `matrix` | object | Provider/model execution matrix |
-| `matrix.providers` | array | List of provider/model combinations |
-| `run` | object | Execution controls |
-| `run.trials` | integer | Number of trials per configuration (default: 1) |
-| `run.seed` | integer | Random seed for deterministic ordering (default: 0) |
-| `run.max_dependencies` | integer | Max dependencies to include (default: 10) |
-| `run.timeout_seconds` | integer | Timeout per run (default: 300) |
-| `run.retry_count` | integer | Number of retries on failure (default: 0) |
-| `run.concurrency` | integer | Max parallel runs (default: 1) |
-| `evaluation` | object | Post-generation evaluation commands |
-| `evaluation.compile_cmd` | string | Command to compile tests |
-| `evaluation.test_cmd` | string | Command to run tests |
-| `evaluation.coverage_cmd` | string/null | Optional coverage command |
-| `scoring` | object | Ranking weights |
-| `scoring.weights.success` | float | Weight for pass rate (0-1) |
-| `scoring.weights.coverage` | float | Weight for coverage (0-1) |
-| `scoring.weights.latency` | float | Weight for speed (0-1) |
-
-#### Benchmark Outputs
-
-After execution, the benchmark produces three output files in the specified output directory:
-
-| File | Description |
-|------|-------------|
-| `results.json` | Raw per-run results with all metrics |
-| `summary.json` | Aggregated statistics and rankings |
-| `report.md` | Human-readable summary with tables |
-
-#### Reproducibility Notes
-
-- Same manifest + seed = identical run ordering
-- Use `--benchmark-dry-run` to validate setup without API calls
-- Failed runs (timeout, error) are recorded with status but don't abort the benchmark
-- Partial results are saved incrementally for crash recovery
 
 ### Arguments
 
@@ -242,10 +154,10 @@ After execution, the benchmark produces three output files in the specified outp
 
 | Option | Default | Description |
 |--------|---------|-------------|
-| `--provider` | `anthropic` | LLM provider: `anthropic`, `openai`, `glm`, `gemini`, `nvidia`, `openrouter` |
-| `--model` | `claude-3-5-sonnet-20241022` | LLM model to use |
-| `--output` | `./tests_generados` | Output directory for generated tests |
-| `--max-deps` | `10` | Maximum number of dependencies to include |
+| `--provider`, `-p` | `anthropic` | LLM provider: `anthropic`, `openai`, `glm`, `gemini`, `nvidia`, `openrouter` |
+| `--model`, `-m` | `claude-3-5-sonnet-20241022` | LLM model to use |
+| `--output`, `-o` | `./tests_generados` | Output directory for generated tests |
+| `--max-deps`, `-d` | `10` | Maximum number of dependencies to include |
 | `--print` | `false` | Print generated test to stdout |
 
 ### Examples

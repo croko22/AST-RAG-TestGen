@@ -31,11 +31,41 @@ except ImportError:
     RICH_AVAILABLE = False
     Console = None  # type: ignore
 
+# Typer for modern CLI
+try:
+    import typer
+    from typer import Option as Opt
+    TYPER_AVAILABLE = True
+except ImportError:
+    TYPER_AVAILABLE = False
+    typer = None  # type: ignore
+    Opt = None  # type: ignore
+
 # Backward-compatible patch targets for tests and external callers.
 # Keep these lazy to avoid hard failures when optional LLM deps are missing.
 LLMClient = None
 LLMConfig = None
 get_available_providers = None
+get_default_model = None
+
+
+def _ensure_llm_symbols() -> None:
+    """Lazily populate main-module LLM symbols if available."""
+    global LLMClient, LLMConfig, get_available_providers, get_default_model
+
+    if LLMConfig is not None and get_available_providers is not None and get_default_model is not None:
+        return
+
+    from llm import client as llm_client_module
+
+    if LLMClient is None:
+        LLMClient = llm_client_module.LLMClient
+    if LLMConfig is None:
+        LLMConfig = llm_client_module.LLMConfig
+    if get_available_providers is None:
+        get_available_providers = llm_client_module.get_available_providers
+    if get_default_model is None:
+        get_default_model = llm_client_module.get_default_model
 
 
 def get_console() -> "Console | None":
@@ -83,23 +113,6 @@ def print_info(message: str) -> None:
         console.print(message)
     else:
         print(message)
-
-
-def _ensure_llm_symbols() -> None:
-    """Lazily populate main-module LLM symbols if available."""
-    global LLMClient, LLMConfig, get_available_providers
-
-    if LLMConfig is not None and get_available_providers is not None:
-        return
-
-    from llm import client as llm_client_module
-
-    if LLMClient is None:
-        LLMClient = llm_client_module.LLMClient
-    if LLMConfig is None:
-        LLMConfig = llm_client_module.LLMConfig
-    if get_available_providers is None:
-        get_available_providers = llm_client_module.get_available_providers
 
 
 def generate_test_for_file(
@@ -514,5 +527,97 @@ Examples:
     return parser
 
 
+# ============================================================================
+# Modern CLI with Typer
+# ============================================================================
+
+if TYPER_AVAILABLE and typer is not None:
+    app = typer.Typer(
+        name="ast-rag-testgen",
+        help="Generate unit tests for Java using AST-based Retrieval-Augmented Generation",
+        add_completion=True,
+    )
+
+    @app.command()
+    def generate(
+        java_file: str = typer.Argument(..., help="Path to the Java file to generate tests for"),
+        project_path: str = typer.Argument(..., help="Root path of the Java project"),
+        provider: str = Opt("anthropic", "--provider", "-p", help="LLM provider (anthropic, openai, glm, gemini, nvidia, openrouter)"),
+        model: str = Opt("claude-3-5-sonnet-20241022", "--model", "-m", help="LLM model to use"),
+        output: str = Opt("./tests_generados", "--output", "-o", help="Output directory for generated tests"),
+        max_deps: int = Opt(10, "--max-deps", "-d", help="Maximum number of dependencies to include"),
+        print_code: bool = Opt(False, "--print", help="Print the generated test to stdout"),
+    ) -> None:
+        """Generate a unit test for a Java file."""
+        try:
+            test_code = generate_test_for_file(
+                java_file_path=java_file,
+                java_project_path=project_path,
+                output_dir=output,
+                max_dependencies=max_deps,
+                llm_provider=provider,
+                llm_model=model,
+            )
+
+            if print_code:
+                console = get_console()
+                if console and Syntax is not None:
+                    syntax = Syntax(test_code, "java", theme="monokai", line_numbers=True)
+                    console.print(syntax)
+                else:
+                    print(test_code)
+
+        except Exception as e:
+            console = get_console()
+            if console:
+                console.print(f"Error: {e}", style="bold red")
+            else:
+                print(f"Error: {e}", file=sys.stderr)
+            sys.exit(1)
+
+    @app.command()
+    def benchmark(
+        manifest: str = typer.Argument(..., help="Path to benchmark manifest (JSON or TOML)"),
+        output: str = Opt("./benchmark_results", "--output", "-o", help="Output directory for benchmark results"),
+        dry_run: bool = Opt(False, "--dry-run", help="Run benchmark without actual generation"),
+    ) -> None:
+        """Run benchmarks using a manifest file."""
+        exit_code = run_benchmark_mode(manifest, output, dry_run)
+        sys.exit(exit_code)
+
+    @app.command()
+    def providers() -> None:
+        """List available LLM providers and their default models."""
+        _ensure_llm_symbols()
+        if get_available_providers is None:
+            print("LLM symbols not available")
+            return
+
+        available_providers = cast(Callable[[], list[str]], get_available_providers)()
+
+        console = get_console()
+        if console:
+            from rich.table import Table
+
+            table = Table(title="Available LLM Providers")
+            table.add_column("Provider", style="cyan")
+            table.add_column("Default Model", style="green")
+
+            for provider in available_providers:
+                default_model = get_default_model(provider) if get_default_model else "N/A"
+                table.add_row(provider, default_model)
+
+            console.print(table)
+        else:
+            print("Available LLM Providers:")
+            for provider in available_providers:
+                default_model = get_default_model(provider) if get_default_model else "N/A"
+                print(f"  {provider}: {default_model}")
+
+
 if __name__ == "__main__":
-    main()
+    # Use typer if available, otherwise fall back to argparse
+    if TYPER_AVAILABLE and typer is not None:
+        app()
+    else:
+        main()
