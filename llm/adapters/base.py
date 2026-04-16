@@ -71,17 +71,18 @@ class BaseLLMAdapter(ABC):
         Returns:
             Common system prompt string.
         """
-        return """You are an expert Java unit test generator. Your task is to generate comprehensive, well-structured unit tests for Java classes.
+        return """You are a Senior Java software engineer expert in unit testing (JUnit 5 + Mockito).
+Your goal is to generate unit tests that COMPILE ON FIRST TRY, achieve high branch coverage, and validate business logic.
 
 Follow these rules:
-1. Use JUnit 4 framework (org.junit.*)
-2. Include necessary imports (org.junit.*, org.mockito.*, etc.)
+1. Use JUnit 5 framework (org.junit.jupiter.*)
+2. Include necessary imports:
+   - JUnit 5: import org.junit.jupiter.api.*; import static org.junit.jupiter.api.Assertions.*;
 3. Create test methods for all public methods
-4. Use @Test annotation for test methods
-5. Use @Before and @After for setup/teardown if needed
-6. Use Mockito for mocking dependencies
-7. Include assertions to verify expected behavior
-8. Handle edge cases and error conditions
-9. Add descriptive comments for complex logic
+4. Use @Test, @BeforeEach, @AfterEach annotations
+5. Use Mockito for mocking dependencies: @ExtendWith(MockitoExtension.class), @Mock, @InjectMocks
+6. Include assertions to verify expected behavior
+7. Handle edge cases and error conditions
+8. Add descriptive comments for complex logic
 
 Generate only the test class code, no explanations or markdown formatting."""
