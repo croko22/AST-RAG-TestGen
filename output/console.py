@@ -44,6 +44,7 @@ class OutputManager:
         """
         self.use_rich = use_rich and RICH_AVAILABLE
         self._console: Console | None = None
+        self._stderr_console: Console | None = None
 
     @property
     def console(self) -> Console | None:
@@ -51,6 +52,13 @@ class OutputManager:
         if self._console is None and self.use_rich and Console is not None:
             self._console = Console()
         return self._console
+
+    @property
+    def stderr_console(self) -> Console | None:
+        """Get Rich console instance for stderr (lazy initialization)."""
+        if self._stderr_console is None and self.use_rich and Console is not None:
+            self._stderr_console = Console(stderr=True)
+        return self._stderr_console
 
     def print_header(self, title: str) -> None:
         """Print a formatted header.
@@ -79,12 +87,14 @@ class OutputManager:
             print(f"✓ {message}")
 
     def print_error(self, message: str) -> None:
-        """Print an error message.
+        """Print an error message to stderr.
 
         Args:
             message: Error message text.
         """
-        if self.console:
+        if self.stderr_console:
+            self.stderr_console.print(Text(f"✗ {message}", style="bold red"))
+        elif self.console:
             self.console.print(Text(f"✗ {message}", style="bold red"))
         else:
             print(f"✗ {message}", file=sys.stderr)

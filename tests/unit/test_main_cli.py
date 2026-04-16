@@ -60,8 +60,8 @@ class TestMainCli:
         exit_code = main.main()
 
         assert exit_code == 1
-        out = capsys.readouterr().out
-        assert "Java file not found: missing.java" in out
+        err = capsys.readouterr().err
+        assert "Java file not found: missing.java" in err
 
     def test_main_exits_when_project_path_is_missing(self, monkeypatch, capsys):
         args = Namespace(
@@ -90,8 +90,8 @@ class TestMainCli:
         exit_code = main.main()
 
         assert exit_code == 1
-        out = capsys.readouterr().out
-        assert "Project path not found: missing-project/" in out
+        err = capsys.readouterr().err
+        assert "Project path not found: missing-project/" in err
 
     def test_main_runs_generator_and_prints_output_when_requested(self, monkeypatch, capsys):
         args = Namespace(
