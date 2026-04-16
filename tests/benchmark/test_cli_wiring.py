@@ -268,7 +268,7 @@ class TestRunBenchmarkMode:
         mock_preflight.return_value = []
         mock_plan.return_value = [MagicMock(), MagicMock()]
 
-        # execute_runs is called once per plan when rich is available (for progress bar)
+        # execute_runs is called once with all plans (stable semantics regardless of rich)
         mock_result1 = MagicMock(
             status="ok",
             latency_ms=1000,
@@ -283,7 +283,7 @@ class TestRunBenchmarkMode:
             model="claude-3-5-sonnet-20241022",
             metrics=MagicMock(coverage_pct=None),
         )
-        mock_execute.side_effect = [[mock_result1], [mock_result2]]
+        mock_execute.return_value = [mock_result1, mock_result2]
 
         mock_report.return_value = MagicMock(
             results_path=Path("results.json"),
@@ -302,8 +302,8 @@ class TestRunBenchmarkMode:
         assert result == 0
         mock_load.assert_called_once_with("bench.yaml")
         mock_plan.assert_called_once()
-        # execute_runs is called once per plan (2 plans = 2 calls)
-        assert mock_execute.call_count == 2
+        # execute_runs is called once with all plans (stable semantics)
+        assert mock_execute.call_count == 1
         mock_report.assert_called_once()
         mock_csv.assert_called_once()
 

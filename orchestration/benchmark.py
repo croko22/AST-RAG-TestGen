@@ -82,6 +82,7 @@ def run_benchmark_mode(
 
     output.print_info("\n[2/3] ⚙️ Executing runs...")
 
+    # Always execute all plans in a single call for stable semantics
     # Use progress bar if rich is available
     if output.use_rich and output.console:
         from rich.progress import (
@@ -101,16 +102,13 @@ def run_benchmark_mode(
         ) as progress:
             task = progress.add_task("Running benchmarks...", total=len(plans))
 
-            results = []
-            for plan in plans:
-                result = execute_runs(
-                    [plan],
-                    output_dir,
-                    dry_run=dry_run,
-                    eval_config=manifest.evaluation,
-                )
-                results.extend(result)
-                progress.update(task, advance=1)
+            results = execute_runs(
+                plans,
+                output_dir,
+                dry_run=dry_run,
+                eval_config=manifest.evaluation,
+            )
+            progress.update(task, advance=len(plans))
     else:
         results = execute_runs(
             plans,
