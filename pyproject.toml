@@ -104,29 +104,6 @@ ignore_missing_imports = true
 module = "tree_sitter.*"
 ignore_missing_imports = true
 
-[tool.pytest]
-testpaths = ["tests"]
-python_files = ["test_*.py"]
-python_classes = ["Test*"]
-python_functions = ["test_*"]
-addopts = [
-    "-v",
-    "--strict-markers",
-    "--tb=short",
-    "--cov=core",
-    "--cov=llm",
-    "--cov=core.metainfo",
-    "--cov-report=html",
-    "--cov-report=term-missing",
-    "--cov-report=xml",
-    "--cov-fail-under=75",
-]
-markers = [
-    "unit: Unit tests",
-    "integration: Integration tests",
-    "slow: Slow running tests",
-]
-
 [tool.coverage.run]
 source = ["core", "llm"]
 omit = [
