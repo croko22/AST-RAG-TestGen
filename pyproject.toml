@@ -62,9 +62,9 @@ dev = [
 ast-rag-testgen = "main:main"
 
 [project.urls]
-Homepage = "https://github.com/yourusername/ast-rag-testgen"
-Repository = "https://github.com/yourusername/ast-rag-testgen"
-Documentation = "https://github.com/yourusername/ast-rag-testgen#readme"
+Homepage = "https://github.com/croko22/Tesis-RAG-vs-RL-Arena"
+Repository = "https://github.com/croko22/Tesis-RAG-vs-RL-Arena"
+Documentation = "https://github.com/croko22/Tesis-RAG-vs-RL-Arena#readme"
 
 [tool.setuptools.packages.find]
 where = ["."]
