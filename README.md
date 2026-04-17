@@ -6,10 +6,10 @@ Unit test generator for Java using AST-based Retrieval-Augmented Generation.
 
 AST-RAG TestGen generates Java unit tests through a 4-step pipeline:
 
-1. **Extractor** (Tree-sitter): Parses Java files and extracts dependencies
-2. **Retriever**: Locates dependency files in the Java project
-3. **Slicer**: Extracts method signatures from dependencies
-4. **Prompt Builder**: Assembles context and sends to LLM
+1. **Parsing** (`core/parsing/`): Tree-sitter parses Java files, extracts package, imports, class/interface names, fields, method signatures
+2. **Extraction** (`core/extraction/`): DependencyResolver finds and resolves dependency files in the Java project with depth limit
+3. **Prompt Building** (`core/prompt_builder.py` or `llm/adapters/`): Assembles code + dependency context for LLM consumption
+4. **LLM Generation** (`llm/client_new.py`): Sends prompt to LLM via adapter pattern, receives generated test
 
 ## Installation
 

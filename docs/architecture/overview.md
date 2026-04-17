@@ -8,6 +8,43 @@ AST-RAG TestGen is a 4-step pipeline for generating Java unit tests using AST-ba
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
+│ 4-STEP PIPELINE                                                 │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│ ┌──────────────┐ ┌──────────────────┐ ┌─────────────────────┐  │
+│ │ 1. PARSING   │──▶│ 2. EXTRACTION    │──▶│ 3. PROMPT BUILDING │  │
+│ │ Tree-sitter  │ │ DependencyResolv.│ │ Adapter-specific    │  │
+│ └──────────────┘ └──────────────────┘ └─────────────────────┘  │
+│                                                                 │
+│ ▼                                                               │
+│ ┌─────────────────────┐                                        │
+│ │ 4. LLM GENERATION   │                                        │
+│ │ Provider Adapter    │                                        │
+│ └─────────────────────┘                                        │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+## Data Flow
+
+```
+Java File
+↓
+Tree-sitter Parser (core/parsing/parser.py)
+↓
+ParsedJavaClass {name, package, imports, methods, fields}
+↓
+DependencyResolver (core/extraction/extractor.py)
+↓
+dependency_context: method signatures from resolved dependencies
+↓
+LLM Adapter builds prompt (llm/adapters/*/build_user_prompt)
+↓
+LLM API call via provider-specific adapter
+↓
+Generated Test Code → tests_generados/{ClassName}Test.java
+```
+┌─────────────────────────────────────────────────────────────────┐
 │                        4-STEP PIPELINE                      │
 ├─────────────────────────────────────────────────────────────────┤
 │                                                               │

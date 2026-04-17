@@ -45,27 +45,31 @@ AST-RAG TestGen is a 4-step pipeline for generating Java unit tests using AST-ba
    - Testable methods
    - Custom filtering rules
 
-4. **Prompt Builder** (`core/prompt_builder.py`): Assembles the dynamic prompt
-   - Combines code under test with extracted method signatures
-   - Formats context for LLM consumption
-
-5. **LLM Client** (`llm/client_new.py`): Multi-provider LLM interface using adapter pattern
+4. **LLM Generation** (`llm/client_new.py`): Multi-provider LLM interface using adapter pattern
    - Supports: anthropic, openai, glm, gemini, nvidia, openrouter
    - Each provider has dedicated adapter in `llm/adapters/`
+   - Prompt is built in the adapter's `build_user_prompt()` method
    - Provider-specific API handling
-   - NVIDIA and OpenRouter use OpenAI-compatible API
 
 ### Data Flow
 
 ```
-Java File → JavaParser → ParsedJavaClass
-    ↓
-JavaProjectPath → JavaFileRetriever → DependencyResolver
-    ↓
-ParsedJavaClass + ResolvedDependencies → PromptBuilder
-    ↓
-Prompt → LLMClient → Generated Test
+Java File → Tree-sitter Parser → ParsedJavaClass
+↓
+JavaProjectPath → DependencyResolver → dependency_context (method signatures)
+↓
+ParsedJavaClass + dependency_context → LLM Adapter (build_user_prompt)
+↓
+Prompt → LLM API → Generated Test
 ```
+
+### Actual Pipeline in orchestration/generator.py
+
+The real pipeline is:
+1. Parse Java file (Tree-sitter) → `core/parsing/parser.py`
+2. Resolve dependencies → `core/extraction/extractor.py` (DependencyResolver)
+3. Build prompt → `llm/adapters/base.py` (_build_common_system_prompt) + each adapter's build_user_prompt
+4. Generate with LLM → `llm/adapters/*` (provider-specific)
 
 ### Key Classes
 

@@ -26,10 +26,10 @@ def generate_test_for_file(
     Generate a unit test for a Java file.
 
     This function orchestrates the 4-step pipeline:
-    1. Extractor (Tree-sitter): Parse Java file and extract dependencies
-    2. RAG (Retriever): Find dependency files in the Java project
-    3. Slicer: Extract method signatures from dependencies
-    4. Prompt Builder: Assemble dynamic prompt and send to LLM
+    1. Parsing (Tree-sitter): Parse Java file and extract structure
+    2. Extraction (DependencyResolver): Find dependency files in the project
+    3. Prompt Building: Assemble code + dependency context
+    4. LLM Generation: Send to LLM via adapter and receive test
 
     Args:
         java_file_path: Path to the Java file to generate tests for
