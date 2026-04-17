@@ -31,6 +31,7 @@ def evaluate_run(
     """
     run_path = Path(run_dir)
     project_path = Path(project_root)
+    copied_test_file: Path | None = None
 
     compile_pass = False
     test_pass = False
@@ -53,8 +54,7 @@ def evaluate_run(
 
     test_file = test_files[0]
 
-    # Copy test file to the project's test directory
-    # Determine the target path based on the package
+    # Determine target path based on package
     test_content = test_file.read_text(encoding="utf-8")
     package_match = re.search(r"package\s+([\w.]+);", test_content)
     if package_match:
@@ -62,81 +62,88 @@ def evaluate_run(
         package_path = package.replace(".", "/")
         target_dir = project_path / "src" / "test" / "java" / package_path
     else:
-        # Default package
         target_dir = project_path / "src" / "test" / "java"
 
     target_dir.mkdir(parents=True, exist_ok=True)
     target_file = target_dir / test_file.name
+    copied_test_file = target_file
 
     # Copy the test file
     import shutil
-
     shutil.copy2(test_file, target_file)
 
-    compile_result = _execute_command(
-        eval_config.compile_cmd,
-        project_path,
-        run_path,
-    )
-
-    if not compile_result.success:
-        failure_type = "compile_failed"
-        failure_message = (
-            compile_result.stderr[:500] if compile_result.stderr else "Compilation failed"
-        )
-        return EvalMetrics(
-            compile_pass=False,
-            test_pass=False,
-            coverage_pct=None,
-            failure_type=failure_type,
-            failure_message=failure_message,
-        )
-
-    compile_pass = True
-
-    test_result = _execute_command(
-        eval_config.test_cmd,
-        project_path,
-        run_path,
-    )
-
-    if not test_result.success:
-        failure_type = "test_failed"
-        failure_message = test_result.stderr[:500] if test_result.stderr else "Tests failed"
-        return EvalMetrics(
-            compile_pass=True,
-            test_pass=False,
-            coverage_pct=None,
-            failure_type=failure_type,
-            failure_message=failure_message,
-        )
-
-    test_pass = True
-
-    if eval_config.coverage_cmd:
-        coverage_result = _execute_command(
-            eval_config.coverage_cmd,
+    try:
+        compile_result = _execute_command(
+            eval_config.compile_cmd,
             project_path,
             run_path,
         )
-        coverage_pct, coverage_source, coverage_reason = _extract_coverage_pct(
-            project_path=project_path,
-            coverage_stdout=coverage_result.stdout,
-        )
-    else:
-        coverage_pct = None
-        coverage_source = None
-        coverage_reason = "coverage_cmd_not_configured"
 
-    return EvalMetrics(
-        compile_pass=compile_pass,
-        test_pass=test_pass,
-        coverage_pct=coverage_pct,
-        coverage_source=coverage_source,
-        coverage_reason=coverage_reason,
-        failure_type=None,
-        failure_message=None,
-    )
+        if not compile_result.success:
+            failure_type = "compile_failed"
+            failure_message = (
+                compile_result.stderr[:500] if compile_result.stderr else "Compilation failed"
+            )
+            return EvalMetrics(
+                compile_pass=False,
+                test_pass=False,
+                coverage_pct=None,
+                failure_type=failure_type,
+                failure_message=failure_message,
+            )
+
+        compile_pass = True
+
+        test_result = _execute_command(
+            eval_config.test_cmd,
+            project_path,
+            run_path,
+        )
+
+        if not test_result.success:
+            failure_type = "test_failed"
+            failure_message = test_result.stderr[:500] if test_result.stderr else "Tests failed"
+            return EvalMetrics(
+                compile_pass=True,
+                test_pass=False,
+                coverage_pct=None,
+                failure_type=failure_type,
+                failure_message=failure_message,
+            )
+
+        test_pass = True
+
+        if eval_config.coverage_cmd:
+            coverage_result = _execute_command(
+                eval_config.coverage_cmd,
+                project_path,
+                run_path,
+            )
+            coverage_pct, coverage_source, coverage_reason = _extract_coverage_pct(
+                project_path=project_path,
+                coverage_stdout=coverage_result.stdout,
+            )
+        else:
+            coverage_pct = None
+            coverage_source = None
+            coverage_reason = "coverage_cmd_not_configured"
+
+        return EvalMetrics(
+            compile_pass=compile_pass,
+            test_pass=test_pass,
+            coverage_pct=coverage_pct,
+            coverage_source=coverage_source,
+            coverage_reason=coverage_reason,
+            failure_type=None,
+            failure_message=None,
+        )
+    finally:
+        # Cleanup: remove the copied test file after evaluation
+        if copied_test_file and copied_test_file.exists():
+            try:
+                copied_test_file.unlink()
+            except OSError:
+                pass  # Best effort cleanup
 
 
 class CommandResult:
@@ -163,6 +170,9 @@ def _execute_command(
     """
     Execute a shell command in the project directory.
 
+    Uses list-based args when possible for security and debuggability.
+    Falls back to shell=True only for complex commands with pipes/redirection.
+
     Args:
         cmd: Command to execute
         project_root: Project directory for execution
@@ -171,35 +181,72 @@ def _execute_command(
     Returns:
         CommandResult with success status and output
     """
-    try:
-        result = subprocess.run(
-            cmd,
-            shell=True,
-            cwd=str(project_root),
-            capture_output=True,
-            text=True,
-            timeout=600,
-        )
-        return CommandResult(
-            success=result.returncode == 0,
-            stdout=result.stdout,
-            stderr=result.stderr,
-            returncode=result.returncode,
-        )
-    except subprocess.TimeoutExpired:
-        return CommandResult(
-            success=False,
-            stdout="",
-            stderr="Command timed out after 600 seconds",
-            returncode=-1,
-        )
-    except Exception as e:
-        return CommandResult(
-            success=False,
-            stdout="",
-            stderr=str(e),
-            returncode=-1,
-        )
+    # Check if command contains shell operators (pipes, redirects, etc.)
+    shell_operators = ['|', '>', '<', '&&', '||', ';', '$', '`', '(', ')']
+    needs_shell = any(op in cmd for op in shell_operators)
+
+    if needs_shell:
+        # Use shell=True for complex commands
+        try:
+            result = subprocess.run(
+                cmd,
+                shell=True,
+                cwd=str(project_root),
+                capture_output=True,
+                text=True,
+                timeout=600,
+            )
+            return CommandResult(
+                success=result.returncode == 0,
+                stdout=result.stdout,
+                stderr=result.stderr,
+                returncode=result.returncode,
+            )
+        except subprocess.TimeoutExpired:
+            return CommandResult(
+                success=False,
+                stdout="",
+                stderr="Command timed out after 600 seconds",
+                returncode=-1,
+            )
+        except Exception as e:
+            return CommandResult(
+                success=False,
+                stdout="",
+                stderr=str(e),
+                returncode=-1,
+            )
+    else:
+        # Use list-based execution for simple commands
+        args = cmd.split()
+        try:
+            result = subprocess.run(
+                args,
+                cwd=str(project_root),
+                capture_output=True,
+                text=True,
+                timeout=600,
+            )
+            return CommandResult(
+                success=result.returncode == 0,
+                stdout=result.stdout,
+                stderr=result.stderr,
+                returncode=result.returncode,
+            )
+        except subprocess.TimeoutExpired:
+            return CommandResult(
+                success=False,
+                stdout="",
+                stderr="Command timed out after 600 seconds",
+                returncode=-1,
+            )
+        except Exception as e:
+            return CommandResult(
+                success=False,
+                stdout="",
+                stderr=str(e),
+                returncode=-1,
+            )
 
 
 def _extract_coverage_pct(
