@@ -35,7 +35,8 @@ def db(db_path):
     """MetainfoDatabase instance for testing."""
     db = MetainfoDatabase(db_path)
     yield db
-    # Cleanup after test
+    # Cleanup after test - close connection first
+    db.close()
     Path(db_path).unlink(missing_ok=True)
 
 
