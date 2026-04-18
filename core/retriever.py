@@ -3,9 +3,12 @@ Retriever module for finding Java source files in a project.
 Handles file discovery and class location.
 """
 
+import logging
 from pathlib import Path
 
 from .parser import ParsedJavaClass, extract_dependencies_from_file
+
+logger = logging.getLogger(__name__)
 
 
 class JavaFileRetriever:
@@ -27,6 +30,7 @@ class JavaFileRetriever:
 
         self._java_files_cache: list[Path] | None = None
         self._class_index: dict[str, Path] | None = None
+        self._parse_errors: int = 0
 
     def _scan_java_files(self) -> list[Path]:
         """Scan and cache all Java files in the project."""
@@ -42,20 +46,28 @@ class JavaFileRetriever:
         """Build an index of class names to file paths."""
         if self._class_index is None:
             self._class_index = {}
+            self._parse_errors = 0
             for java_file in self._scan_java_files():
                 try:
                     parsed = extract_dependencies_from_file(str(java_file))
-                    if parsed.name and parsed.name != "Unknown":
-                        # Index by simple class name
-                        self._class_index[parsed.name] = java_file
-
-                        # Also index with package if available
+                    if parsed and parsed.name and parsed.name != "Unknown":
+                        # Primary key: FQCN (fully qualified class name)
                         if parsed.package:
-                            full_name = f"{parsed.package}.{parsed.name}"
-                            self._class_index[full_name] = java_file
-                except Exception:
-                    # Skip files that can't be parsed
-                    continue
+                            fqcn = f"{parsed.package}.{parsed.name}"
+                            self._class_index[fqcn] = java_file
+
+                        # Secondary key: simple class name (may have collisions)
+                        # Use a list to track multiple files with same simple name
+                        simple_key = parsed.name
+                        if simple_key not in self._class_index:
+                            self._class_index[simple_key] = java_file
+                        # If already exists, it's a collision - prefer the one in package
+                except Exception as e:
+                    self._parse_errors += 1
+                    logger.warning(f"Failed to parse {java_file}: {e}")
+
+            if self._parse_errors > 0:
+                logger.info(f"Skipped {self._parse_errors} files due to parse errors")
 
     def find_file_by_class_name(self, class_name: str) -> str | None:
         """
@@ -106,7 +118,8 @@ class JavaFileRetriever:
         """
         try:
             return extract_dependencies_from_file(file_path)
-        except Exception:
+        except Exception as e:
+            logger.warning(f"Failed to parse {file_path}: {e}")
             return None
 
 
@@ -158,6 +171,20 @@ class DependencyResolver:
         _resolve(class_name, 0)
         return result
 
+    def _detect_is_interface(self, parsed: ParsedJavaClass) -> bool:
+        """Detect if a parsed class is actually an interface."""
+        # Check by file name convention
+        if parsed.name.startswith("I") and any(c.isupper() for c in parsed.name[1:]):
+            # Likely an interface like IService, IRepository
+            return True
+        # Check if any import is from an interface package
+        interface_packages = ("java.util", "java.io", "java.sql", "javax.sql")
+        for imp in parsed.imports:
+            if any(imp.startswith(p) for p in interface_packages):
+                # Common interface types in these packages
+                return True
+        return False
+
     def get_method_signatures(self, class_name: str) -> str:
         """
         Get formatted method signatures for a class.
@@ -182,18 +209,14 @@ class DependencyResolver:
             lines.append(f"package {parsed.package};")
             lines.append("")
 
-        class_type = (
-            "interface"
-            if "interface" in class_name or any("interface" in imp for imp in parsed.imports)
-            else "class"
-        )
+        class_type = "interface" if self._detect_is_interface(parsed) else "class"
         lines.append(f"public {class_type} {parsed.name} {{")
 
         for method in parsed.methods:
             params = ", ".join(method.parameters)
             visibility = method.visibility
             static = "static " if method.is_static else ""
-            lines.append(f"    {visibility} {static}{method.return_type} {method.name}({params});")
+            lines.append(f" {visibility} {static}{method.return_type} {method.name}({params});")
 
         lines.append("}")
         lines.append("")
