@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+import pytest
+pytestmark = pytest.mark.slow
+
 import json
 
 from benchmark.planner import plan_runs

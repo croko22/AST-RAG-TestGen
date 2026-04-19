@@ -3,14 +3,14 @@
 from __future__ import annotations
 
 import re
+import shutil
 import subprocess
+import tempfile
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
 from benchmark.schemas import EvaluationConfig
 from benchmark.types import EvalMetrics, RunResult
-
-_JACOCO_XML_PATH = Path("target/site/jacoco/jacoco.xml")
 
 
 def evaluate_run(
@@ -31,7 +31,6 @@ def evaluate_run(
     """
     run_path = Path(run_dir)
     project_path = Path(project_root)
-    copied_test_file: Path | None = None
 
     compile_pass = False
     test_pass = False
@@ -53,29 +52,33 @@ def evaluate_run(
         )
 
     test_file = test_files[0]
-
-    # Determine target path based on package
     test_content = test_file.read_text(encoding="utf-8")
     package_match = re.search(r"package\s+([\w.]+);", test_content)
-    if package_match:
-        package = package_match.group(1)
-        package_path = package.replace(".", "/")
-        target_dir = project_path / "src" / "test" / "java" / package_path
-    else:
-        target_dir = project_path / "src" / "test" / "java"
 
-    target_dir.mkdir(parents=True, exist_ok=True)
-    target_file = target_dir / test_file.name
-    copied_test_file = target_file
-
-    # Copy the test file
-    import shutil
-    shutil.copy2(test_file, target_file)
-
+    # Use temp directory for test files to avoid modifying project under test
+    temp_test_dir: tempfile.TemporaryDirectory | None = None
     try:
+        temp_test_dir = tempfile.TemporaryDirectory(prefix="eval_tests_")
+        temp_path = Path(temp_test_dir.name)
+
+        # Determine target path based on package
+        if package_match:
+            package = package_match.group(1)
+            package_path = package.replace(".", "/")
+            target_dir = temp_path / "src" / "test" / "java" / package_path
+        else:
+            target_dir = temp_path / "src" / "test" / "java"
+
+        target_dir.mkdir(parents=True, exist_ok=True)
+        target_file = target_dir / test_file.name
+
+        # Copy the test file to temp location
+        shutil.copy2(test_file, target_file)
+
+        # Execute commands in the temp directory structure, NOT in project_root
         compile_result = _execute_command(
             eval_config.compile_cmd,
-            project_path,
+            temp_path,  # Run from temp dir, not project_root
             run_path,
         )
 
@@ -96,7 +99,7 @@ def evaluate_run(
 
         test_result = _execute_command(
             eval_config.test_cmd,
-            project_path,
+            temp_path,
             run_path,
         )
 
@@ -116,12 +119,13 @@ def evaluate_run(
         if eval_config.coverage_cmd:
             coverage_result = _execute_command(
                 eval_config.coverage_cmd,
-                project_path,
+                temp_path,
                 run_path,
             )
             coverage_pct, coverage_source, coverage_reason = _extract_coverage_pct(
-                project_path=project_path,
+                project_path=temp_path,
                 coverage_stdout=coverage_result.stdout,
+                jacoco_path=eval_config.jacoco_path,
             )
         else:
             coverage_pct = None
@@ -138,11 +142,11 @@ def evaluate_run(
             failure_message=None,
         )
     finally:
-        # Cleanup: remove the copied test file after evaluation
-        if copied_test_file and copied_test_file.exists():
+        # Explicit cleanup of temp test directory
+        if temp_test_dir is not None:
             try:
-                copied_test_file.unlink()
-            except OSError:
+                temp_test_dir.cleanup()
+            except Exception:
                 pass  # Best effort cleanup
 
 
@@ -252,9 +256,10 @@ def _execute_command(
 def _extract_coverage_pct(
     project_path: Path,
     coverage_stdout: str,
+    jacoco_path: str | None = None,
 ) -> tuple[float | None, str | None, str | None]:
     """Extract coverage with artifact-first strategy and bounded fallback."""
-    artifact_result = _extract_coverage_from_jacoco_xml(project_path)
+    artifact_result = _extract_coverage_from_jacoco_xml(project_path, jacoco_path)
     if artifact_result is not None:
         return artifact_result, "jacoco_xml", None
 
@@ -265,14 +270,38 @@ def _extract_coverage_pct(
     return None, None, "coverage_unavailable"
 
 
-def _extract_coverage_from_jacoco_xml(project_path: Path) -> float | None:
-    """Parse LINE coverage from target/site/jacoco/jacoco.xml when available."""
-    jacoco_path = project_path / _JACOCO_XML_PATH
-    if not jacoco_path.exists():
-        return None
+def _extract_coverage_from_jacoco_xml(
+    project_path: Path,
+    jacoco_path: str | None = None,
+) -> float | None:
+    """Parse LINE coverage from jacoco.xml when available.
+
+    Args:
+        project_path: Root directory where jacoco_path is relative to
+        jacoco_path: Relative path to jacoco.xml (e.g., 'target/site/jacoco/jacoco.xml')
+                     If None, uses the default from EvaluationConfig.jacoco_path
+    """
+    # Use provided jacoco_path or fall back to config default
+    if jacoco_path is None:
+        jacoco_path = "target/site/jacoco/jacoco.xml"
+
+    jacoco_xml_path = project_path / jacoco_path
+    if not jacoco_xml_path.exists():
+        # Try common alternative locations
+        alternative_paths = [
+            project_path / "target" / "site" / "jacoco" / "jacoco.xml",
+            project_path / "jacoco.xml",
+            project_path / "target" / "jacoco.xml",
+        ]
+        for alt_path in alternative_paths:
+            if alt_path.exists():
+                jacoco_xml_path = alt_path
+                break
+        else:
+            return None
 
     try:
-        root = ET.fromstring(jacoco_path.read_text(encoding="utf-8"))
+        root = ET.fromstring(jacoco_xml_path.read_text(encoding="utf-8"))
     except (ET.ParseError, OSError, UnicodeDecodeError):
         return None
 

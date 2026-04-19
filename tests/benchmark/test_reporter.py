@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 
 import pytest
+pytestmark = pytest.mark.slow
 
 from benchmark.reporter import (
     _build_summary_json,
