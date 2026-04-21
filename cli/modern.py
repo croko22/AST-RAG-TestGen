@@ -66,7 +66,7 @@ def create_modern_cli():
             # Import orchestration modules
             from orchestration.generator import generate_test_for_file
 
-            test_code = generate_test_for_file(
+            result = generate_test_for_file(
                 java_file_path=java_file,
                 java_project_path=project_path,
                 output_dir=output,
@@ -76,7 +76,7 @@ def create_modern_cli():
             )
 
             if print_code:
-                output_manager.print_code(test_code)
+                output_manager.print_code(result.test_code)
 
         except Exception as e:
             output_manager.print_error(f"Error: {e}")

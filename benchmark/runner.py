@@ -88,7 +88,7 @@ def _execute_generation(
 
     start_time = time.monotonic()
 
-    generate_test_for_file(
+    result = generate_test_for_file(
         java_file_path=full_java_path,
         java_project_path=project_path,
         output_dir=str(output_dir),
@@ -100,7 +100,7 @@ def _execute_generation(
     end_time = time.monotonic()
     latency_ms = int((end_time - start_time) * 1000)
 
-    test_class_path = Path(output_dir) / f"{Path(java_file).stem}Test.java"
+    test_class_path = result.output_path
 
     return str(test_class_path), latency_ms
 
