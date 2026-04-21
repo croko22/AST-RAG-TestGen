@@ -118,6 +118,17 @@ def create_modern_cli():
             default_model = get_default_model(provider)
             output_manager.print_info(f"{provider}: {default_model}")
 
+    @app.command()
+    def serve(
+        host: str = Opt("127.0.0.1", "--host", "-H", help="Host for HTTP transport"),
+        port: int = Opt(8000, "--port", "-P", help="Port for HTTP transport"),
+        transport: str = Opt("stdio", "--transport", "-t", help="Transport: stdio or http"),
+    ) -> None:
+        """Start the MCP server for editor/IDE integration."""
+        from mcp_server.cli import run_serve
+
+        sys.exit(run_serve(host=host, port=port, transport=transport))
+
     return app
 
 
