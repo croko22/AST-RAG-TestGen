@@ -6,17 +6,23 @@ import re
 import shutil
 import subprocess
 import tempfile
-import xml.etree.ElementTree as ET
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 from benchmark.schemas import EvaluationConfig
-from benchmark.types import EvalMetrics, RunResult
+from benchmark.types import EvalMetrics, PipelineTimings, RunResult
+from postproc.quality import assess_test_quality
+from postproc.validator import parse_coverage
+
+if TYPE_CHECKING:
+    from orchestration.generator import GenerationResult
 
 
 def evaluate_run(
     run_dir: Path | str,
     eval_config: EvaluationConfig,
     project_root: Path | str,
+    generation_result: GenerationResult | None = None,
 ) -> EvalMetrics:
     """
     Execute evaluation commands for a generated test run.
@@ -25,96 +31,89 @@ def evaluate_run(
         run_dir: Directory containing the generated test file
         eval_config: Evaluation commands from manifest
         project_root: Root directory of the Java project
+        generation_result: Optional generation result with per-step timings
 
     Returns:
         EvalMetrics with compile_pass, test_pass, coverage_pct, and failure info
     """
     run_path = Path(run_dir)
-    project_path = Path(project_root)
 
-    compile_pass = False
-    test_pass = False
-    coverage_pct: float | None = None
-    failure_type: str | None = None
-    failure_message: str | None = None
-
-    # Find the generated test file
     test_files = list(run_path.glob("*.java"))
     if not test_files:
-        failure_type = "error"
-        failure_message = "No test file found in run directory"
         return EvalMetrics(
             compile_pass=False,
             test_pass=False,
-            coverage_pct=None,
-            failure_type=failure_type,
-            failure_message=failure_message,
+            failure_type="error",
+            failure_message="No test file found in run directory",
         )
 
     test_file = test_files[0]
     test_content = test_file.read_text(encoding="utf-8")
-    package_match = re.search(r"package\s+([\w.]+);", test_content)
 
-    # Use temp directory for test files to avoid modifying project under test
+    quality = assess_test_quality(test_content)
+
+    timings = _extract_timings(generation_result)
+    generation_time_ms = (
+        sum(generation_result.timings.values())
+        if generation_result is not None and hasattr(generation_result, "timings")
+        else 0
+    )
+
     temp_test_dir: tempfile.TemporaryDirectory | None = None
     try:
         temp_test_dir = tempfile.TemporaryDirectory(prefix="eval_tests_")
         temp_path = Path(temp_test_dir.name)
 
-        # Determine target path based on package
+        package_match = re.search(r"package\s+([\w.]+);", test_content)
         if package_match:
-            package = package_match.group(1)
-            package_path = package.replace(".", "/")
+            package_path = package_match.group(1).replace(".", "/")
             target_dir = temp_path / "src" / "test" / "java" / package_path
         else:
             target_dir = temp_path / "src" / "test" / "java"
 
         target_dir.mkdir(parents=True, exist_ok=True)
-        target_file = target_dir / test_file.name
+        shutil.copy2(test_file, target_dir / test_file.name)
 
-        # Copy the test file to temp location
-        shutil.copy2(test_file, target_file)
-
-        # Execute commands in the temp directory structure, NOT in project_root
         compile_result = _execute_command(
             eval_config.compile_cmd,
-            temp_path,  # Run from temp dir, not project_root
-            run_path,
-        )
-
-        if not compile_result.success:
-            failure_type = "compile_failed"
-            failure_message = (
-                compile_result.stderr[:500] if compile_result.stderr else "Compilation failed"
-            )
-            return EvalMetrics(
-                compile_pass=False,
-                test_pass=False,
-                coverage_pct=None,
-                failure_type=failure_type,
-                failure_message=failure_message,
-            )
-
-        compile_pass = True
-
-        test_result = _execute_command(
-            eval_config.test_cmd,
             temp_path,
             run_path,
         )
+        if not compile_result.success:
+            return EvalMetrics(
+                compile_pass=False,
+                test_pass=False,
+                failure_type="compile_failed",
+                failure_message=(
+                    compile_result.stderr[:500] if compile_result.stderr else "Compilation failed"
+                ),
+                assertion_count=quality.assertion_count,
+                test_count=quality.test_count,
+                trivial_flag=quality.trivial_flag,
+                timings=timings,
+                generation_time_ms=generation_time_ms,
+            )
 
+        test_result = _execute_command(eval_config.test_cmd, temp_path, run_path)
         if not test_result.success:
-            failure_type = "test_failed"
-            failure_message = test_result.stderr[:500] if test_result.stderr else "Tests failed"
             return EvalMetrics(
                 compile_pass=True,
                 test_pass=False,
-                coverage_pct=None,
-                failure_type=failure_type,
-                failure_message=failure_message,
+                failure_type="test_failed",
+                failure_message=(
+                    test_result.stderr[:500] if test_result.stderr else "Tests failed"
+                ),
+                assertion_count=quality.assertion_count,
+                test_count=quality.test_count,
+                trivial_flag=quality.trivial_flag,
+                timings=timings,
+                generation_time_ms=generation_time_ms,
             )
 
-        test_pass = True
+        coverage_pct: float | None = None
+        branch_coverage_pct: float | None = None
+        coverage_source: str | None = None
+        coverage_reason: str | None = None
 
         if eval_config.coverage_cmd:
             coverage_result = _execute_command(
@@ -122,32 +121,46 @@ def evaluate_run(
                 temp_path,
                 run_path,
             )
-            coverage_pct, coverage_source, coverage_reason = _extract_coverage_pct(
+            coverage_pct, branch_coverage_pct, coverage_source, coverage_reason = _extract_coverage(
                 project_path=temp_path,
                 coverage_stdout=coverage_result.stdout,
                 jacoco_path=eval_config.jacoco_path,
             )
         else:
-            coverage_pct = None
-            coverage_source = None
             coverage_reason = "coverage_cmd_not_configured"
 
         return EvalMetrics(
-            compile_pass=compile_pass,
-            test_pass=test_pass,
+            compile_pass=True,
+            test_pass=True,
             coverage_pct=coverage_pct,
+            branch_coverage_pct=branch_coverage_pct,
             coverage_source=coverage_source,
             coverage_reason=coverage_reason,
-            failure_type=None,
-            failure_message=None,
+            assertion_count=quality.assertion_count,
+            test_count=quality.test_count,
+            trivial_flag=quality.trivial_flag,
+            timings=timings,
+            generation_time_ms=generation_time_ms,
         )
     finally:
-        # Explicit cleanup of temp test directory
         if temp_test_dir is not None:
             try:
                 temp_test_dir.cleanup()
             except Exception:
-                pass  # Best effort cleanup
+                pass
+
+
+def _extract_timings(generation_result: GenerationResult | None) -> PipelineTimings:
+    if generation_result is None or not hasattr(generation_result, "timings"):
+        return PipelineTimings()
+    t = generation_result.timings
+    return PipelineTimings(
+        parse_ms=t.get("parse_ms", 0),
+        retrieval_ms=t.get("retrieval_ms", 0),
+        prompt_ms=t.get("prompt_ms", 0),
+        llm_ms=t.get("llm_ms", 0),
+        postproc_ms=t.get("postproc_ms", 0),
+    )
 
 
 class CommandResult:
@@ -171,26 +184,10 @@ def _execute_command(
     project_root: Path,
     run_dir: Path,
 ) -> CommandResult:
-    """
-    Execute a shell command in the project directory.
-
-    Uses list-based args when possible for security and debuggability.
-    Falls back to shell=True only for complex commands with pipes/redirection.
-
-    Args:
-        cmd: Command to execute
-        project_root: Project directory for execution
-        run_dir: Run-specific directory
-
-    Returns:
-        CommandResult with success status and output
-    """
-    # Check if command contains shell operators (pipes, redirects, etc.)
-    shell_operators = ['|', '>', '<', '&&', '||', ';', '$', '`', '(', ')']
+    shell_operators = ["|", ">", "<", "&&", "||", ";", "$", "`", "(", ")"]
     needs_shell = any(op in cmd for op in shell_operators)
 
     if needs_shell:
-        # Use shell=True for complex commands
         try:
             result = subprocess.run(
                 cmd,
@@ -221,7 +218,6 @@ def _execute_command(
                 returncode=-1,
             )
     else:
-        # Use list-based execution for simple commands
         args = cmd.split()
         try:
             result = subprocess.run(
@@ -253,82 +249,44 @@ def _execute_command(
             )
 
 
-def _extract_coverage_pct(
+def _extract_coverage(
     project_path: Path,
     coverage_stdout: str,
     jacoco_path: str | None = None,
-) -> tuple[float | None, str | None, str | None]:
-    """Extract coverage with artifact-first strategy and bounded fallback."""
-    artifact_result = _extract_coverage_from_jacoco_xml(project_path, jacoco_path)
-    if artifact_result is not None:
-        return artifact_result, "jacoco_xml", None
+) -> tuple[float | None, float | None, str | None, str | None]:
+    jacoco_xml_path = _find_jacoco_xml(project_path, jacoco_path)
+    if jacoco_xml_path is not None:
+        cov = parse_coverage(jacoco_xml_path)
+        if cov.line_pct is not None:
+            return cov.line_pct, cov.branch_pct, "jacoco_xml", None
 
-    fallback_result = _extract_coverage_from_stdout(coverage_stdout)
-    if fallback_result is not None:
-        return fallback_result, "stdout_regex", None
+    fallback = _extract_coverage_from_stdout(coverage_stdout)
+    if fallback is not None:
+        return fallback, None, "stdout_regex", None
 
-    return None, None, "coverage_unavailable"
+    return None, None, None, "coverage_unavailable"
 
 
-def _extract_coverage_from_jacoco_xml(
+def _find_jacoco_xml(
     project_path: Path,
     jacoco_path: str | None = None,
-) -> float | None:
-    """Parse LINE coverage from jacoco.xml when available.
-
-    Args:
-        project_path: Root directory where jacoco_path is relative to
-        jacoco_path: Relative path to jacoco.xml (e.g., 'target/site/jacoco/jacoco.xml')
-                     If None, uses the default from EvaluationConfig.jacoco_path
-    """
-    # Use provided jacoco_path or fall back to config default
+) -> Path | None:
     if jacoco_path is None:
         jacoco_path = "target/site/jacoco/jacoco.xml"
 
-    jacoco_xml_path = project_path / jacoco_path
-    if not jacoco_xml_path.exists():
-        # Try common alternative locations
-        alternative_paths = [
-            project_path / "target" / "site" / "jacoco" / "jacoco.xml",
-            project_path / "jacoco.xml",
-            project_path / "target" / "jacoco.xml",
-        ]
-        for alt_path in alternative_paths:
-            if alt_path.exists():
-                jacoco_xml_path = alt_path
-                break
-        else:
-            return None
-
-    try:
-        root = ET.fromstring(jacoco_xml_path.read_text(encoding="utf-8"))
-    except (ET.ParseError, OSError, UnicodeDecodeError):
-        return None
-
-    line_counter = None
-    for counter in root.iter("counter"):
-        if counter.attrib.get("type") == "LINE":
-            line_counter = counter
-            break
-
-    if line_counter is None:
-        return None
-
-    try:
-        missed = int(line_counter.attrib.get("missed", ""))
-        covered = int(line_counter.attrib.get("covered", ""))
-    except ValueError:
-        return None
-
-    total = missed + covered
-    if total <= 0:
-        return None
-
-    return (covered / total) * 100.0
+    candidates = [
+        project_path / jacoco_path,
+        project_path / "target" / "site" / "jacoco" / "jacoco.xml",
+        project_path / "jacoco.xml",
+        project_path / "target" / "jacoco.xml",
+    ]
+    for path in candidates:
+        if path.exists():
+            return path
+    return None
 
 
 def _extract_coverage_from_stdout(output: str) -> float | None:
-    """Parse bounded percentage value from coverage command stdout."""
     output_lower = output.lower()
 
     labeled_match = re.search(
@@ -346,7 +304,6 @@ def _extract_coverage_from_stdout(output: str) -> float | None:
 
 
 def _bounded_percent(value: float) -> float | None:
-    """Return percent only when in [0, 100] bounds."""
     if 0.0 <= value <= 100.0:
         return value
     return None
@@ -356,18 +313,5 @@ def merge_run_metrics(
     run_result: RunResult,
     eval_metrics: EvalMetrics,
 ) -> RunResult:
-    """
-    Merge evaluation metrics into an existing run result.
-
-    This is used to update a run result with evaluation outcomes
-    after the evaluation phase completes.
-
-    Args:
-        run_result: Existing run result from generation
-        eval_metrics: Evaluation metrics from compile/test/coverage
-
-    Returns:
-        Updated RunResult with merged metrics
-    """
     run_result.metrics = eval_metrics
     return run_result

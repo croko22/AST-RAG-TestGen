@@ -10,7 +10,13 @@ from pathlib import Path
 from typing import Any
 
 from benchmark.schemas import BenchmarkManifest, ScoringConfig, ScoringWeights
-from benchmark.types import PreflightFinding, ProvenanceRecord, RunResult
+from benchmark.types import (
+    EvalMetrics,
+    PipelineTimings,
+    PreflightFinding,
+    ProvenanceRecord,
+    RunResult,
+)
 
 
 class ReportBundle:
@@ -35,22 +41,6 @@ def build_report(
     output_dir: Path | str,
     preflight_findings: list[PreflightFinding] | None = None,
 ) -> ReportBundle:
-    """
-    Generate complete benchmark report bundle.
-
-    Creates three files:
-    - results.json: All run results in machine-readable format
-    - summary.json: Aggregated statistics and ranked entries
-    - report.md: Human-readable summary with tables
-
-    Args:
-        results: List of all run results
-        manifest: Original benchmark manifest for config
-        output_dir: Directory to write reports
-
-    Returns:
-        ReportBundle with paths to generated files
-    """
     output_path = Path(output_dir)
     output_path.mkdir(parents=True, exist_ok=True)
 
@@ -91,7 +81,6 @@ def _build_results_json(
     provenance_path: Path,
     provenance_records: list[ProvenanceRecord],
 ) -> dict[str, Any]:
-    """Build machine-readable results JSON."""
     return {
         "generated_at": _utc_iso_z(),
         "manifest_version": manifest.manifest_version,
@@ -108,21 +97,37 @@ def _build_results_json(
     }
 
 
+def _serialize_metrics(metrics: EvalMetrics) -> dict[str, Any]:
+    return {
+        "compile_pass": metrics.compile_pass,
+        "test_pass": metrics.test_pass,
+        "coverage_pct": metrics.coverage_pct,
+        "branch_coverage_pct": metrics.branch_coverage_pct,
+        "coverage_source": metrics.coverage_source,
+        "coverage_reason": metrics.coverage_reason,
+        "failure_type": metrics.failure_type,
+        "failure_message": metrics.failure_message,
+        "generation_time_ms": metrics.generation_time_ms,
+        "assertion_count": metrics.assertion_count,
+        "trivial_flag": metrics.trivial_flag,
+        "test_count": metrics.test_count,
+        "quality_score": metrics.quality_score,
+        "timings": {
+            "parse_ms": metrics.timings.parse_ms,
+            "retrieval_ms": metrics.timings.retrieval_ms,
+            "prompt_ms": metrics.timings.prompt_ms,
+            "llm_ms": metrics.timings.llm_ms,
+            "postproc_ms": metrics.timings.postproc_ms,
+        },
+    }
+
+
 def _serialize_run_result(result: RunResult) -> dict[str, Any]:
-    """Serialize a single RunResult to JSON-compatible dict."""
     return {
         "run_id": result.run_id,
         "status": result.status,
         "latency_ms": result.latency_ms,
-        "metrics": {
-            "compile_pass": result.metrics.compile_pass,
-            "test_pass": result.metrics.test_pass,
-            "coverage_pct": result.metrics.coverage_pct,
-            "coverage_source": result.metrics.coverage_source,
-            "coverage_reason": result.metrics.coverage_reason,
-            "failure_type": result.metrics.failure_type,
-            "failure_message": result.metrics.failure_message,
-        },
+        "metrics": _serialize_metrics(result.metrics),
         "output_path": result.output_path,
         "provider": result.provider,
         "model": result.model,
@@ -139,7 +144,6 @@ def _build_summary_json(
     provenance_path: Path | None = None,
     provenance_records: list[ProvenanceRecord] | None = None,
 ) -> dict[str, Any]:
-    """Build summary JSON with aggregated statistics and rankings."""
     stats = _compute_statistics(results)
     rankings = _compute_rankings(results, manifest.scoring)
 
@@ -164,7 +168,6 @@ def _compute_diagnostics(
     results: list[RunResult],
     preflight_findings: list[PreflightFinding],
 ) -> dict[str, int]:
-    """Compute campaign diagnostics for fidelity hardening surfacing."""
     return {
         "preflight_warning_count": sum(1 for f in preflight_findings if f.severity == "warning"),
         "coverage_fallback_count": sum(
@@ -173,11 +176,11 @@ def _compute_diagnostics(
         "coverage_unavailable_count": sum(
             1 for r in results if r.metrics.coverage_reason == "coverage_unavailable"
         ),
+        "trivial_test_count": sum(1 for r in results if r.metrics.trivial_flag),
     }
 
 
 def _serialize_preflight(findings: list[PreflightFinding]) -> dict[str, Any]:
-    """Serialize preflight findings with split severities."""
     warnings = [f for f in findings if f.severity == "warning"]
     errors = [f for f in findings if f.severity == "error"]
     return {
@@ -197,7 +200,6 @@ def _serialize_preflight(findings: list[PreflightFinding]) -> dict[str, Any]:
 
 
 def _count_provenance_statuses(records: list[ProvenanceRecord]) -> dict[str, int]:
-    """Count provenance record statuses."""
     ok_count = sum(1 for record in records if record.status == "ok")
     unavailable_count = sum(1 for record in records if record.status == "unavailable")
     return {
@@ -211,7 +213,6 @@ def _build_provenance_json(
     manifest: BenchmarkManifest,
     records: list[ProvenanceRecord],
 ) -> dict[str, Any]:
-    """Build campaign-level provenance sidecar payload."""
     return {
         "generated_at": _utc_iso_z(),
         "manifest_version": manifest.manifest_version,
@@ -233,7 +234,6 @@ def _build_provenance_json(
 
 
 def collect_provenance_records(manifest: BenchmarkManifest) -> list[ProvenanceRecord]:
-    """Capture git provenance for each dataset target repository path."""
     project_root = Path(manifest.project_root)
     records: list[ProvenanceRecord] = []
 
@@ -296,7 +296,6 @@ def collect_provenance_records(manifest: BenchmarkManifest) -> list[ProvenanceRe
 
 
 def _resolve_repo_root(path: Path) -> Path | None:
-    """Resolve nearest git repository root for a path."""
     current = path if path.is_dir() else path.parent
     for candidate in (current, *current.parents):
         if (candidate / ".git").exists():
@@ -305,7 +304,6 @@ def _resolve_repo_root(path: Path) -> Path | None:
 
 
 def _git_value(repo_root: Path, args: list[str]) -> str | None:
-    """Return git command stdout value or None."""
     try:
         proc = subprocess.run(
             ["git", *args],
@@ -325,7 +323,6 @@ def _git_value(repo_root: Path, args: list[str]) -> str | None:
 
 
 def _git_is_dirty(repo_root: Path) -> bool | None:
-    """Return dirty state or None when git status cannot be resolved."""
     try:
         proc = subprocess.run(
             ["git", "status", "--porcelain"],
@@ -344,7 +341,6 @@ def _git_is_dirty(repo_root: Path) -> bool | None:
 
 
 def _compute_statistics(results: list[RunResult]) -> dict[str, Any]:
-    """Compute aggregate statistics from results."""
     total = len(results)
     if total == 0:
         return {
@@ -354,6 +350,10 @@ def _compute_statistics(results: list[RunResult]) -> dict[str, Any]:
             "timeout_count": 0,
             "error_count": 0,
             "avg_latency_ms": 0,
+            "avg_coverage_pct": 0.0,
+            "avg_branch_coverage_pct": 0.0,
+            "avg_quality_score": 0.0,
+            "trivial_rate": 0.0,
         }
 
     success_count = sum(1 for r in results if r.status == "ok")
@@ -363,6 +363,19 @@ def _compute_statistics(results: list[RunResult]) -> dict[str, Any]:
     latencies = [r.latency_ms for r in results if r.status == "ok"]
     avg_latency = sum(latencies) / len(latencies) if latencies else 0
 
+    coverages = [r.metrics.coverage_pct for r in results if r.metrics.coverage_pct is not None]
+    avg_coverage = sum(coverages) / len(coverages) if coverages else 0.0
+
+    branch_coverages = [
+        r.metrics.branch_coverage_pct for r in results if r.metrics.branch_coverage_pct is not None
+    ]
+    avg_branch = sum(branch_coverages) / len(branch_coverages) if branch_coverages else 0.0
+
+    quality_scores = [r.metrics.quality_score for r in results if r.status == "ok"]
+    avg_quality = sum(quality_scores) / len(quality_scores) if quality_scores else 0.0
+
+    trivial_count = sum(1 for r in results if r.metrics.trivial_flag)
+
     return {
         "total_runs": total,
         "success_count": success_count,
@@ -370,6 +383,10 @@ def _compute_statistics(results: list[RunResult]) -> dict[str, Any]:
         "timeout_count": timeout_count,
         "error_count": error_count,
         "avg_latency_ms": int(avg_latency),
+        "avg_coverage_pct": round(avg_coverage, 2),
+        "avg_branch_coverage_pct": round(avg_branch, 2),
+        "avg_quality_score": round(avg_quality, 4),
+        "trivial_rate": trivial_count / total,
     }
 
 
@@ -377,7 +394,6 @@ def _compute_rankings(
     results: list[RunResult],
     scoring: ScoringConfig,
 ) -> list[dict[str, Any]]:
-    """Compute ranked entries by provider/model combinations."""
     weights = scoring.weights
 
     entry_scores: dict[tuple[str, str], list[float]] = {}
@@ -401,6 +417,23 @@ def _compute_rankings(
             1 for r in results if r.provider == provider and r.model == model and r.status == "ok"
         )
 
+        provider_results = [
+            r for r in results if r.provider == provider and r.model == model and r.status == "ok"
+        ]
+        avg_coverage = 0.0
+        coverages = [
+            r.metrics.coverage_pct for r in provider_results if r.metrics.coverage_pct is not None
+        ]
+        if coverages:
+            avg_coverage = sum(coverages) / len(coverages)
+
+        avg_quality = 0.0
+        qualities = [r.metrics.quality_score for r in provider_results]
+        if qualities:
+            avg_quality = sum(qualities) / len(qualities)
+
+        trivial_count = sum(1 for r in provider_results if r.metrics.trivial_flag)
+
         ranked_entries.append(
             {
                 "provider": provider,
@@ -409,6 +442,9 @@ def _compute_rankings(
                 "run_count": run_count,
                 "success_count": success_count,
                 "success_rate": success_count / run_count if run_count > 0 else 0.0,
+                "avg_coverage_pct": round(avg_coverage, 2),
+                "avg_quality_score": round(avg_quality, 4),
+                "trivial_count": trivial_count,
             }
         )
 
@@ -424,23 +460,6 @@ def _compute_entry_score(
     result: RunResult,
     weights: ScoringWeights,
 ) -> float:
-    """
-    Compute weighted score for a single run result.
-
-    Score formula:
-    - success component: (compile_pass ? 0.5 : 0) + (test_pass ? 0.5 : 0)
-    - coverage component: coverage_pct / 100.0 if available
-    - latency component: normalized inverse (lower is better)
-
-    Final score = success * w_success + coverage * w_coverage + latency * w_latency
-
-    Args:
-        result: Run result to score
-        weights: Scoring weights from manifest
-
-    Returns:
-        Weighted score [0.0, 1.0]
-    """
     success_score = 0.0
     if result.metrics.compile_pass:
         success_score += 0.5
@@ -474,7 +493,6 @@ def _build_markdown_report(
     manifest: BenchmarkManifest,
     summary: dict[str, Any],
 ) -> str:
-    """Build human-readable Markdown report."""
     lines = [
         "# Benchmark Report",
         "",
@@ -493,6 +511,10 @@ def _build_markdown_report(
             f"- **Timeouts:** {stats.get('timeout_count', 0)}",
             f"- **Errors:** {stats.get('error_count', 0)}",
             f"- **Avg Latency:** {stats.get('avg_latency_ms', 0):,}ms",
+            f"- **Avg Coverage:** {stats.get('avg_coverage_pct', 0):.1f}%",
+            f"- **Avg Branch Coverage:** {stats.get('avg_branch_coverage_pct', 0):.1f}%",
+            f"- **Avg Quality Score:** {stats.get('avg_quality_score', 0):.4f}",
+            f"- **Trivial Rate:** {stats.get('trivial_rate', 0):.1%}",
             "",
         ]
     )
@@ -503,66 +525,142 @@ def _build_markdown_report(
             [
                 "## Rankings",
                 "",
-                "| Rank | Provider | Model | Avg Score | Success Rate | Runs |",
-                "|------|----------|-------|-----------|--------------|------|",
+                "| Rank | Provider | Model | Avg Score | Success Rate | Avg Cov% | Quality | Trivial | Runs |",
+                "|------|----------|-------|-----------|--------------|---------|---------|---------|------|",
             ]
         )
         for entry in rankings:
             lines.append(
                 f"| {entry['rank']} | {entry['provider']} | "
                 f"{entry['model']} | {entry['avg_score']:.4f} | "
-                f"{entry['success_rate']:.1%} | {entry['run_count']} |"
+                f"{entry['success_rate']:.1%} | {entry['avg_coverage_pct']:.1f} | "
+                f"{entry['avg_quality_score']:.4f} | {entry['trivial_count']} | "
+                f"{entry['run_count']} |"
             )
         lines.append("")
+
+    rag_section = _build_rag_comparison_section(results)
+    if rag_section:
+        lines.extend(rag_section)
 
     lines.extend(
         [
             "## Run Details",
             "",
-            "| Run ID | Provider | Model | Dataset | Status | Latency |",
-            "|--------|----------|-------|---------|--------|---------|",
+            "| Run ID | Provider | Model | Dataset | Status | Cov% | Branch% | Quality | Trivial | Gen(ms) |",
+            "|--------|----------|-------|---------|--------|------|---------|---------|---------|---------|",
         ]
     )
     for result in results:
-        status_emoji = {
-            "ok": "✓",
-            "timeout": "⏱",
-            "error": "✗",
+        status_icon = {
+            "ok": "+",
+            "timeout": "T",
+            "error": "X",
         }.get(result.status, "?")
+        cov = (
+            f"{result.metrics.coverage_pct:.1f}" if result.metrics.coverage_pct is not None else "-"
+        )
+        branch = (
+            f"{result.metrics.branch_coverage_pct:.1f}"
+            if result.metrics.branch_coverage_pct is not None
+            else "-"
+        )
+        quality = f"{result.metrics.quality_score:.3f}"
+        trivial = "Y" if result.metrics.trivial_flag else "-"
+        gen_ms = (
+            f"{result.metrics.generation_time_ms:,}" if result.metrics.generation_time_ms else "-"
+        )
         lines.append(
             f"| {result.run_id} | {result.provider} | {result.model} | "
-            f"{result.dataset_id} | {status_emoji} {result.status} | "
-            f"{result.latency_ms:,}ms |"
+            f"{result.dataset_id} | {status_icon} {result.status} | "
+            f"{cov} | {branch} | {quality} | {trivial} | {gen_ms} |"
         )
     lines.append("")
 
     return "\n".join(lines)
 
 
+def _build_rag_comparison_section(results: list[RunResult]) -> list[str]:
+    ast_results: list[RunResult] = []
+    rag_results: list[RunResult] = []
+
+    for r in results:
+        strategy = _get_retrieval_strategy(r)
+        if strategy in ("rag", "hybrid"):
+            rag_results.append(r)
+        else:
+            ast_results.append(r)
+
+    if not rag_results:
+        return []
+
+    lines = [
+        "## AST vs RAG Comparison",
+        "",
+        "| Metric | AST-only | RAG/Hybrid | Delta |",
+        "|--------|----------|------------|-------|",
+    ]
+
+    ast_ok = [r for r in ast_results if r.status == "ok"]
+    rag_ok = [r for r in rag_results if r.status == "ok"]
+
+    ast_success_rate = len(ast_ok) / len(ast_results) if ast_results else 0
+    rag_success_rate = len(rag_ok) / len(rag_results) if rag_results else 0
+
+    ast_cov = _avg_field(ast_ok, lambda r: r.metrics.coverage_pct)
+    rag_cov = _avg_field(rag_ok, lambda r: r.metrics.coverage_pct)
+
+    ast_quality = _avg_field(ast_ok, lambda r: r.metrics.quality_score)
+    rag_quality = _avg_field(rag_ok, lambda r: r.metrics.quality_score)
+
+    ast_latency = _avg_field(ast_ok, lambda r: float(r.latency_ms))
+    rag_latency = _avg_field(rag_ok, lambda r: float(r.latency_ms))
+
+    comparisons = [
+        ("Success Rate", f"{ast_success_rate:.1%}", f"{rag_success_rate:.1%}"),
+        ("Avg Coverage%", f"{ast_cov:.1f}", f"{rag_cov:.1f}"),
+        ("Avg Quality", f"{ast_quality:.4f}", f"{rag_quality:.4f}"),
+        ("Avg Latency(ms)", f"{ast_latency:.0f}", f"{rag_latency:.0f}"),
+    ]
+
+    for label, ast_val, rag_val in comparisons:
+        try:
+            delta = float(rag_val.replace("%", "").replace(",", "")) - float(
+                ast_val.replace("%", "").replace(",", "")
+            )
+            delta_str = f"{'+' if delta >= 0 else ''}{delta:.2f}"
+        except (ValueError, AttributeError):
+            delta_str = "N/A"
+        lines.append(f"| {label} | {ast_val} | {rag_val} | {delta_str} |")
+
+    lines.append("")
+    return lines
+
+
+def _get_retrieval_strategy(result: RunResult) -> str:
+    snapshot = result.config_snapshot or {}
+    strategy = snapshot.get("retrieval_strategy", "ast")
+    if isinstance(strategy, str):
+        return strategy.lower()
+    return "ast"
+
+
+def _avg_field(results: list[RunResult], extractor) -> float:
+    values = [extractor(r) for r in results if extractor(r) is not None]
+    return sum(values) / len(values) if values else 0.0
+
+
 def _utc_now() -> datetime:
-    """Return timezone-aware UTC datetime."""
     return datetime.now(UTC)
 
 
 def _utc_iso_z() -> str:
-    """Serialize current UTC datetime with a trailing Z suffix."""
     return _utc_now().isoformat().replace("+00:00", "Z")
 
 
 def load_results_from_dir(
     output_dir: Path | str,
 ) -> list[RunResult]:
-    """
-    Load run results from a benchmark output directory.
-
-    Reads individual run/result.json files and aggregates them.
-
-    Args:
-        output_dir: Directory containing run subdirectories
-
-    Returns:
-        List of RunResult objects
-    """
     output_path = Path(output_dir)
     results: list[RunResult] = []
 
@@ -588,18 +686,31 @@ def load_results_from_dir(
 
 
 def _deserialize_run_result(data: dict[str, Any]) -> RunResult:
-    """Deserialize a JSON dict back to RunResult."""
     from benchmark.types import EvalMetrics
 
     metrics_data = data.get("metrics", {})
+    timings_data = metrics_data.get("timings", {})
+    timings = PipelineTimings(
+        parse_ms=timings_data.get("parse_ms", 0),
+        retrieval_ms=timings_data.get("retrieval_ms", 0),
+        prompt_ms=timings_data.get("prompt_ms", 0),
+        llm_ms=timings_data.get("llm_ms", 0),
+        postproc_ms=timings_data.get("postproc_ms", 0),
+    )
     metrics = EvalMetrics(
         compile_pass=metrics_data.get("compile_pass", False),
         test_pass=metrics_data.get("test_pass", False),
         coverage_pct=metrics_data.get("coverage_pct"),
+        branch_coverage_pct=metrics_data.get("branch_coverage_pct"),
         coverage_source=metrics_data.get("coverage_source"),
         coverage_reason=metrics_data.get("coverage_reason"),
         failure_type=metrics_data.get("failure_type"),
         failure_message=metrics_data.get("failure_message"),
+        generation_time_ms=metrics_data.get("generation_time_ms", 0),
+        assertion_count=metrics_data.get("assertion_count", 0),
+        trivial_flag=metrics_data.get("trivial_flag", False),
+        test_count=metrics_data.get("test_count", 0),
+        timings=timings,
     )
 
     return RunResult(
@@ -621,24 +732,6 @@ def export_thesis_metrics_csv(
     output_dir: Path | str,
     filename: str = "thesis_metrics.csv",
 ) -> Path:
-    """
-    Export thesis-ready metrics in CSV format.
-
-    Creates a CSV file with columns:
-    - model: provider/model combination
-    - success_rate: proportion of successful runs
-    - avg_latency_sec: average latency in seconds
-    - coverage_pct: average coverage percentage
-    - score: weighted average score
-
-    Args:
-        results: List of run results
-        output_dir: Directory to write CSV file
-        filename: Output filename (default: thesis_metrics.csv)
-
-    Returns:
-        Path to created CSV file
-    """
     output_path = Path(output_dir)
     output_path.mkdir(parents=True, exist_ok=True)
 
@@ -654,6 +747,13 @@ def export_thesis_metrics_csv(
                 "latency_count": 0,
                 "coverage_sum": 0.0,
                 "coverage_count": 0,
+                "branch_coverage_sum": 0.0,
+                "branch_coverage_count": 0,
+                "quality_scores": [],
+                "trivial_count": 0,
+                "assertion_sum": 0,
+                "generation_time_sum": 0,
+                "generation_time_count": 0,
                 "scores": [],
             }
 
@@ -671,6 +771,21 @@ def export_thesis_metrics_csv(
             stats["coverage_sum"] += result.metrics.coverage_pct
             stats["coverage_count"] += 1
 
+        if result.metrics.branch_coverage_pct is not None:
+            stats["branch_coverage_sum"] += result.metrics.branch_coverage_pct
+            stats["branch_coverage_count"] += 1
+
+        stats["quality_scores"].append(result.metrics.quality_score)
+
+        if result.metrics.trivial_flag:
+            stats["trivial_count"] += 1
+
+        stats["assertion_sum"] += result.metrics.assertion_count
+
+        if result.metrics.generation_time_ms > 0:
+            stats["generation_time_sum"] += result.metrics.generation_time_ms
+            stats["generation_time_count"] += 1
+
     csv_path = output_path / filename
 
     with csv_path.open("w", newline="", encoding="utf-8") as f:
@@ -681,15 +796,19 @@ def export_thesis_metrics_csv(
                 "success_rate",
                 "avg_latency_sec",
                 "coverage_pct",
+                "branch_coverage_pct",
+                "quality_score",
+                "trivial_pct",
+                "avg_assertion_count",
+                "avg_generation_time_ms",
                 "score",
             ]
         )
 
         for (provider, model), stats in entry_stats.items():
             model_str = f"{provider}/{model}"
-            success_rate = (
-                stats["success_count"] / stats["total_count"] if stats["total_count"] > 0 else 0.0
-            )
+            total = stats["total_count"]
+            success_rate = stats["success_count"] / total if total > 0 else 0.0
             avg_latency_sec = (
                 (stats["latency_sum"] / stats["latency_count"]) / 1000.0
                 if stats["latency_count"] > 0
@@ -700,10 +819,25 @@ def export_thesis_metrics_csv(
                 if stats["coverage_count"] > 0
                 else 0.0
             )
-
-            success_score = (
-                stats["success_count"] / stats["total_count"] if stats["total_count"] > 0 else 0.0
+            branch_coverage_pct = (
+                stats["branch_coverage_sum"] / stats["branch_coverage_count"]
+                if stats["branch_coverage_count"] > 0
+                else 0.0
             )
+            quality_score = (
+                sum(stats["quality_scores"]) / len(stats["quality_scores"])
+                if stats["quality_scores"]
+                else 0.0
+            )
+            trivial_pct = (stats["trivial_count"] / total * 100) if total > 0 else 0.0
+            avg_assertion = stats["assertion_sum"] / total if total > 0 else 0.0
+            avg_gen_ms = (
+                stats["generation_time_sum"] / stats["generation_time_count"]
+                if stats["generation_time_count"] > 0
+                else 0.0
+            )
+
+            success_score = success_rate
             coverage_score = coverage_pct / 100.0
             latency_score = 1.0 - min(avg_latency_sec / 300.0, 1.0)
             score = (success_score * 0.5) + (coverage_score * 0.3) + (latency_score * 0.2)
@@ -714,6 +848,11 @@ def export_thesis_metrics_csv(
                     f"{success_rate:.4f}",
                     f"{avg_latency_sec:.2f}",
                     f"{coverage_pct:.2f}",
+                    f"{branch_coverage_pct:.2f}",
+                    f"{quality_score:.4f}",
+                    f"{trivial_pct:.1f}",
+                    f"{avg_assertion:.1f}",
+                    f"{avg_gen_ms:.0f}",
                     f"{score:.4f}",
                 ]
             )
