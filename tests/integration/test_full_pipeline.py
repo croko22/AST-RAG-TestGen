@@ -1,6 +1,7 @@
 """Integration tests for the full AST-RAG pipeline."""
 
 import pytest
+
 pytestmark = pytest.mark.slow
 
 from unittest.mock import Mock, patch
