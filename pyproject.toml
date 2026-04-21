@@ -57,6 +57,13 @@ dev = [
     "pytest-cov>=4.1.0",
     "pytest-mock>=3.11.0",
 ]
+rag = [
+    "chromadb>=0.4.0",
+    "sentence-transformers>=2.2.0",
+]
+mcp = [
+    "fastmcp>=2.0.0",
+]
 
 [project.scripts]
 ast-rag-testgen = "main:main"
@@ -68,7 +75,7 @@ Documentation = "https://github.com/croko22/Tesis-RAG-vs-RL-Arena#readme"
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["core*", "llm*"]
+include = ["core*", "llm*", "rag*", "mcp_server*", "postproc*"]
 
 [tool.ruff]
 line-length = 100
