@@ -25,10 +25,11 @@ def _collection_name_for(path: str) -> str:
 
 
 class ChromaIndexer:
-    def __init__(self, persist_dir: str = ".chroma_db", embedder=None):
+    def __init__(self, persist_dir: str = ".chroma_db", embedder=None, collection_name: str | None = None):
         self._persist_dir = persist_dir
         self._embedder = embedder
         self._client = None
+        self._default_collection = collection_name
 
     def _get_client(self):
         if self._client is None:
@@ -77,9 +78,12 @@ class ChromaIndexer:
     def query(
         self,
         embedding: list[float],
-        collection_name: str,
+        collection_name: str | None = None,
         k: int = 10,
     ) -> list[RetrievalResult]:
+        effective_name = collection_name or self._default_collection
+        if not effective_name:
+            raise ValueError("collection_name required (not set in constructor)")
         if not embedding:
             return []
         try:

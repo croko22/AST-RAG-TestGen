@@ -98,11 +98,7 @@ class TestFullPipeline:
 
     def test_end_to_end_with_mocked_llm(self, service_file, mock_java_project):
         """Test full pipeline with mocked LLM response."""
-        mock_client = Mock()
-        mock_response = Mock()
-        mock_response.content = [
-            Mock(
-                text="""
+        mock_test_code = """
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 import org.junit.jupiter.api.Test;
@@ -112,64 +108,36 @@ import org.mockito.Mock;
 
 @ExtendWith(MockitoExtension.class)
 class UsuarioServiceTest {
-    @Mock UsuarioRepository usuarioRepository;
-    @InjectMocks UsuarioService usuarioService;
+@Mock UsuarioRepository usuarioRepository;
+@InjectMocks UsuarioService usuarioService;
 
-    @Test
-    void crearUsuario_debeGuardar() {
-        Usuario u = new Usuario();
-        usuarioService.crearUsuario(u);
-        verify(usuarioRepository).save(u);
-    }
+@Test
+void crearUsuario_debeGuardar() {
+Usuario u = new Usuario();
+usuarioService.crearUsuario(u);
+verify(usuarioRepository).save(u);
+}
 }
 """
-            )
-        ]
-        mock_client.messages.create.return_value = mock_response
+        import tempfile
 
-        with patch("llm.client.LLMClient._init_anthropic"):
-            with patch("llm.client_new.LLMClient") as MockLLMClient:
-                mock_instance = Mock()
-                mock_instance.generate_test.return_value = """
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+        from orchestration.generator import generate_test_for_file
 
-@ExtendWith(MockitoExtension.class)
-class UsuarioServiceTest {
-    @Mock UsuarioRepository usuarioRepository;
-    @InjectMocks UsuarioService usuarioService;
+        with patch("orchestration.generator._generate_test_with_llm", return_value=mock_test_code):
+            with tempfile.TemporaryDirectory() as output_dir:
+                result = generate_test_for_file(
+                    java_file_path=service_file,
+                    java_project_path=mock_java_project,
+                    output_dir=output_dir,
+                    max_dependencies=5,
+                    llm_provider="anthropic",
+                    llm_model="test-model",
+                )
 
-    @Test
-    void crearUsuario_debeGuardar() {
-        Usuario u = new Usuario();
-        usuarioService.crearUsuario(u);
-        verify(usuarioRepository).save(u);
-    }
-}
-"""
-                MockLLMClient.return_value = mock_instance
-
-                import tempfile
-
-                from orchestration.generator import generate_test_for_file
-
-                with tempfile.TemporaryDirectory() as output_dir:
-                    test_code = generate_test_for_file(
-                        java_file_path=service_file,
-                        java_project_path=mock_java_project,
-                        output_dir=output_dir,
-                        max_dependencies=5,
-                        llm_provider="anthropic",
-                        llm_model="test-model",
-                    )
-
-                assert "UsuarioServiceTest" in test_code
-                assert "import org.junit.jupiter" in test_code
-                assert "verify(usuarioRepository)" in test_code
+        test_code = result.test_code if hasattr(result, 'test_code') else result
+        assert "UsuarioServiceTest" in test_code
+        assert "import org.junit.jupiter" in test_code
+        assert "verify(usuarioRepository)" in test_code
 
     def test_dependency_resolution_depth_2_includes_repository(
         self, service_file, mock_java_project

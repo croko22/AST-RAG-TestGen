@@ -42,11 +42,13 @@ class HybridRetriever:
         embedder=None,
         alpha: float = 0.5,
         ast_dependencies: set[str] | None = None,
+        collection_name: str | None = None,
     ):
         self._indexer = indexer
         self._embedder = embedder
         self._alpha = alpha
         self._ast_dependencies = ast_dependencies or set()
+        self._collection_name = collection_name
 
     def set_ast_dependencies(self, deps: set[str]) -> None:
         self._ast_dependencies = deps
@@ -67,7 +69,7 @@ class HybridRetriever:
             return []
 
         embedding = self._embedder.embed_single(query)
-        vector_results = self._indexer.query(embedding, k=k * 2)
+        vector_results = self._indexer.query(embedding, collection_name=self._collection_name, k=k * 2)
 
         if not vector_results:
             return []
