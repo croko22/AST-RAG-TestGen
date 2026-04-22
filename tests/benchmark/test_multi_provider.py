@@ -8,6 +8,10 @@ from __future__ import annotations
 
 import json
 import os
+
+import pytest
+
+pytestmark = pytest.mark.slow
 import stat
 
 import pytest

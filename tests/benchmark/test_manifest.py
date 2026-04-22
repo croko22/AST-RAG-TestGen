@@ -6,6 +6,8 @@ import json
 
 import pytest
 
+pytestmark = pytest.mark.slow
+
 from benchmark.manifest import (
     ManifestValidationError,
     load_manifest,

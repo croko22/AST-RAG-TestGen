@@ -32,6 +32,8 @@ class PromptBuilder:
         self,
         java_file_path: str,
         max_dependencies: int = 10,
+        rag_context: str | None = None,
+        max_context_tokens: int = 4000,
     ) -> tuple[str, str]:
         """
         Build the complete prompt with code and context.
@@ -39,25 +41,36 @@ class PromptBuilder:
         Args:
             java_file_path: Path to the Java file to test
             max_dependencies: Maximum number of dependencies to include
+            rag_context: Optional RAG-retrieved context to include
+            max_context_tokens: Maximum token budget for combined context
 
         Returns:
             Tuple of (code_under_test, dependency_context)
         """
-        # Parse the file under test
         parsed = self.retriever.parse_file(java_file_path)
         if not parsed:
             raise ValueError(f"Could not parse file: {java_file_path}")
 
         code_under_test = parsed.content
 
-        # Extract and resolve dependencies
         dependency_context = self._build_dependency_context(parsed, max_dependencies)
 
-        # Add public methods of the class under test to context
         public_methods_context = self._build_public_methods_context(parsed)
         dependency_context = public_methods_context + "\n" + dependency_context
 
+        if rag_context:
+            rag_section = self._format_rag_context(rag_context)
+            char_budget = max_context_tokens * 4
+            remaining = char_budget - len(dependency_context)
+            if remaining < len(rag_section):
+                rag_section = rag_section[:max(0, remaining)]
+            dependency_context = dependency_context + "\n" + rag_section
+
         return code_under_test, dependency_context
+
+    def _format_rag_context(self, rag_context: str) -> str:
+        header = "### CONTEXTO ADICIONAL (RAG - Recuperación Semántica)"
+        return f"{header}\n{rag_context}"
 
     def _build_dependency_context(
         self,
@@ -177,6 +190,8 @@ def build_test_prompt(
     java_file_path: str,
     java_project_path: str,
     max_dependencies: int = 10,
+    rag_context: str | None = None,
+    max_context_tokens: int = 4000,
 ) -> tuple[str, str]:
     """
     Convenience function to build the test prompt.
@@ -185,6 +200,8 @@ def build_test_prompt(
         java_file_path: Path to the Java file to test
         java_project_path: Root path of the Java project
         max_dependencies: Maximum dependencies to include
+        rag_context: Optional RAG-retrieved context
+        max_context_tokens: Maximum token budget for combined context
 
     Returns:
         Tuple of (code_under_test, dependency_context)
@@ -192,7 +209,12 @@ def build_test_prompt(
     retriever = JavaFileRetriever(java_project_path)
     resolver = DependencyResolver(retriever)
     builder = PromptBuilder(retriever, resolver)
-    return builder.build_prompt(java_file_path, max_dependencies)
+    return builder.build_prompt(
+        java_file_path,
+        max_dependencies,
+        rag_context=rag_context,
+        max_context_tokens=max_context_tokens,
+    )
 
 
 if __name__ == "__main__":

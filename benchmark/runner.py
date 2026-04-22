@@ -37,22 +37,38 @@ def _create_run_workspace(base_output_dir: Path, run_id: str) -> Path:
     return run_dir
 
 
+def _serialize_metrics(metrics: EvalMetrics) -> dict[str, Any]:
+    return {
+        "compile_pass": metrics.compile_pass,
+        "test_pass": metrics.test_pass,
+        "coverage_pct": metrics.coverage_pct,
+        "branch_coverage_pct": metrics.branch_coverage_pct,
+        "coverage_source": metrics.coverage_source,
+        "coverage_reason": metrics.coverage_reason,
+        "failure_type": metrics.failure_type,
+        "failure_message": metrics.failure_message,
+        "generation_time_ms": metrics.generation_time_ms,
+        "assertion_count": metrics.assertion_count,
+        "trivial_flag": metrics.trivial_flag,
+        "test_count": metrics.test_count,
+        "quality_score": metrics.quality_score,
+        "timings": {
+            "parse_ms": metrics.timings.parse_ms,
+            "retrieval_ms": metrics.timings.retrieval_ms,
+            "prompt_ms": metrics.timings.prompt_ms,
+            "llm_ms": metrics.timings.llm_ms,
+            "postproc_ms": metrics.timings.postproc_ms,
+        },
+    }
+
+
 def _write_run_result(run_dir: Path, result: RunResult) -> None:
-    """Write incremental run result to JSON for crash resilience."""
     result_path = run_dir / "result.json"
     result_data = {
         "run_id": result.run_id,
         "status": result.status,
         "latency_ms": result.latency_ms,
-        "metrics": {
-            "compile_pass": result.metrics.compile_pass,
-            "test_pass": result.metrics.test_pass,
-            "coverage_pct": result.metrics.coverage_pct,
-            "coverage_source": result.metrics.coverage_source,
-            "coverage_reason": result.metrics.coverage_reason,
-            "failure_type": result.metrics.failure_type,
-            "failure_message": result.metrics.failure_message,
-        },
+        "metrics": _serialize_metrics(result.metrics),
         "output_path": result.output_path,
         "provider": result.provider,
         "model": result.model,
@@ -66,17 +82,7 @@ def _write_run_result(run_dir: Path, result: RunResult) -> None:
 def _execute_generation(
     plan: RunPlan,
     output_dir: Path,
-) -> tuple[str, int]:
-    """
-    Execute the generation flow for a run.
-
-    This is a scaffold implementation that creates the isolated workspace
-    and writes placeholder results. Full integration with the generation
-    pipeline will be added in subsequent phases.
-
-    Returns:
-        Tuple of (output_path, latency_ms)
-    """
+) -> tuple[str, int, Any]:
     from pathlib import Path
 
     from main import generate_test_for_file
@@ -88,7 +94,7 @@ def _execute_generation(
 
     start_time = time.monotonic()
 
-    generate_test_for_file(
+    result = generate_test_for_file(
         java_file_path=full_java_path,
         java_project_path=project_path,
         output_dir=str(output_dir),
@@ -100,9 +106,7 @@ def _execute_generation(
     end_time = time.monotonic()
     latency_ms = int((end_time - start_time) * 1000)
 
-    test_class_path = Path(output_dir) / f"{Path(java_file).stem}Test.java"
-
-    return str(test_class_path), latency_ms
+    return str(result.output_path), latency_ms, result
 
 
 def _run_with_timeout(
@@ -180,7 +184,7 @@ def execute_run(
         )
 
     try:
-        output_path, latency_ms = _run_with_timeout(
+        output_path, latency_ms, gen_result = _run_with_timeout(
             _execute_generation,
             plan.timeout_seconds,
             plan,
@@ -190,7 +194,12 @@ def execute_run(
         if eval_config is not None:
             from benchmark.evaluator import evaluate_run
 
-            metrics = evaluate_run(run_dir, eval_config, plan.project_root)
+            metrics = evaluate_run(
+                run_dir,
+                eval_config,
+                plan.project_root,
+                generation_result=gen_result,
+            )
             status = "ok" if metrics.failure_type is None else "failed"
         else:
             metrics = EvalMetrics(

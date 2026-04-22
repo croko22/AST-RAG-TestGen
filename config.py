@@ -164,6 +164,72 @@ class FeatureFlagsConfig(BaseSettings):
     )
 
 
+class RAGConfig(BaseSettings):
+    """Configuration for RAG retrieval pipeline."""
+
+    enabled: bool = Field(default=False, alias="RAG_ENABLED")
+    alpha: float = Field(default=0.5, ge=0.0, le=1.0, alias="RAG_ALPHA")
+    embedding_provider: Literal["local", "api"] = Field(
+        default="local", alias="RAG_EMBEDDING_PROVIDER"
+    )
+    embedding_model: str = Field(default="all-MiniLM-L6-v2", alias="RAG_EMBEDDING_MODEL")
+    chroma_persist_dir: str = Field(default=".chroma_db", alias="RAG_CHROMA_PERSIST_DIR")
+    chunk_strategy: Literal["method", "class", "file"] = Field(
+        default="method", alias="RAG_CHUNK_STRATEGY"
+    )
+    chunk_max_tokens: int = Field(default=512, ge=64, le=8192, alias="RAG_CHUNK_MAX_TOKENS")
+    retrieval_top_k: int = Field(default=10, ge=1, le=100, alias="RAG_RETRIEVAL_TOP_K")
+    max_context_tokens: int = Field(default=4096, ge=256, le=32768, alias="RAG_MAX_CONTEXT_TOKENS")
+    retrieval_strategy: Literal["ast", "rag", "hybrid"] = Field(
+        default="hybrid", alias="RAG_RETRIEVAL_STRATEGY"
+    )
+
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        extra="ignore",
+        env_ignore_empty=True,
+    )
+
+
+class MCPServerConfig(BaseSettings):
+    """Configuration for MCP server."""
+
+    transport: Literal["stdio", "http"] = Field(default="stdio", alias="MCP_TRANSPORT")
+    host: str = Field(default="127.0.0.1", alias="MCP_HOST")
+    port: int = Field(default=8000, ge=1, le=65535, alias="MCP_PORT")
+    debug: bool = Field(default=False, alias="MCP_DEBUG")
+
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        extra="ignore",
+        env_ignore_empty=True,
+    )
+
+
+class PostProcConfig(BaseSettings):
+    """Configuration for post-processing pipeline."""
+
+    enabled: bool = Field(default=False, alias="POSTPROC_ENABLED")
+    auto_compile: bool = Field(default=False, alias="POSTPROC_AUTO_COMPILE")
+    auto_run: bool = Field(default=False, alias="POSTPROC_AUTO_RUN")
+    coverage_tool: str = Field(default="jacoco", alias="POSTPROC_COVERAGE_TOOL")
+    quality_threshold: float = Field(
+        default=0.5, ge=0.0, le=1.0, alias="POSTPROC_QUALITY_THRESHOLD"
+    )
+    compile_cmd: str | None = Field(default=None, alias="POSTPROC_COMPILE_CMD")
+    test_cmd: str | None = Field(default=None, alias="POSTPROC_TEST_CMD")
+    coverage_cmd: str | None = Field(default=None, alias="POSTPROC_COVERAGE_CMD")
+
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        extra="ignore",
+        env_ignore_empty=True,
+    )
+
+
 class AppConfig(BaseSettings):
     """Main application configuration combining all sub-configurations."""
 
@@ -171,6 +237,9 @@ class AppConfig(BaseSettings):
     java: JavaProjectConfig = Field(default_factory=JavaProjectConfig)
     benchmark: BenchmarkConfig = Field(default_factory=BenchmarkConfig)
     features: FeatureFlagsConfig = Field(default_factory=FeatureFlagsConfig)
+    rag: RAGConfig = Field(default_factory=RAGConfig)
+    mcp_server: MCPServerConfig = Field(default_factory=MCPServerConfig)
+    postproc: PostProcConfig = Field(default_factory=PostProcConfig)
 
     model_config = SettingsConfigDict(
         env_file=".env",

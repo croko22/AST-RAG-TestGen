@@ -51,6 +51,10 @@ class EvaluationConfig(StrictModel):
     compile_cmd: str = Field(..., min_length=1)
     test_cmd: str = Field(..., min_length=1)
     coverage_cmd: str | None = None
+    jacoco_path: str | None = Field(
+        default="target/site/jacoco/jacoco.xml",
+        description="Path to JaCoCo XML report relative to project root"
+    )
 
 
 class ScoringWeights(StrictModel):

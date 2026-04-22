@@ -37,7 +37,7 @@ def legacy_main(args) -> int:
         # Import orchestration modules
         from orchestration.generator import generate_test_for_file
 
-        test_code = generate_test_for_file(
+        result = generate_test_for_file(
             java_file_path=args.java_file,
             java_project_path=args.project_path,
             output_dir=args.output,
@@ -49,7 +49,7 @@ def legacy_main(args) -> int:
         )
 
         if args.print:
-            output.print_code(test_code)
+            output.print_code(result.test_code)
 
         output.print_success(f"Test saved to {args.output}/{Path(args.java_file).stem}Test.java")
         return 0

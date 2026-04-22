@@ -122,7 +122,11 @@ class TestMainCli:
             assert kwargs["llm_model"] == "gpt-4-turbo"
             assert kwargs["enable_metainfo_db"] is True
             assert kwargs["enable_reftest_parity"] is True
-            return "public class ServiceTest {}"
+            from orchestration.generator import GenerationResult
+            return GenerationResult(
+                test_code="public class ServiceTest {}",
+                output_path="./tests_generados/serviceTest.java",
+            )
 
         monkeypatch.setattr(
             "orchestration.generator.generate_test_for_file", fake_generate_test_for_file

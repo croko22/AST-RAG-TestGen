@@ -14,6 +14,13 @@ python main.py generate <java_file> <java_project_path> [options]
 python main.py benchmark <manifest> [options]
 python main.py providers
 
+# MCP Server (editor/IDE integration)
+python main.py serve --transport stdio
+python main.py serve --transport http --port 8000
+
+# RAG-enabled generation
+python main.py generate service.java project/ --rag-enabled --alpha 0.7
+
 # Legacy CLI (backward compatible)
 python main.py <java_file> <java_project_path> [options]
 
@@ -58,9 +65,11 @@ Java File → Tree-sitter Parser → ParsedJavaClass
 ↓
 JavaProjectPath → DependencyResolver → dependency_context (method signatures)
 ↓
-ParsedJavaClass + dependency_context → LLM Adapter (build_user_prompt)
+[IF RAG ENABLED] JavaProjectPath → Chunker → Embedder → ChromaDB → HybridRetriever → rag_context
 ↓
-Prompt → LLM API → Generated Test
+ParsedJavaClass + dependency_context + [rag_context] → Prompt Builder → LLM Adapter
+↓
+Prompt → LLM API → Generated Test → [Post-processing: compile, run, coverage, quality]
 ```
 
 ### Actual Pipeline in orchestration/generator.py
@@ -78,12 +87,43 @@ The real pipeline is:
 - `MethodSignature`: Extracted method metadata (visibility, return type, params)
 - `LLMConfig`: Config for LLM API calls (provider, model, temperature)
 - `LLMClient`: Multi-provider interface to various LLM APIs
+- `CodeChunk`: RAG chunk (method/class/import-level) with metadata
+- `RetrievalResult`: Hybrid retrieval result (vector + AST scores)
+- `GenerationResult`: Pipeline output with test_code, timings, retrieval_strategy
+
+### RAG Pipeline (`rag/`)
+
+5. **RAG Layer** (`rag/`): Semantic code retrieval augmenting AST-based context
+- `ASTChunker`: Chunks parsed Java into method/class/import-level pieces
+- `EmbeddingService`: sentence-transformers wrapper (all-MiniLM-L6-v2), lazy-loaded
+- `ChromaIndexer`: ChromaDB vector storage with per-project collections
+- `HybridRetriever`: Alpha-weighted blending of vector similarity + AST relevance
+- Hybrid formula: `alpha * vector_score + (1-alpha) * ast_score`
+
+### MCP Server (`mcp_server/`)
+
+6. **MCP Server** (`mcp_server/`): FastMCP-based server for editor/IDE integration
+- `generate_tests`: Full pipeline via MCP tool
+- `analyze_code`: AST analysis + dependency graph via MCP tool
+- `coverage_suggestions`: Quality assessment + coverage suggestions via MCP tool
+- Supports STDIO (editor) and HTTP/SSE (remote) transports
+
+### Post-Processing (`postproc/`)
+
+7. **Post-Processing** (`postproc/`): Validation and quality assessment
+- `validate_compilation`: Compile generated tests
+- `run_tests`: Execute tests and capture results
+- `parse_coverage`: JaCoCo XML parsing (LINE + BRANCH coverage)
+- `assess_test_quality`: Heuristic quality scoring (assertions, triviality, diversity)
 
 ## Configuration
 
 - Environment variables loaded from `.env` via `python-dotenv`
 - API keys: `ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, `GLM_API_KEY`, `GEMINI_API_KEY`, `NVIDIA_API_KEY`, `OPENROUTER_API_KEY`
 - Provider defaults: `LLM_PROVIDER`, `LLM_MODEL`
+- RAG config: `RAG_ENABLED`, `RAG_ALPHA`, `RAG_EMBEDDING_MODEL`, `RAG_CHROMA_PERSIST_DIR`
+- MCP Server: `MCP_HOST`, `MCP_PORT`, `MCP_TRANSPORT`
+- Post-processing: `POSTPROC_AUTO_COMPILE`, `POSTPROC_AUTO_RUN`, `POSTPROC_QUALITY_THRESHOLD`
 
 ## Terminal Output
 
@@ -140,12 +180,28 @@ llm/                    # LLM provider adapters
 │   └── openrouter.py   # OpenRouter adapter
 └── client_new.py       # Multi-provider client
 
-orchestration/          # Pipeline orchestration
-├── generator.py        # Test generation orchestration
-└── benchmark.py        # Benchmark orchestration
+orchestration/ # Pipeline orchestration
+├── generator.py # Test generation orchestration
+└── benchmark.py # Benchmark orchestration
 
-output/                 # Output handling
-└── console.py          # Rich console wrapper
+rag/ # RAG pipeline
+├── models.py # CodeChunk, RetrievalResult, IndexStats
+├── protocols.py # Chunker, Embedder, Indexer, Retriever protocols
+├── chunker.py # AST-aware chunking (method/class/import)
+├── embedder.py # sentence-transformers wrapper
+├── indexer.py # ChromaDB vector storage
+└── retriever.py # Hybrid retrieval (vector + AST)
+
+postproc/ # Post-processing
+├── validator.py # Compile, run tests, JaCoCo coverage
+└── quality.py # Quality heuristics (assertions, triviality, diversity)
+
+mcp_server/ # MCP server for editor/IDE
+├── server.py # FastMCP tools (generate, analyze, coverage)
+└── cli.py # CLI entry point (serve command)
+
+output/ # Output handling
+└── console.py # Rich console wrapper
 
 config/                 # Configuration management
 └── settings.py         # Pydantic settings

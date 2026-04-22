@@ -1,5 +1,9 @@
 """Tests for CLI benchmark mode wiring and backward compatibility."""
 
+import pytest
+
+pytestmark = pytest.mark.slow
+
 from argparse import Namespace
 from pathlib import Path
 from unittest.mock import MagicMock, patch

@@ -6,6 +6,8 @@ import json
 
 import pytest
 
+pytestmark = pytest.mark.slow
+
 from benchmark.reporter import (
     _build_summary_json,
     _compute_diagnostics,
