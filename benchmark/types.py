@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any, Literal
+from typing import Any, Literal, Optional
 
 PreflightSeverity = Literal["error", "warning"]
 ProvenanceStatus = Literal["ok", "unavailable"]
@@ -28,6 +28,9 @@ class EvalMetrics:
     branch_coverage_pct: float | None = None
     coverage_source: str | None = None
     coverage_reason: str | None = None
+    mutation_score_pct: Optional[float] = None
+    killed_mutations: Optional[int] = None
+    total_mutations: Optional[int] = None
     failure_type: str | None = None
     failure_message: str | None = None
     generation_time_ms: int = 0

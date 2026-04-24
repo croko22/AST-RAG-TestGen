@@ -11,6 +11,7 @@ from typing import TYPE_CHECKING
 
 from benchmark.schemas import EvaluationConfig
 from benchmark.types import EvalMetrics, PipelineTimings, RunResult
+from postproc.pit_parser import parse_pit_report
 from postproc.quality import assess_test_quality
 from postproc.validator import parse_coverage
 
@@ -129,6 +130,20 @@ def evaluate_run(
         else:
             coverage_reason = "coverage_cmd_not_configured"
 
+        mutation_score_pct: float | None = None
+        killed_mutations: int | None = None
+        total_mutations: int | None = None
+
+        if eval_config.run_pit or eval_config.pit_cmd:
+            if eval_config.pit_cmd:
+                _execute_command(eval_config.pit_cmd, temp_path, run_path)
+            pit_report_dir = temp_path / (eval_config.pit_path or "target/pit-reports")
+            pit_data = parse_pit_report(str(pit_report_dir))
+            if pit_data is not None:
+                mutation_score_pct = pit_data.get("mutation_score_pct")
+                killed_mutations = pit_data.get("killed_mutations")
+                total_mutations = pit_data.get("total_mutations")
+
         return EvalMetrics(
             compile_pass=True,
             test_pass=True,
@@ -136,6 +151,9 @@ def evaluate_run(
             branch_coverage_pct=branch_coverage_pct,
             coverage_source=coverage_source,
             coverage_reason=coverage_reason,
+            mutation_score_pct=mutation_score_pct,
+            killed_mutations=killed_mutations,
+            total_mutations=total_mutations,
             assertion_count=quality.assertion_count,
             test_count=quality.test_count,
             trivial_flag=quality.trivial_flag,

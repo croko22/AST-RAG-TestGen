@@ -112,6 +112,9 @@ def _serialize_metrics(metrics: EvalMetrics) -> dict[str, Any]:
         "trivial_flag": metrics.trivial_flag,
         "test_count": metrics.test_count,
         "quality_score": metrics.quality_score,
+        "mutation_score_pct": metrics.mutation_score_pct,
+        "killed_mutations": metrics.killed_mutations,
+        "total_mutations": metrics.total_mutations,
         "timings": {
             "parse_ms": metrics.timings.parse_ms,
             "retrieval_ms": metrics.timings.retrieval_ms,
@@ -354,6 +357,8 @@ def _compute_statistics(results: list[RunResult]) -> dict[str, Any]:
             "avg_branch_coverage_pct": 0.0,
             "avg_quality_score": 0.0,
             "trivial_rate": 0.0,
+            "avg_mutation_score_pct": 0.0,
+            "mutation_data_count": 0,
         }
 
     success_count = sum(1 for r in results if r.status == "ok")
@@ -376,6 +381,12 @@ def _compute_statistics(results: list[RunResult]) -> dict[str, Any]:
 
     trivial_count = sum(1 for r in results if r.metrics.trivial_flag)
 
+    mutation_scores = [
+        r.metrics.mutation_score_pct for r in results if r.metrics.mutation_score_pct is not None
+    ]
+    avg_mutation = sum(mutation_scores) / len(mutation_scores) if mutation_scores else 0.0
+    mutation_count = len(mutation_scores)
+
     return {
         "total_runs": total,
         "success_count": success_count,
@@ -387,6 +398,8 @@ def _compute_statistics(results: list[RunResult]) -> dict[str, Any]:
         "avg_branch_coverage_pct": round(avg_branch, 2),
         "avg_quality_score": round(avg_quality, 4),
         "trivial_rate": trivial_count / total,
+        "avg_mutation_score_pct": round(avg_mutation, 2),
+        "mutation_data_count": mutation_count,
     }
 
 
@@ -475,7 +488,11 @@ def _compute_entry_score(
         max_latency = 300000
         latency_score = 1.0 - min(result.latency_ms / max_latency, 1.0)
 
-    total_weight = weights.success + weights.coverage + weights.latency
+    mutation_score = 0.0
+    if result.metrics.mutation_score_pct is not None:
+        mutation_score = result.metrics.mutation_score_pct / 100.0
+
+    total_weight = weights.success + weights.coverage + weights.latency + weights.mutation
     if total_weight == 0:
         return success_score
 
@@ -483,6 +500,7 @@ def _compute_entry_score(
         (success_score * weights.success)
         + (coverage_score * weights.coverage)
         + (latency_score * weights.latency)
+        + (mutation_score * weights.mutation)
     ) / total_weight
 
     return weighted
@@ -504,20 +522,22 @@ def _build_markdown_report(
     ]
 
     stats = summary.get("statistics", {})
-    lines.extend(
-        [
-            f"- **Total Runs:** {stats.get('total_runs', 0)}",
-            f"- **Successful:** {stats.get('success_count', 0)} ({stats.get('success_rate', 0):.1%})",
-            f"- **Timeouts:** {stats.get('timeout_count', 0)}",
-            f"- **Errors:** {stats.get('error_count', 0)}",
-            f"- **Avg Latency:** {stats.get('avg_latency_ms', 0):,}ms",
-            f"- **Avg Coverage:** {stats.get('avg_coverage_pct', 0):.1f}%",
-            f"- **Avg Branch Coverage:** {stats.get('avg_branch_coverage_pct', 0):.1f}%",
-            f"- **Avg Quality Score:** {stats.get('avg_quality_score', 0):.4f}",
-            f"- **Trivial Rate:** {stats.get('trivial_rate', 0):.1%}",
-            "",
-        ]
-    )
+    summary_lines = [
+        f"- **Total Runs:** {stats.get('total_runs', 0)}",
+        f"- **Successful:** {stats.get('success_count', 0)} ({stats.get('success_rate', 0):.1%})",
+        f"- **Timeouts:** {stats.get('timeout_count', 0)}",
+        f"- **Errors:** {stats.get('error_count', 0)}",
+        f"- **Avg Latency:** {stats.get('avg_latency_ms', 0):,}ms",
+        f"- **Avg Coverage:** {stats.get('avg_coverage_pct', 0):.1f}%",
+        f"- **Avg Branch Coverage:** {stats.get('avg_branch_coverage_pct', 0):.1f}%",
+        f"- **Avg Quality Score:** {stats.get('avg_quality_score', 0):.4f}",
+        f"- **Trivial Rate:** {stats.get('trivial_rate', 0):.1%}",
+    ]
+    if stats.get("mutation_data_count", 0) > 0:
+        summary_lines.append(f"- **Avg Mutation Score:** {stats.get('avg_mutation_score_pct', 0):.1f}%")
+        summary_lines.append(f"- **Runs with Mutation Data:** {stats.get('mutation_data_count', 0)}")
+    summary_lines.append("")
+    lines.extend(summary_lines)
 
     rankings = summary.get("rankings", [])
     if rankings:
@@ -543,14 +563,26 @@ def _build_markdown_report(
     if rag_section:
         lines.extend(rag_section)
 
-    lines.extend(
-        [
-            "## Run Details",
-            "",
-            "| Run ID | Provider | Model | Dataset | Status | Cov% | Branch% | Quality | Trivial | Gen(ms) |",
-            "|--------|----------|-------|---------|--------|------|---------|---------|---------|---------|",
-        ]
-    )
+    has_mutation_data = any(r.metrics.mutation_score_pct is not None for r in results)
+
+    if has_mutation_data:
+        lines.extend(
+            [
+                "## Run Details",
+                "",
+                "| Run ID | Provider | Model | Dataset | Status | Cov% | Branch% | Mut% | Quality | Trivial | Gen(ms) |",
+                "|--------|----------|-------|---------|--------|------|---------|------|---------|---------|---------|",
+            ]
+        )
+    else:
+        lines.extend(
+            [
+                "## Run Details",
+                "",
+                "| Run ID | Provider | Model | Dataset | Status | Cov% | Branch% | Quality | Trivial | Gen(ms) |",
+                "|--------|----------|-------|---------|--------|------|---------|---------|---------|---------|",
+            ]
+        )
     for result in results:
         status_icon = {
             "ok": "+",
@@ -570,11 +602,23 @@ def _build_markdown_report(
         gen_ms = (
             f"{result.metrics.generation_time_ms:,}" if result.metrics.generation_time_ms else "-"
         )
-        lines.append(
-            f"| {result.run_id} | {result.provider} | {result.model} | "
-            f"{result.dataset_id} | {status_icon} {result.status} | "
-            f"{cov} | {branch} | {quality} | {trivial} | {gen_ms} |"
-        )
+        if has_mutation_data:
+            mut = (
+                f"{result.metrics.mutation_score_pct:.1f}"
+                if result.metrics.mutation_score_pct is not None
+                else "-"
+            )
+            lines.append(
+                f"| {result.run_id} | {result.provider} | {result.model} | "
+                f"{result.dataset_id} | {status_icon} {result.status} | "
+                f"{cov} | {branch} | {mut} | {quality} | {trivial} | {gen_ms} |"
+            )
+        else:
+            lines.append(
+                f"| {result.run_id} | {result.provider} | {result.model} | "
+                f"{result.dataset_id} | {status_icon} {result.status} | "
+                f"{cov} | {branch} | {quality} | {trivial} | {gen_ms} |"
+            )
     lines.append("")
 
     return "\n".join(lines)
@@ -711,6 +755,9 @@ def _deserialize_run_result(data: dict[str, Any]) -> RunResult:
         trivial_flag=metrics_data.get("trivial_flag", False),
         test_count=metrics_data.get("test_count", 0),
         timings=timings,
+        mutation_score_pct=metrics_data.get("mutation_score_pct"),
+        killed_mutations=metrics_data.get("killed_mutations"),
+        total_mutations=metrics_data.get("total_mutations"),
     )
 
     return RunResult(
@@ -749,6 +796,8 @@ def export_thesis_metrics_csv(
                 "coverage_count": 0,
                 "branch_coverage_sum": 0.0,
                 "branch_coverage_count": 0,
+                "mutation_sum": 0.0,
+                "mutation_count": 0,
                 "quality_scores": [],
                 "trivial_count": 0,
                 "assertion_sum": 0,
@@ -775,6 +824,10 @@ def export_thesis_metrics_csv(
             stats["branch_coverage_sum"] += result.metrics.branch_coverage_pct
             stats["branch_coverage_count"] += 1
 
+        if result.metrics.mutation_score_pct is not None:
+            stats["mutation_sum"] += result.metrics.mutation_score_pct
+            stats["mutation_count"] += 1
+
         stats["quality_scores"].append(result.metrics.quality_score)
 
         if result.metrics.trivial_flag:
@@ -797,6 +850,7 @@ def export_thesis_metrics_csv(
                 "avg_latency_sec",
                 "coverage_pct",
                 "branch_coverage_pct",
+                "mutation_score_pct",
                 "quality_score",
                 "trivial_pct",
                 "avg_assertion_count",
@@ -824,6 +878,11 @@ def export_thesis_metrics_csv(
                 if stats["branch_coverage_count"] > 0
                 else 0.0
             )
+            mutation_score_pct = (
+                stats["mutation_sum"] / stats["mutation_count"]
+                if stats["mutation_count"] > 0
+                else 0.0
+            )
             quality_score = (
                 sum(stats["quality_scores"]) / len(stats["quality_scores"])
                 if stats["quality_scores"]
@@ -849,6 +908,7 @@ def export_thesis_metrics_csv(
                     f"{avg_latency_sec:.2f}",
                     f"{coverage_pct:.2f}",
                     f"{branch_coverage_pct:.2f}",
+                    f"{mutation_score_pct:.2f}",
                     f"{quality_score:.4f}",
                     f"{trivial_pct:.1f}",
                     f"{avg_assertion:.1f}",
