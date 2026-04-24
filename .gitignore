@@ -24,6 +24,8 @@ wheels/
 *.egg
 
 # Virtual environments
+.venv/
+.venv-batch1/
 venv/
 ENV/
 env/
@@ -51,6 +53,7 @@ htmlcov/
 coverage.xml
 .pytest_cache/
 .mypy_cache/
+.ruff_cache/
 
 # Generated outputs and benchmark artifacts
 results/
@@ -59,9 +62,21 @@ campaigns/**/results/
 campaigns/**/results-*/
 campaigns/**/repos/
 
+# Temp and cache files
+*.tmp
+
+# Repo artifacts
+skills-lock.json
+TEST_STATUS.md
+.codex
+
 # Conda
 .conda/
 condaenv.*.txt
+condaenv.*.requirements.txt
+
+# Benchmark datasets (cloned external repos)
+datasets/reftest-12/*/
 
 # Mock Java project (for testing)
 mock-java-project/
