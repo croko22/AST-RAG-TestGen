@@ -227,6 +227,7 @@ class TestThesisMetricsCsv:
 
         header = content.split("\n")[0]
         assert "branch_coverage_pct" in header
+        assert "mutation_score_pct" in header
         assert "quality_score" in header
         assert "trivial_pct" in header
         assert "avg_generation_time_ms" in header
@@ -251,8 +252,9 @@ class TestThesisMetricsCsv:
         fields = data_line.split(",")
 
         assert fields[4] == "60.00"
-        assert fields[7] == "10.0"
-        assert fields[8] == "2000"
+        assert fields[5] == "0.00"
+        assert fields[8] == "10.0"
+        assert fields[9] == "2000"
 
     def test_multiple_providers(self, tmp_path):
         results = [

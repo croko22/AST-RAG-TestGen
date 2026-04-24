@@ -52,6 +52,9 @@ def _serialize_metrics(metrics: EvalMetrics) -> dict[str, Any]:
         "trivial_flag": metrics.trivial_flag,
         "test_count": metrics.test_count,
         "quality_score": metrics.quality_score,
+        "mutation_score_pct": metrics.mutation_score_pct,
+        "killed_mutations": metrics.killed_mutations,
+        "total_mutations": metrics.total_mutations,
         "timings": {
             "parse_ms": metrics.timings.parse_ms,
             "retrieval_ms": metrics.timings.retrieval_ms,

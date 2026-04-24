@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Literal
+from typing import Literal, Optional
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
@@ -55,6 +55,12 @@ class EvaluationConfig(StrictModel):
         default="target/site/jacoco/jacoco.xml",
         description="Path to JaCoCo XML report relative to project root"
     )
+    pit_cmd: Optional[str] = None
+    pit_path: Optional[str] = Field(
+        default="target/pit-reports",
+        description="Path to PIT mutation report directory relative to project root"
+    )
+    run_pit: bool = False
 
 
 class ScoringWeights(StrictModel):
@@ -63,11 +69,12 @@ class ScoringWeights(StrictModel):
     success: float = Field(default=0.5, ge=0.0)
     coverage: float = Field(default=0.3, ge=0.0)
     latency: float = Field(default=0.2, ge=0.0)
+    mutation: float = Field(default=0.0, ge=0.0)
 
     @model_validator(mode="after")
     def validate_total_positive(self) -> ScoringWeights:
         """Require at least one positive weight."""
-        total = self.success + self.coverage + self.latency
+        total = self.success + self.coverage + self.latency + self.mutation
         if total <= 0:
             raise ValueError("scoring.weights must have a positive total")
         return self
