@@ -230,6 +230,25 @@ class PostProcConfig(BaseSettings):
     )
 
 
+class FeedbackLoopConfig(BaseSettings):
+    """Configuration for feedback-loop retry pipeline."""
+
+    max_retries: int = Field(default=2, ge=0, le=10, alias="FEEDBACK_MAX_RETRIES")
+    retry_on_compile_fail: bool = Field(default=True, alias="FEEDBACK_RETRY_ON_COMPILE_FAIL")
+    retry_on_test_fail: bool = Field(default=False, alias="FEEDBACK_RETRY_ON_TEST_FAIL")
+    retry_on_coverage_low: bool = Field(default=False, alias="FEEDBACK_RETRY_ON_COVERAGE_LOW")
+    coverage_threshold_pct: float = Field(
+        default=0.0, ge=0.0, le=100.0, alias="FEEDBACK_COVERAGE_THRESHOLD_PCT"
+    )
+
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        extra="ignore",
+        env_ignore_empty=True,
+    )
+
+
 class AppConfig(BaseSettings):
     """Main application configuration combining all sub-configurations."""
 
@@ -240,6 +259,7 @@ class AppConfig(BaseSettings):
     rag: RAGConfig = Field(default_factory=RAGConfig)
     mcp_server: MCPServerConfig = Field(default_factory=MCPServerConfig)
     postproc: PostProcConfig = Field(default_factory=PostProcConfig)
+    feedback_loop: FeedbackLoopConfig = Field(default_factory=FeedbackLoopConfig)
 
     model_config = SettingsConfigDict(
         env_file=".env",
