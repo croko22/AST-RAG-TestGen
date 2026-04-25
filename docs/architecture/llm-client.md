@@ -10,10 +10,12 @@ Provide a unified interface to multiple LLM providers for test generation.
 |----------|-----|---------------|-----------|
 | Anthropic | `anthropic` | `claude-3-5-sonnet-20241022` | Native |
 | OpenAI | `openai` | `gpt-4-turbo` | Native |
-| GLM (Zhipu AI) | `zhipuai` | `glm-4-plus` | OpenAI-compatible |
+| GLM (Zhipu AI) | `zhipuai` | `glm-5-turbo` | OpenAI-compatible |
 | Gemini | `google-generativeai` | `gemini-2.0-flash` | Native (different) |
 | OpenRouter | `openai` (custom base) | `anthropic/claude-3.5-sonnet` | OpenAI-compatible |
-| NVIDIA NIM | `openai` (custom base) | `meta/llama-3.1-405b-instruct` | OpenAI-compatible |
+| NVIDIA NIM | `openai` (custom base) | `meta/llama-3.3-70b-instruct` | OpenAI-compatible |
+
+> **Note:** The previous NVIDIA default `meta/llama-3.1-405b-instruct` is deprecated and slow. The current default is `meta/llama-3.3-70b-instruct`.
 
 ## Configuration
 
@@ -148,7 +150,7 @@ from llm import LLMClient, LLMConfig
 
 config = LLMConfig(
     provider="nvidia",
-    model="meta/llama-3.1-405b-instruct",
+    model="meta/llama-3.3-70b-instruct",
     temperature=0.3,
 )
 client = LLMClient(config)
@@ -167,10 +169,10 @@ python main.py service.java project/
 python main.py service.java project/ --provider openai --model gpt-4-turbo
 
 # GLM
-python main.py service.java project/ --provider glm --model glm-4-plus
+python main.py service.java project/ --provider glm --model glm-5-turbo
 
 # NVIDIA
-python main.py service.java project/ --provider nvidia --model meta/llama-3.1-405b-instruct
+python main.py service.java project/ --provider nvidia --model meta/llama-3.3-70b-instruct
 
 # OpenRouter
 python main.py service.java project/ --provider openrouter --model anthropic/claude-3.5-sonnet

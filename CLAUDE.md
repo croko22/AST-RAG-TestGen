@@ -26,7 +26,7 @@ python main.py <java_file> <java_project_path> [options]
 
 # Examples:
 python main.py generate UsuarioService.java mock-java-project/
-python main.py generate service.java project/ --provider nvidia --model meta/llama-3.1-405b-instruct
+python main.py generate service.java project/ --provider nvidia --model meta/llama-3.3-70b-instruct
 python main.py generate service.java project/ --output ./my_tests --max-deps 5
 python main.py benchmark benchmark.yaml --output ./results
 python main.py providers
@@ -221,3 +221,5 @@ Generate tests for any service:
 ```bash
 python main.py mock-java-project/src/main/java/com/example/demo/service/UsuarioService.java mock-java-project/ --provider nvidia
 ```
+
+> **Note:** The previous NVIDIA default `meta/llama-3.1-405b-instruct` is deprecated and slow. The current default is `meta/llama-3.3-70b-instruct`.

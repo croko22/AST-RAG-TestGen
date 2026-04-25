@@ -99,12 +99,12 @@ class LLMClient:
     DEFAULT_MODELS = {
         "anthropic": "claude-3-5-sonnet-20241022",
         "openai": "gpt-4-turbo",
-        "glm": "glm-4-plus",
-        "zhipu": "glm-4-plus",  # Alias
+        "glm": "glm-5-turbo",
+        "zhipu": "glm-5-turbo",  # Alias
         "gemini": "gemini-2.0-flash",
         "google": "gemini-2.0-flash",  # Alias
         "openrouter": "anthropic/claude-3.5-sonnet",
-        "nvidia": "meta/llama-3.1-405b-instruct",
+        "nvidia": "meta/llama-3.3-70b-instruct",
     }
 
     # Available GLM models from Zhipu AI

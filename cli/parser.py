@@ -63,7 +63,7 @@ Examples:
   python main.py service.java project/ --provider openai --model gpt-4-turbo
 
   # Use GLM (Zhipu AI)
-  python main.py service.java project/ --provider glm --model glm-4-plus
+  python main.py service.java project/ --provider glm --model glm-5-turbo
 
   # Use Gemini
   python main.py service.java project/ --provider gemini --model gemini-2.0-flash-exp

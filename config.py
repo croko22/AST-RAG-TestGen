@@ -92,12 +92,12 @@ class LLMProviderConfig(BaseSettings):
         default_models = {
             "anthropic": "claude-3-5-sonnet-20241022",
             "openai": "gpt-4-turbo",
-            "glm": "glm-4-plus",
-            "zhipu": "glm-4-plus",
+            "glm": "glm-5-turbo",
+            "zhipu": "glm-5-turbo",
             "gemini": "gemini-2.0-flash",
             "google": "gemini-2.0-flash",
             "openrouter": "anthropic/claude-3.5-sonnet",
-            "nvidia": "meta/llama-3.1-405b-instruct",
+            "nvidia": "meta/llama-3.3-70b-instruct",
         }
         return default_models.get(self.provider, self.model)
 

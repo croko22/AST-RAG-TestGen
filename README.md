@@ -106,7 +106,7 @@ python main.py --install-completion
 python main.py generate UsuarioService.java mock-java-project/
 
 # Use different provider
-python main.py generate service.java project/ --provider nvidia --model meta/llama-3.1-405b-instruct
+python main.py generate service.java project/ --provider nvidia --model meta/llama-3.3-70b-instruct
 
 # Custom output directory
 python main.py generate service.java project/ --output ./my_tests
@@ -170,7 +170,7 @@ python main.py mock-java-project/src/main/java/com/example/demo/service/UsuarioS
 python main.py service.java project/ --provider openai --model gpt-4-turbo
 
 # Use GLM (Zhipu AI)
-python main.py service.java project/ --provider glm --model glm-4-plus
+python main.py service.java project/ --provider glm --model glm-5-turbo
 
 # Use Gemini
 python main.py service.java project/ --provider gemini --model gemini-2.0-flash-exp
@@ -179,7 +179,7 @@ python main.py service.java project/ --provider gemini --model gemini-2.0-flash-
 python main.py service.java project/ --provider openrouter --model anthropic/claude-3.5-sonnet
 
 # Use NVIDIA
-python main.py service.java project/ --provider nvidia --model meta/llama-3.1-405b-instruct
+python main.py service.java project/ --provider nvidia --model meta/llama-3.3-70b-instruct
 
 # Custom output directory
 python main.py service.java project/ --output ./my_tests
@@ -197,10 +197,12 @@ python main.py service.java project/ --print
 |----------|---------------|
 | Anthropic | `claude-3-5-sonnet-20241022` |
 | OpenAI | `gpt-4-turbo` |
-| GLM (Zhipu AI) | `glm-4-plus` |
+| GLM (Zhipu AI) | `glm-5-turbo` |
 | Gemini | `gemini-2.0-flash-exp` |
-| NVIDIA | `meta/llama-3.1-405b-instruct` |
+| NVIDIA | `meta/llama-3.3-70b-instruct` |
 | OpenRouter | `anthropic/claude-3.5-sonnet` |
+
+> **Note:** The previous NVIDIA default `meta/llama-3.1-405b-instruct` is deprecated and slow. The current default is `meta/llama-3.3-70b-instruct`.
 
 ## Project Structure
 

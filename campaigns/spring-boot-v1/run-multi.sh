@@ -34,7 +34,7 @@ COMPARISON_DIR="$SCRIPT_DIR/results-comparison"
 # Provider definitions: "provider|model|env_key"
 # Edit this array to add/remove providers or change models.
 declare -a PROVIDERS=(
-    "nvidia|meta/llama-3.1-405b-instruct|NVIDIA_API_KEY"
+    "nvidia|meta/llama-3.3-70b-instruct|NVIDIA_API_KEY"
     "openai|gpt-4o|OPENAI_API_KEY"
     "anthropic|claude-3-5-sonnet-20241022|ANTHROPIC_API_KEY"
     "gemini|gemini-2.0-flash|GEMINI_API_KEY"
