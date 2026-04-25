@@ -37,6 +37,9 @@ class EvalMetrics:
     assertion_count: int = 0
     trivial_flag: bool = False
     test_count: int = 0
+    attempt_count: int = 1
+    compile_errors: list[str] = field(default_factory=list)
+    final_status: str = "success"
     timings: PipelineTimings = field(default_factory=PipelineTimings)
 
     @property

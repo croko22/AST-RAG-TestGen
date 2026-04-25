@@ -34,6 +34,7 @@ class PromptBuilder:
         max_dependencies: int = 10,
         rag_context: str | None = None,
         max_context_tokens: int = 4000,
+        feedback_context: str | None = None,
     ) -> tuple[str, str]:
         """
         Build the complete prompt with code and context.
@@ -43,6 +44,7 @@ class PromptBuilder:
             max_dependencies: Maximum number of dependencies to include
             rag_context: Optional RAG-retrieved context to include
             max_context_tokens: Maximum token budget for combined context
+            feedback_context: Optional feedback from a previous attempt to include
 
         Returns:
             Tuple of (code_under_test, dependency_context)
@@ -66,11 +68,19 @@ class PromptBuilder:
                 rag_section = rag_section[:max(0, remaining)]
             dependency_context = dependency_context + "\n" + rag_section
 
+        if feedback_context:
+            feedback_section = self._format_feedback_context(feedback_context)
+            dependency_context = dependency_context + "\n" + feedback_section
+
         return code_under_test, dependency_context
 
     def _format_rag_context(self, rag_context: str) -> str:
         header = "### CONTEXTO ADICIONAL (RAG - Recuperación Semántica)"
         return f"{header}\n{rag_context}"
+
+    def _format_feedback_context(self, feedback_context: str) -> str:
+        header = "### FEEDBACK DE INTENTO ANTERIOR"
+        return f"{header}\n{feedback_context}"
 
     def _build_dependency_context(
         self,
@@ -192,6 +202,7 @@ def build_test_prompt(
     max_dependencies: int = 10,
     rag_context: str | None = None,
     max_context_tokens: int = 4000,
+    feedback_context: str | None = None,
 ) -> tuple[str, str]:
     """
     Convenience function to build the test prompt.
@@ -202,6 +213,7 @@ def build_test_prompt(
         max_dependencies: Maximum dependencies to include
         rag_context: Optional RAG-retrieved context
         max_context_tokens: Maximum token budget for combined context
+        feedback_context: Optional feedback from a previous attempt
 
     Returns:
         Tuple of (code_under_test, dependency_context)
@@ -214,6 +226,7 @@ def build_test_prompt(
         max_dependencies,
         rag_context=rag_context,
         max_context_tokens=max_context_tokens,
+        feedback_context=feedback_context,
     )
 
 

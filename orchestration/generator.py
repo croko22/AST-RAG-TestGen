@@ -14,6 +14,12 @@ from typing import Any, Literal
 
 from output import get_output
 
+try:
+    from postproc.validator import validate_compilation
+    _VALIDATOR_AVAILABLE = True
+except ImportError:
+    _VALIDATOR_AVAILABLE = False
+
 
 @dataclass(slots=True)
 class GenerationResult:
@@ -22,6 +28,9 @@ class GenerationResult:
     timings: dict[str, int] = field(default_factory=dict)
     retrieval_strategy: str = "ast"
     context_sources: dict[str, Any] = field(default_factory=dict)
+    attempt_count: int = 0
+    compile_errors: list[str] = field(default_factory=list)
+    final_status: str = "unknown"
 
 
 def generate_test_for_file(
@@ -36,6 +45,7 @@ def generate_test_for_file(
     rag_enabled: bool = False,
     rag_config: dict[str, Any] | None = None,
     retrieval_strategy: Literal["ast", "rag", "hybrid"] = "ast",
+    feedback_config: Any = None,
 ) -> GenerationResult:
     output = get_output()
     timings: dict[str, int] = {}
@@ -84,15 +94,78 @@ def generate_test_for_file(
 
     output.print_info(f"    Context length: {len(dependency_signatures)} chars")
 
-    t0 = time.perf_counter()
-    output.print_info("[4/4] 🤖 Generating test with LLM...")
-    test_code = _generate_test_with_llm(
-        code_under_test=code_under_test,
-        dependency_context=dependency_signatures,
-        provider=llm_provider,
-        model=llm_model,
-    )
-    timings["llm_ms"] = int((time.perf_counter() - t0) * 1000)
+    max_retries = getattr(feedback_config, "max_retries", 1) if feedback_config else 1
+    retry_on_compile_fail = getattr(feedback_config, "retry_on_compile_fail", False) if feedback_config else False
+
+    attempt = 1
+    compile_errors: list[str] = []
+    final_status = "success"
+    test_code = ""
+
+    t_llm_total = time.perf_counter()
+    while attempt <= max_retries:
+        t0 = time.perf_counter()
+        output.print_info(f"[4/4] 🤖 Generating test with LLM... (attempt {attempt}/{max_retries})")
+        test_code = _generate_test_with_llm(
+            code_under_test=code_under_test,
+            dependency_context=dependency_signatures,
+            provider=llm_provider,
+            model=llm_model,
+        )
+        timings[f"llm_attempt_{attempt}_ms"] = int((time.perf_counter() - t0) * 1000)
+
+        cleaned_code = test_code.strip()
+        if cleaned_code.startswith("```java"):
+            cleaned_code = cleaned_code[7:]
+        if cleaned_code.startswith("```"):
+            cleaned_code = cleaned_code[3:]
+        if cleaned_code.endswith("```"):
+            cleaned_code = cleaned_code[:-3]
+        cleaned_code = cleaned_code.strip()
+
+        if feedback_config and _VALIDATOR_AVAILABLE:
+            import tempfile
+            with tempfile.TemporaryDirectory() as temp_dir:
+                temp_path = Path(temp_dir)
+                test_file = temp_path / f"{parsed_class.name}Test.java"
+                test_file.write_text(cleaned_code, encoding="utf-8")
+
+                compile_result = validate_compilation(
+                    test_file=test_file,
+                    project_path=Path(java_project_path),
+                )
+                if compile_result.success:
+                    final_status = "success"
+                    break
+
+                compile_errors.extend(compile_result.errors)
+
+                if not retry_on_compile_fail:
+                    final_status = "compile_failed"
+                    break
+
+                if attempt >= max_retries:
+                    final_status = "compile_failed_after_retries"
+                    break
+
+                feedback = f"Compilación falló (intento {attempt}): {'; '.join(compile_result.errors)}"
+                t_prompt = time.perf_counter()
+                code_under_test, dependency_signatures = _build_prompt(
+                    parsed_class=parsed_class,
+                    project_path=Path(java_project_path),
+                    dependency_context=dependency_context,
+                    max_dependencies=max_dependencies,
+                    rag_context=rag_context,
+                    max_context_tokens=max_ctx_tokens,
+                    feedback_context=feedback,
+                )
+                timings[f"prompt_rebuild_attempt_{attempt}_ms"] = int((time.perf_counter() - t_prompt) * 1000)
+        else:
+            break
+
+        attempt += 1
+
+    timings["llm_ms"] = int((time.perf_counter() - t_llm_total) * 1000)
 
     output_path = Path(output_dir)
     output_path.mkdir(parents=True, exist_ok=True)
@@ -100,24 +173,18 @@ def generate_test_for_file(
     test_class_name = f"{parsed_class.name}Test.java"
     test_file_path = output_path / test_class_name
 
-    test_code = test_code.strip()
-    if test_code.startswith("```java"):
-        test_code = test_code[7:]
-    if test_code.startswith("```"):
-        test_code = test_code[3:]
-    if test_code.endswith("```"):
-        test_code = test_code[:-3]
-    test_code = test_code.strip()
-
-    test_file_path.write_text(test_code, encoding="utf-8")
+    test_file_path.write_text(cleaned_code, encoding="utf-8")
     output.print_success(f"Test generated: {test_file_path}")
 
     return GenerationResult(
-        test_code=test_code,
+        test_code=cleaned_code,
         output_path=str(test_file_path),
         timings=timings,
         retrieval_strategy=retrieval_strategy,
         context_sources=context_sources,
+        attempt_count=attempt,
+        compile_errors=compile_errors,
+        final_status=final_status,
     )
 
 
@@ -238,7 +305,7 @@ def _resolve_dependencies(parsed_class, project_path: Path, max_depth: int):
 
 
 def _build_prompt(parsed_class, project_path, dependency_context, max_dependencies,
-                  rag_context=None, max_context_tokens=4000):
+                  rag_context=None, max_context_tokens=4000, feedback_context=None):
     from core.prompt_builder import PromptBuilder
     from core.retriever import DependencyResolver, JavaFileRetriever
 
@@ -252,6 +319,7 @@ def _build_prompt(parsed_class, project_path, dependency_context, max_dependenci
         max_dependencies=max_dependencies,
         rag_context=rag_context,
         max_context_tokens=max_context_tokens,
+        feedback_context=feedback_context,
     )
 
 
