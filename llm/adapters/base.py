@@ -65,6 +65,51 @@ class BaseLLMAdapter(ABC):
             User prompt string.
         """
 
+    def _build_few_shot_examples(self) -> str:
+        """Build few-shot examples demonstrating the expected test style.
+
+        Returns:
+            String with example test methods.
+        """
+        return """
+
+A continuacion se presentan ejemplos del estilo esperado para las pruebas unitarias:
+
+```java
+@Test
+public void testCrearUsuario_Success() {
+    // Given: el email no esta registrado previamente
+    when(usuarioRepository.existsByEmail(usuario.getEmail())).thenReturn(false);
+    when(usuarioRepository.save(usuario)).thenReturn(usuario);
+
+    // When: se ejecuta la creacion del usuario
+    Usuario createdUsuario = usuarioService.crearUsuario(usuario);
+
+    // Then: se verifica el resultado y las interacciones con los mocks
+    assertNotNull(createdUsuario);
+    assertEquals(usuario, createdUsuario);
+    verify(usuarioRepository, times(1)).existsByEmail(usuario.getEmail());
+    verify(usuarioRepository, times(1)).save(usuario);
+    verify(emailService, times(1)).sendWelcomeEmail(usuario.getEmail());
+}
+
+@Test
+public void testCrearUsuario_EmailAlreadyExists() {
+    // Given: el email ya esta registrado en el sistema
+    when(usuarioRepository.existsByEmail(usuario.getEmail())).thenReturn(true);
+
+    // When / Then: se espera una excepcion al intentar crear
+    Exception exception = assertThrows(IllegalArgumentException.class, () -> {
+        usuarioService.crearUsuario(usuario);
+    });
+
+    assertEquals("El email ya esta registrado", exception.getMessage());
+    verify(usuarioRepository, times(1)).existsByEmail(usuario.getEmail());
+    verify(usuarioRepository, never()).save(usuario);
+    verify(emailService, never()).sendWelcomeEmail(usuario.getEmail());
+}
+```"""
+
     def _build_common_system_prompt(self) -> str:
         """Build common system prompt for all providers.
 
@@ -85,4 +130,4 @@ Follow these rules:
 7. Handle edge cases and error conditions
 8. Add descriptive comments for complex logic
 
-Generate only the test class code, no explanations or markdown formatting."""
+Generate only the test class code, no explanations or markdown formatting.""" + self._build_few_shot_examples()
