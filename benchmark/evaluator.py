@@ -65,6 +65,10 @@ def evaluate_run(
         temp_test_dir = tempfile.TemporaryDirectory(prefix="eval_tests_")
         temp_path = Path(temp_test_dir.name)
 
+        project_root_path = Path(project_root)
+        if (project_root_path / "pom.xml").exists():
+            shutil.copytree(project_root_path, temp_path, dirs_exist_ok=True)
+
         package_match = re.search(r"package\s+([\w.]+);", test_content)
         if package_match:
             package_path = package_match.group(1).replace(".", "/")
