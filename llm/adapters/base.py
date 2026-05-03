@@ -123,11 +123,12 @@ Follow these rules:
 1. Use JUnit 5 framework (org.junit.jupiter.*)
 2. Include necessary imports:
    - JUnit 5: import org.junit.jupiter.api.*; import static org.junit.jupiter.api.Assertions.*;
-3. Create test methods for all public methods
-4. Use @Test, @BeforeEach, @AfterEach annotations
-5. Use Mockito for mocking dependencies: @ExtendWith(MockitoExtension.class), @Mock, @InjectMocks
-6. Include assertions to verify expected behavior
-7. Handle edge cases and error conditions
-8. Add descriptive comments for complex logic
+3. CRITICAL: For classes from the project under test, ALWAYS use fully qualified names (e.g., org.ice4j.message.Request) OR include proper import statements. Never use simple class names without imports.
+4. Create test methods for all public methods
+5. Use @Test, @BeforeEach, @AfterEach annotations
+6. Use Mockito for mocking dependencies: @ExtendWith(MockitoExtension.class), @Mock, @InjectMocks
+7. Include assertions to verify expected behavior
+8. Handle edge cases and error conditions
+9. Add descriptive comments for complex logic
 
 Generate only the test class code, no explanations or markdown formatting.""" + self._build_few_shot_examples()
