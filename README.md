@@ -1,10 +1,23 @@
 # AST-RAG TestGen
 
-Unit test generator for Java using AST-based Retrieval-Augmented Generation.
+AI-powered Java unit test generation using AST-based context retrieval and RAG pipeline.
 
 ## Overview
 
-AST-RAG TestGen generates Java unit tests through a 4-step pipeline:
+AST-RAG TestGen generates high-quality JUnit 5 + Mockito tests through a 4-step pipeline:
+
+- **Parsing**: Tree-sitter parses Java files, extracts package, imports, class/interface names, fields, method signatures
+- **Extraction**: DependencyResolver finds and resolves dependency files in the Java project
+- **RAG Retrieval**: Optional semantic retrieval for large codebases
+- **LLM Generation**: Sends context to LLM via adapter pattern, receives generated test
+
+### Features
+
+- **Multiple LLM Providers**: Anthropic, OpenAI, Google Gemini, NVIDIA, GLM, OpenRouter
+- **MCP Server**: Editor/IDE integration via Model Context Protocol
+- **Post-Processing**: Compilation validation, test execution, coverage analysis, quality scoring
+- **Feedback Loop**: Optional retry on compile errors
+- **Benchmark Mode**: Evaluate on real Java projects with metrics
 
 1. **Parsing** (`core/parsing/`): Tree-sitter parses Java files, extracts package, imports, class/interface names, fields, method signatures
 2. **Extraction** (`core/extraction/`): DependencyResolver finds and resolves dependency files in the Java project with depth limit
