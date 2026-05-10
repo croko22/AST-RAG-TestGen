@@ -94,8 +94,16 @@ def generate_test_for_file(
 
     output.print_info(f"    Context length: {len(dependency_signatures)} chars")
 
-    max_retries = getattr(feedback_config, "max_retries", 1) if feedback_config else 1
-    retry_on_compile_fail = getattr(feedback_config, "retry_on_compile_fail", False) if feedback_config else False
+    # Default feedback config - disabled by default (mvn compile is slow)
+    # Users can enable via FeedbackLoopConfig in main.py CLI
+    if feedback_config is None:
+        class DefaultFeedback:
+            max_retries = 1
+            retry_on_compile_fail = False
+        feedback_config = DefaultFeedback()
+    
+    max_retries = getattr(feedback_config, "max_retries", 1)
+    retry_on_compile_fail = getattr(feedback_config, "retry_on_compile_fail", False)
 
     attempt = 1
     compile_errors: list[str] = []
