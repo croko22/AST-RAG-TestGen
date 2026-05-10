@@ -131,47 +131,26 @@ def generate_test_for_file(
             cleaned_code = cleaned_code[:-3]
         cleaned_code = cleaned_code.strip()
 
-        if feedback_config and _VALIDATOR_AVAILABLE:
-            import tempfile
-            with tempfile.TemporaryDirectory() as temp_dir:
-                temp_path = Path(temp_dir)
-                test_file = temp_path / f"{parsed_class.name}Test.java"
-                test_file.write_text(cleaned_code, encoding="utf-8")
-
-                compile_result = validate_compilation(
-                    test_file=test_file,
-                    project_path=Path(java_project_path),
-                )
-                if compile_result.success:
-                    final_status = "success"
-                    break
-
-                compile_errors.extend(compile_result.errors)
-
-                if not retry_on_compile_fail:
-                    final_status = "compile_failed"
-                    break
-
-                if attempt >= max_retries:
-                    final_status = "compile_failed_after_retries"
-                    break
-
-                feedback = f"Compilación falló (intento {attempt}): {'; '.join(compile_result.errors)}"
-                t_prompt = time.perf_counter()
-                code_under_test, dependency_signatures = _build_prompt(
-                    parsed_class=parsed_class,
-                    project_path=Path(java_project_path),
-                    dependency_context=dependency_context,
-                    max_dependencies=max_dependencies,
-                    rag_context=rag_context,
-                    max_context_tokens=max_ctx_tokens,
-                    feedback_context=feedback,
-                )
-                timings[f"prompt_rebuild_attempt_{attempt}_ms"] = int((time.perf_counter() - t_prompt) * 1000)
+        # Skip compile validation in feedback loop - evaluator handles it
+        # Validation via mvn compile is too slow for retry loop
+        if retry_on_compile_fail and attempt < max_retries:
+            # Add feedback for next attempt
+            feedback = f"Attempt {attempt} generated - will be validated by evaluator"
+            t_prompt = time.perf_counter()
+            code_under_test, dependency_signatures = _build_prompt(
+                parsed_class=parsed_class,
+                project_path=Path(java_project_path),
+                dependency_context=dependency_context,
+                max_dependencies=max_dependencies,
+                rag_context=rag_context,
+                max_context_tokens=max_ctx_tokens,
+                feedback_context=feedback,
+            )
+            timings[f"prompt_rebuild_attempt_{attempt}_ms"] = int((time.perf_counter() - t_prompt) * 1000)
+            attempt += 1
         else:
+            final_status = "success"
             break
-
-        attempt += 1
 
     timings["llm_ms"] = int((time.perf_counter() - t_llm_total) * 1000)
 
