@@ -1,0 +1,43 @@
+{
+  "manifest_version": 1,
+  "project_root": "datasets/reftest-12",
+  "dataset": [
+    {
+      "id": "commons-cli-option",
+      "java_file": "commons-cli/src/main/java/org/apache/commons/cli/Option.java",
+      "expected_test_path": "commons-cli/src/test/java/org/apache/commons/cli/OptionTest.java"
+    },
+    {
+      "id": "commons-dbutils-beanprocessor",
+      "java_file": "commons-dbutils/src/main/java/org/apache/commons/dbutils/BeanProcessor.java",
+      "expected_test_path": "commons-dbutils/src/test/java/org/apache/commons/dbutils/BeanProcessorTest.java"
+    },
+    {
+      "id": "jsoup-cleaner",
+      "java_file": "jsoup/src/main/java/org/jsoup/safety/Cleaner.java",
+      "expected_test_path": "jsoup/src/test/java/org/jsoup/safety/CleanerTest.java"
+    }
+  ],
+  "matrix": {
+    "providers": [
+      {
+        "name": "nvidia",
+        "model": "qwen/qwen2.5-coder-32b-instruct"
+      }
+    ]
+  },
+  "run": {
+    "trials": 1,
+    "seed": 42,
+    "max_dependencies": 5,
+    "timeout_seconds": 180,
+    "retry_count": 1,
+    "concurrency": 1
+  },
+  "evaluation": {
+    "compile_cmd": "mvn compile test-compile -q",
+    "test_cmd": "mvn test -q",
+    "coverage_cmd": "mvn jacoco:report -q",
+    "run_pit": false
+  }
+}

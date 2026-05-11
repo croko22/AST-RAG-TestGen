@@ -1,0 +1,39 @@
+{
+  "generated_at": "2026-05-02T21:48:01.216641Z",
+  "manifest_version": 1,
+  "records": [
+    {
+      "repo_id": "commons-dbutils-beanprocessor",
+      "repo_path": "datasets/reftest-12/commons-dbutils",
+      "requested_ref": null,
+      "resolved_commit": "8c91f6cb0ff1b6b715c4284c34d4a36daf401d22",
+      "branch": "master",
+      "dirty": true,
+      "status": "ok",
+      "reason": null,
+      "captured_at": "2026-05-02T21:48:01.201767Z"
+    },
+    {
+      "repo_id": "commons-dbutils-dbutils",
+      "repo_path": "datasets/reftest-12/commons-dbutils",
+      "requested_ref": null,
+      "resolved_commit": "8c91f6cb0ff1b6b715c4284c34d4a36daf401d22",
+      "branch": "master",
+      "dirty": true,
+      "status": "ok",
+      "reason": null,
+      "captured_at": "2026-05-02T21:48:01.207108Z"
+    },
+    {
+      "repo_id": "commons-dbutils-rowprocessor",
+      "repo_path": "datasets/reftest-12/commons-dbutils",
+      "requested_ref": null,
+      "resolved_commit": "8c91f6cb0ff1b6b715c4284c34d4a36daf401d22",
+      "branch": "master",
+      "dirty": true,
+      "status": "ok",
+      "reason": null,
+      "captured_at": "2026-05-02T21:48:01.211993Z"
+    }
+  ]
+}

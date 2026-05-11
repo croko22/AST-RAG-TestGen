@@ -1,0 +1,48 @@
+{
+  "run_id": "run_a02829b54c5a",
+  "status": "failed",
+  "latency_ms": 97251,
+  "metrics": {
+    "compile_pass": true,
+    "test_pass": false,
+    "coverage_pct": null,
+    "branch_coverage_pct": null,
+    "coverage_source": null,
+    "coverage_reason": null,
+    "failure_type": "test_failed",
+    "failure_message": "OpenJDK 64-Bit Server VM warning: Sharing is only supported for boot loader classes because bootstrap classpath has been appended\n",
+    "generation_time_ms": 194452,
+    "assertion_count": 33,
+    "trivial_flag": false,
+    "test_count": 6,
+    "quality_score": 1.0,
+    "mutation_score_pct": null,
+    "killed_mutations": null,
+    "total_mutations": null,
+    "timings": {
+      "parse_ms": 6,
+      "retrieval_ms": 36,
+      "prompt_ms": 4,
+      "llm_ms": 97203,
+      "postproc_ms": 0
+    }
+  },
+  "output_path": "benchmark_reftest_commonsdbutils_results/run_a02829b54c5a/BeanProcessorTest.java",
+  "provider": "nvidia",
+  "model": "meta/llama-3.3-70b-instruct",
+  "dataset_id": "commons-dbutils-beanprocessor",
+  "trial": 1,
+  "config_snapshot": {
+    "run_id": "run_a02829b54c5a",
+    "dataset_id": "commons-dbutils-beanprocessor",
+    "java_file": "src/main/java/org/apache/commons/dbutils/BeanProcessor.java",
+    "provider": "nvidia",
+    "model": "meta/llama-3.3-70b-instruct",
+    "trial": 1,
+    "seed": 42,
+    "max_dependencies": 3,
+    "timeout_seconds": 180,
+    "retry_count": 1,
+    "project_root": "datasets/reftest-12/commons-dbutils"
+  }
+}

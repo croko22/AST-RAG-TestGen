@@ -1,0 +1,43 @@
+{
+  "manifest_version": 1,
+  "project_root": "datasets/reftest-12",
+  "dataset": [
+    {
+      "id": "commons-dbutils-queryloader",
+      "java_file": "commons-dbutils/src/main/java/org/apache/commons/dbutils/QueryLoader.java"
+    },
+    {
+      "id": "datafaker-wordutils",
+      "java_file": "datafaker/src/main/java/net/datafaker/internal/helper/WordUtils.java"
+    },
+    {
+      "id": "ice4j-request",
+      "java_file": "ice4j/src/main/java/org/ice4j/message/Request.java"
+    },
+    {
+      "id": "jsoup-cleaner",
+      "java_file": "jsoup/src/main/java/org/jsoup/safety/Cleaner.java"
+    }
+  ],
+  "matrix": {
+    "providers": [
+      {
+        "name": "nvidia",
+        "model": "meta/llama-3.3-70b-instruct"
+      }
+    ]
+  },
+  "run": {
+    "trials": 1,
+    "seed": 42,
+    "max_dependencies": 3,
+    "timeout_seconds": 180,
+    "retry_count": 1,
+    "concurrency": 1
+  },
+  "evaluation": {
+    "compile_cmd": "mvn compile test-compile -q",
+    "test_cmd": "mvn test -q",
+    "run_pit": false
+  }
+}

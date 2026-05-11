@@ -1,0 +1,48 @@
+{
+  "run_id": "run_d2e43d5baa39",
+  "status": "failed",
+  "latency_ms": 252533,
+  "metrics": {
+    "compile_pass": false,
+    "test_pass": false,
+    "coverage_pct": null,
+    "branch_coverage_pct": null,
+    "coverage_source": null,
+    "coverage_reason": null,
+    "failure_type": "compile_failed",
+    "failure_message": "Compilation failed",
+    "generation_time_ms": 505035,
+    "assertion_count": 31,
+    "trivial_flag": false,
+    "test_count": 24,
+    "quality_score": 0.775,
+    "mutation_score_pct": null,
+    "killed_mutations": null,
+    "total_mutations": null,
+    "timings": {
+      "parse_ms": 3,
+      "retrieval_ms": 24,
+      "prompt_ms": 0,
+      "llm_ms": 252504,
+      "postproc_ms": 0
+    }
+  },
+  "output_path": "benchmark_reftest_commonsdbutils_results/run_d2e43d5baa39/DbUtilsTest.java",
+  "provider": "nvidia",
+  "model": "meta/llama-3.3-70b-instruct",
+  "dataset_id": "commons-dbutils-dbutils",
+  "trial": 1,
+  "config_snapshot": {
+    "run_id": "run_d2e43d5baa39",
+    "dataset_id": "commons-dbutils-dbutils",
+    "java_file": "src/main/java/org/apache/commons/dbutils/DbUtils.java",
+    "provider": "nvidia",
+    "model": "meta/llama-3.3-70b-instruct",
+    "trial": 1,
+    "seed": 42,
+    "max_dependencies": 3,
+    "timeout_seconds": 180,
+    "retry_count": 1,
+    "project_root": "datasets/reftest-12/commons-dbutils"
+  }
+}

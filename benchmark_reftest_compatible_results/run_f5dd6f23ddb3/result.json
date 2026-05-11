@@ -1,0 +1,48 @@
+{
+  "run_id": "run_f5dd6f23ddb3",
+  "status": "failed",
+  "latency_ms": 20060,
+  "metrics": {
+    "compile_pass": false,
+    "test_pass": false,
+    "coverage_pct": null,
+    "branch_coverage_pct": null,
+    "coverage_source": null,
+    "coverage_reason": null,
+    "failure_type": "compile_failed",
+    "failure_message": "Compilation failed",
+    "generation_time_ms": 40118,
+    "assertion_count": 2,
+    "trivial_flag": true,
+    "test_count": 4,
+    "quality_score": 0.0,
+    "mutation_score_pct": null,
+    "killed_mutations": null,
+    "total_mutations": null,
+    "timings": {
+      "parse_ms": 0,
+      "retrieval_ms": 0,
+      "prompt_ms": 0,
+      "llm_ms": 20059,
+      "postproc_ms": 0
+    }
+  },
+  "output_path": "benchmark_reftest_compatible_results/run_f5dd6f23ddb3/RequestTest.java",
+  "provider": "nvidia",
+  "model": "meta/llama-3.3-70b-instruct",
+  "dataset_id": "ice4j-request",
+  "trial": 1,
+  "config_snapshot": {
+    "run_id": "run_f5dd6f23ddb3",
+    "dataset_id": "ice4j-request",
+    "java_file": "ice4j/src/main/java/org/ice4j/message/Request.java",
+    "provider": "nvidia",
+    "model": "meta/llama-3.3-70b-instruct",
+    "trial": 1,
+    "seed": 42,
+    "max_dependencies": 3,
+    "timeout_seconds": 180,
+    "retry_count": 1,
+    "project_root": "datasets/reftest-12"
+  }
+}

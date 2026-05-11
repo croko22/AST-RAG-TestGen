@@ -1,0 +1,39 @@
+{
+  "manifest_version": 1,
+  "project_root": "datasets/reftest-12/commons-dbutils",
+  "dataset": [
+    {
+      "id": "commons-dbutils-beanprocessor",
+      "java_file": "src/main/java/org/apache/commons/dbutils/BeanProcessor.java"
+    },
+    {
+      "id": "commons-dbutils-dbutils",
+      "java_file": "src/main/java/org/apache/commons/dbutils/DbUtils.java"
+    },
+    {
+      "id": "commons-dbutils-rowprocessor",
+      "java_file": "src/main/java/org/apache/commons/dbutils/RowProcessor.java"
+    }
+  ],
+  "matrix": {
+    "providers": [
+      {
+        "name": "nvidia",
+        "model": "meta/llama-3.3-70b-instruct"
+      }
+    ]
+  },
+  "run": {
+    "trials": 1,
+    "seed": 42,
+    "max_dependencies": 3,
+    "timeout_seconds": 180,
+    "retry_count": 1,
+    "concurrency": 1
+  },
+  "evaluation": {
+    "compile_cmd": "mvn compile test-compile -q -Drat.skip=true",
+    "test_cmd": "mvn test -q -Drat.skip=true",
+    "run_pit": false
+  }
+}

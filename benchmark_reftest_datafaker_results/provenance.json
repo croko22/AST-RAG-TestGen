@@ -1,0 +1,17 @@
+{
+  "generated_at": "2026-05-02T22:14:36.495933Z",
+  "manifest_version": 1,
+  "records": [
+    {
+      "repo_id": "datafaker-faker",
+      "repo_path": "datasets/reftest-12/datafaker",
+      "requested_ref": null,
+      "resolved_commit": "8eda7089e93c6b1e79efe89aa610aa80d4b3d87c",
+      "branch": "HEAD",
+      "dirty": false,
+      "status": "ok",
+      "reason": null,
+      "captured_at": "2026-05-02T22:14:36.486270Z"
+    }
+  ]
+}

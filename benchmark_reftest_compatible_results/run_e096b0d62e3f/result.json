@@ -1,0 +1,48 @@
+{
+  "run_id": "run_e096b0d62e3f",
+  "status": "failed",
+  "latency_ms": 20217,
+  "metrics": {
+    "compile_pass": false,
+    "test_pass": false,
+    "coverage_pct": null,
+    "branch_coverage_pct": null,
+    "coverage_source": null,
+    "coverage_reason": null,
+    "failure_type": "compile_failed",
+    "failure_message": "Compilation failed",
+    "generation_time_ms": 30556,
+    "assertion_count": 6,
+    "trivial_flag": false,
+    "test_count": 5,
+    "quality_score": 0.72,
+    "mutation_score_pct": null,
+    "killed_mutations": null,
+    "total_mutations": null,
+    "timings": {
+      "parse_ms": 1,
+      "retrieval_ms": 5048,
+      "prompt_ms": 4820,
+      "llm_ms": 10344,
+      "postproc_ms": 0
+    }
+  },
+  "output_path": "benchmark_reftest_compatible_results/run_e096b0d62e3f/CleanerTest.java",
+  "provider": "nvidia",
+  "model": "meta/llama-3.3-70b-instruct",
+  "dataset_id": "jsoup-cleaner",
+  "trial": 1,
+  "config_snapshot": {
+    "run_id": "run_e096b0d62e3f",
+    "dataset_id": "jsoup-cleaner",
+    "java_file": "jsoup/src/main/java/org/jsoup/safety/Cleaner.java",
+    "provider": "nvidia",
+    "model": "meta/llama-3.3-70b-instruct",
+    "trial": 1,
+    "seed": 42,
+    "max_dependencies": 3,
+    "timeout_seconds": 180,
+    "retry_count": 1,
+    "project_root": "datasets/reftest-12"
+  }
+}

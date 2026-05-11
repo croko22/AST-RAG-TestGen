@@ -1,0 +1,31 @@
+{
+  "manifest_version": 1,
+  "project_root": "mock-java-project",
+  "dataset": [
+    {
+      "id": "mock-usuario-service",
+      "java_file": "src/main/java/com/example/demo/service/UsuarioService.java"
+    }
+  ],
+  "matrix": {
+    "providers": [
+      {
+        "name": "nvidia",
+        "model": "meta/llama-3.3-70b-instruct"
+      }
+    ]
+  },
+  "run": {
+    "trials": 1,
+    "seed": 42,
+    "max_dependencies": 2,
+    "timeout_seconds": 120,
+    "retry_count": 1,
+    "concurrency": 1
+  },
+  "evaluation": {
+    "compile_cmd": "mvn test-compile -q",
+    "test_cmd": "mvn test -q -Dtest=UsuarioServiceTest",
+    "run_pit": false
+  }
+}
