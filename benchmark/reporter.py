@@ -115,6 +115,7 @@ def _serialize_metrics(metrics: EvalMetrics) -> dict[str, Any]:
         "mutation_score_pct": metrics.mutation_score_pct,
         "killed_mutations": metrics.killed_mutations,
         "total_mutations": metrics.total_mutations,
+        "compile_errors": metrics.compile_errors,
         "timings": {
             "parse_ms": metrics.timings.parse_ms,
             "retrieval_ms": metrics.timings.retrieval_ms,

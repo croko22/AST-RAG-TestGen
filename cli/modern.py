@@ -119,6 +119,28 @@ def create_modern_cli():
             output_manager.print_info(f"{provider}: {default_model}")
 
     @app.command()
+    def thesis_report(
+        output: str = Opt(
+            "", "--output", "-o", help="Output path for the report (default: docs/thesis/results-package-v1.md)"
+        ),
+        latex: bool = Opt(False, "--latex", help="Also emit LaTeX table fragments"),
+    ) -> None:
+        """Generate thesis-ready results report from benchmark data."""
+        try:
+            from benchmark.thesis_report import generate_thesis_report
+
+            out = generate_thesis_report(
+                output_path=output if output else None,
+                latex=latex,
+            )
+            print(f"\nReport written to: {out}")
+        except SystemExit:
+            raise
+        except Exception as e:
+            print(f"Error generating thesis report: {e}")
+            sys.exit(1)
+
+    @app.command()
     def serve(
         host: str = Opt("127.0.0.1", "--host", "-H", help="Host for HTTP transport"),
         port: int = Opt(8000, "--port", "-P", help="Port for HTTP transport"),

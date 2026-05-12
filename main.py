@@ -41,7 +41,7 @@ def main() -> int:
     if MODERN_CLI_AVAILABLE:
         # Check if we're being called with modern CLI arguments
         # (e.g., "generate", "benchmark", "providers" subcommands)
-        if len(sys.argv) > 1 and sys.argv[1] in ("generate", "benchmark", "providers", "serve"):
+        if len(sys.argv) > 1 and sys.argv[1] in ("generate", "benchmark", "providers", "serve", "thesis-report"):
             return run_modern_cli()
 
     # Fall back to legacy CLI
