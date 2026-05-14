@@ -1,0 +1,364 @@
+{
+  "manifest_version": 1,
+  "project_root": "datasets/reftest-12/jsoup",
+  "dataset": [
+    {
+      "id": "jsoup-jsoup",
+      "java_file": "src/main/java/org/jsoup/Jsoup.java",
+      "expected_test_path": "src/test/java/org/jsoup/JsoupTest.java"
+    },
+    {
+      "id": "jsoup-htmltoplaintext",
+      "java_file": "src/main/java/org/jsoup/examples/HtmlToPlainText.java",
+      "expected_test_path": "src/test/java/org/jsoup/examples/HtmlToPlainTextTest.java"
+    },
+    {
+      "id": "jsoup-listlinks",
+      "java_file": "src/main/java/org/jsoup/examples/ListLinks.java",
+      "expected_test_path": "src/test/java/org/jsoup/examples/ListLinksTest.java"
+    },
+    {
+      "id": "jsoup-wikipedia",
+      "java_file": "src/main/java/org/jsoup/examples/Wikipedia.java",
+      "expected_test_path": "src/test/java/org/jsoup/examples/WikipediaTest.java"
+    },
+    {
+      "id": "jsoup-authenticationhandler",
+      "java_file": "src/main/java/org/jsoup/helper/AuthenticationHandler.java",
+      "expected_test_path": "src/test/java/org/jsoup/helper/AuthenticationHandlerTest.java"
+    },
+    {
+      "id": "jsoup-cookieutil",
+      "java_file": "src/main/java/org/jsoup/helper/CookieUtil.java",
+      "expected_test_path": "src/test/java/org/jsoup/helper/CookieUtilTest.java"
+    },
+    {
+      "id": "jsoup-datautil",
+      "java_file": "src/main/java/org/jsoup/helper/DataUtil.java",
+      "expected_test_path": "src/test/java/org/jsoup/helper/DataUtilTest.java"
+    },
+    {
+      "id": "jsoup-httpconnection",
+      "java_file": "src/main/java/org/jsoup/helper/HttpConnection.java",
+      "expected_test_path": "src/test/java/org/jsoup/helper/HttpConnectionTest.java"
+    },
+    {
+      "id": "jsoup-re2jregex",
+      "java_file": "src/main/java/org/jsoup/helper/Re2jRegex.java",
+      "expected_test_path": "src/test/java/org/jsoup/helper/Re2jRegexTest.java"
+    },
+    {
+      "id": "jsoup-regex",
+      "java_file": "src/main/java/org/jsoup/helper/Regex.java",
+      "expected_test_path": "src/test/java/org/jsoup/helper/RegexTest.java"
+    },
+    {
+      "id": "jsoup-requestdispatch",
+      "java_file": "src/main/java/org/jsoup/helper/RequestDispatch.java",
+      "expected_test_path": "src/test/java/org/jsoup/helper/RequestDispatchTest.java"
+    },
+    {
+      "id": "jsoup-urlbuilder",
+      "java_file": "src/main/java/org/jsoup/helper/UrlBuilder.java",
+      "expected_test_path": "src/test/java/org/jsoup/helper/UrlBuilderTest.java"
+    },
+    {
+      "id": "jsoup-urlconnectionexecutor",
+      "java_file": "src/main/java/org/jsoup/helper/UrlConnectionExecutor.java",
+      "expected_test_path": "src/test/java/org/jsoup/helper/UrlConnectionExecutorTest.java"
+    },
+    {
+      "id": "jsoup-validate",
+      "java_file": "src/main/java/org/jsoup/helper/Validate.java",
+      "expected_test_path": "src/test/java/org/jsoup/helper/ValidateTest.java"
+    },
+    {
+      "id": "jsoup-validationexception",
+      "java_file": "src/main/java/org/jsoup/helper/ValidationException.java",
+      "expected_test_path": "src/test/java/org/jsoup/helper/ValidationExceptionTest.java"
+    },
+    {
+      "id": "jsoup-w3cdom",
+      "java_file": "src/main/java/org/jsoup/helper/W3CDom.java",
+      "expected_test_path": "src/test/java/org/jsoup/helper/W3CDomTest.java"
+    },
+    {
+      "id": "jsoup-controllableinputstream",
+      "java_file": "src/main/java/org/jsoup/internal/ControllableInputStream.java",
+      "expected_test_path": "src/test/java/org/jsoup/internal/ControllableInputStreamTest.java"
+    },
+    {
+      "id": "jsoup-quietappendable",
+      "java_file": "src/main/java/org/jsoup/internal/QuietAppendable.java",
+      "expected_test_path": "src/test/java/org/jsoup/internal/QuietAppendableTest.java"
+    },
+    {
+      "id": "jsoup-simplebufferedinput",
+      "java_file": "src/main/java/org/jsoup/internal/SimpleBufferedInput.java",
+      "expected_test_path": "src/test/java/org/jsoup/internal/SimpleBufferedInputTest.java"
+    },
+    {
+      "id": "jsoup-simplestreamreader",
+      "java_file": "src/main/java/org/jsoup/internal/SimpleStreamReader.java",
+      "expected_test_path": "src/test/java/org/jsoup/internal/SimpleStreamReaderTest.java"
+    },
+    {
+      "id": "jsoup-softpool",
+      "java_file": "src/main/java/org/jsoup/internal/SoftPool.java",
+      "expected_test_path": "src/test/java/org/jsoup/internal/SoftPoolTest.java"
+    },
+    {
+      "id": "jsoup-stringutil",
+      "java_file": "src/main/java/org/jsoup/internal/StringUtil.java",
+      "expected_test_path": "src/test/java/org/jsoup/internal/StringUtilTest.java"
+    },
+    {
+      "id": "jsoup-attribute",
+      "java_file": "src/main/java/org/jsoup/nodes/Attribute.java",
+      "expected_test_path": "src/test/java/org/jsoup/nodes/AttributeTest.java"
+    },
+    {
+      "id": "jsoup-attributes",
+      "java_file": "src/main/java/org/jsoup/nodes/Attributes.java",
+      "expected_test_path": "src/test/java/org/jsoup/nodes/AttributesTest.java"
+    },
+    {
+      "id": "jsoup-cdatanode",
+      "java_file": "src/main/java/org/jsoup/nodes/CDataNode.java",
+      "expected_test_path": "src/test/java/org/jsoup/nodes/CDataNodeTest.java"
+    },
+    {
+      "id": "jsoup-comment",
+      "java_file": "src/main/java/org/jsoup/nodes/Comment.java",
+      "expected_test_path": "src/test/java/org/jsoup/nodes/CommentTest.java"
+    },
+    {
+      "id": "jsoup-datanode",
+      "java_file": "src/main/java/org/jsoup/nodes/DataNode.java",
+      "expected_test_path": "src/test/java/org/jsoup/nodes/DataNodeTest.java"
+    },
+    {
+      "id": "jsoup-document",
+      "java_file": "src/main/java/org/jsoup/nodes/Document.java",
+      "expected_test_path": "src/test/java/org/jsoup/nodes/DocumentTest.java"
+    },
+    {
+      "id": "jsoup-documenttype",
+      "java_file": "src/main/java/org/jsoup/nodes/DocumentType.java",
+      "expected_test_path": "src/test/java/org/jsoup/nodes/DocumentTypeTest.java"
+    },
+    {
+      "id": "jsoup-element",
+      "java_file": "src/main/java/org/jsoup/nodes/Element.java",
+      "expected_test_path": "src/test/java/org/jsoup/nodes/ElementTest.java"
+    },
+    {
+      "id": "jsoup-entities",
+      "java_file": "src/main/java/org/jsoup/nodes/Entities.java",
+      "expected_test_path": "src/test/java/org/jsoup/nodes/EntitiesTest.java"
+    },
+    {
+      "id": "jsoup-formelement",
+      "java_file": "src/main/java/org/jsoup/nodes/FormElement.java",
+      "expected_test_path": "src/test/java/org/jsoup/nodes/FormElementTest.java"
+    },
+    {
+      "id": "jsoup-leafnode",
+      "java_file": "src/main/java/org/jsoup/nodes/LeafNode.java",
+      "expected_test_path": "src/test/java/org/jsoup/nodes/LeafNodeTest.java"
+    },
+    {
+      "id": "jsoup-node",
+      "java_file": "src/main/java/org/jsoup/nodes/Node.java",
+      "expected_test_path": "src/test/java/org/jsoup/nodes/NodeTest.java"
+    },
+    {
+      "id": "jsoup-nodeiterator",
+      "java_file": "src/main/java/org/jsoup/nodes/NodeIterator.java",
+      "expected_test_path": "src/test/java/org/jsoup/nodes/NodeIteratorTest.java"
+    },
+    {
+      "id": "jsoup-nodeutils",
+      "java_file": "src/main/java/org/jsoup/nodes/NodeUtils.java",
+      "expected_test_path": "src/test/java/org/jsoup/nodes/NodeUtilsTest.java"
+    },
+    {
+      "id": "jsoup-printer",
+      "java_file": "src/main/java/org/jsoup/nodes/Printer.java",
+      "expected_test_path": "src/test/java/org/jsoup/nodes/PrinterTest.java"
+    },
+    {
+      "id": "jsoup-range",
+      "java_file": "src/main/java/org/jsoup/nodes/Range.java",
+      "expected_test_path": "src/test/java/org/jsoup/nodes/RangeTest.java"
+    },
+    {
+      "id": "jsoup-textnode",
+      "java_file": "src/main/java/org/jsoup/nodes/TextNode.java",
+      "expected_test_path": "src/test/java/org/jsoup/nodes/TextNodeTest.java"
+    },
+    {
+      "id": "jsoup-xmldeclaration",
+      "java_file": "src/main/java/org/jsoup/nodes/XmlDeclaration.java",
+      "expected_test_path": "src/test/java/org/jsoup/nodes/XmlDeclarationTest.java"
+    },
+    {
+      "id": "jsoup-characterreader",
+      "java_file": "src/main/java/org/jsoup/parser/CharacterReader.java",
+      "expected_test_path": "src/test/java/org/jsoup/parser/CharacterReaderTest.java"
+    },
+    {
+      "id": "jsoup-htmltreebuilder",
+      "java_file": "src/main/java/org/jsoup/parser/HtmlTreeBuilder.java",
+      "expected_test_path": "src/test/java/org/jsoup/parser/HtmlTreeBuilderTest.java"
+    },
+    {
+      "id": "jsoup-parsesettings",
+      "java_file": "src/main/java/org/jsoup/parser/ParseSettings.java",
+      "expected_test_path": "src/test/java/org/jsoup/parser/ParseSettingsTest.java"
+    },
+    {
+      "id": "jsoup-parser",
+      "java_file": "src/main/java/org/jsoup/parser/Parser.java",
+      "expected_test_path": "src/test/java/org/jsoup/parser/ParserTest.java"
+    },
+    {
+      "id": "jsoup-streamparser",
+      "java_file": "src/main/java/org/jsoup/parser/StreamParser.java",
+      "expected_test_path": "src/test/java/org/jsoup/parser/StreamParserTest.java"
+    },
+    {
+      "id": "jsoup-tag",
+      "java_file": "src/main/java/org/jsoup/parser/Tag.java",
+      "expected_test_path": "src/test/java/org/jsoup/parser/TagTest.java"
+    },
+    {
+      "id": "jsoup-tagset",
+      "java_file": "src/main/java/org/jsoup/parser/TagSet.java",
+      "expected_test_path": "src/test/java/org/jsoup/parser/TagSetTest.java"
+    },
+    {
+      "id": "jsoup-token",
+      "java_file": "src/main/java/org/jsoup/parser/Token.java",
+      "expected_test_path": "src/test/java/org/jsoup/parser/TokenTest.java"
+    },
+    {
+      "id": "jsoup-tokendata",
+      "java_file": "src/main/java/org/jsoup/parser/TokenData.java",
+      "expected_test_path": "src/test/java/org/jsoup/parser/TokenDataTest.java"
+    },
+    {
+      "id": "jsoup-tokenqueue",
+      "java_file": "src/main/java/org/jsoup/parser/TokenQueue.java",
+      "expected_test_path": "src/test/java/org/jsoup/parser/TokenQueueTest.java"
+    },
+    {
+      "id": "jsoup-tokeniser",
+      "java_file": "src/main/java/org/jsoup/parser/Tokeniser.java",
+      "expected_test_path": "src/test/java/org/jsoup/parser/TokeniserTest.java"
+    },
+    {
+      "id": "jsoup-treebuilder",
+      "java_file": "src/main/java/org/jsoup/parser/TreeBuilder.java",
+      "expected_test_path": "src/test/java/org/jsoup/parser/TreeBuilderTest.java"
+    },
+    {
+      "id": "jsoup-xmltreebuilder",
+      "java_file": "src/main/java/org/jsoup/parser/XmlTreeBuilder.java",
+      "expected_test_path": "src/test/java/org/jsoup/parser/XmlTreeBuilderTest.java"
+    },
+    {
+      "id": "jsoup-cleaner",
+      "java_file": "src/main/java/org/jsoup/safety/Cleaner.java",
+      "expected_test_path": "src/test/java/org/jsoup/safety/CleanerTest.java"
+    },
+    {
+      "id": "jsoup-safelist",
+      "java_file": "src/main/java/org/jsoup/safety/Safelist.java",
+      "expected_test_path": "src/test/java/org/jsoup/safety/SafelistTest.java"
+    },
+    {
+      "id": "jsoup-collector",
+      "java_file": "src/main/java/org/jsoup/select/Collector.java",
+      "expected_test_path": "src/test/java/org/jsoup/select/CollectorTest.java"
+    },
+    {
+      "id": "jsoup-combiningevaluator",
+      "java_file": "src/main/java/org/jsoup/select/CombiningEvaluator.java",
+      "expected_test_path": "src/test/java/org/jsoup/select/CombiningEvaluatorTest.java"
+    },
+    {
+      "id": "jsoup-elements",
+      "java_file": "src/main/java/org/jsoup/select/Elements.java",
+      "expected_test_path": "src/test/java/org/jsoup/select/ElementsTest.java"
+    },
+    {
+      "id": "jsoup-evaluator",
+      "java_file": "src/main/java/org/jsoup/select/Evaluator.java",
+      "expected_test_path": "src/test/java/org/jsoup/select/EvaluatorTest.java"
+    },
+    {
+      "id": "jsoup-nodetraversor",
+      "java_file": "src/main/java/org/jsoup/select/NodeTraversor.java",
+      "expected_test_path": "src/test/java/org/jsoup/select/NodeTraversorTest.java"
+    },
+    {
+      "id": "jsoup-nodes",
+      "java_file": "src/main/java/org/jsoup/select/Nodes.java",
+      "expected_test_path": "src/test/java/org/jsoup/select/NodesTest.java"
+    },
+    {
+      "id": "jsoup-queryparser",
+      "java_file": "src/main/java/org/jsoup/select/QueryParser.java",
+      "expected_test_path": "src/test/java/org/jsoup/select/QueryParserTest.java"
+    },
+    {
+      "id": "jsoup-selector",
+      "java_file": "src/main/java/org/jsoup/select/Selector.java",
+      "expected_test_path": "src/test/java/org/jsoup/select/SelectorTest.java"
+    },
+    {
+      "id": "jsoup-structuralevaluator",
+      "java_file": "src/main/java/org/jsoup/select/StructuralEvaluator.java",
+      "expected_test_path": "src/test/java/org/jsoup/select/StructuralEvaluatorTest.java"
+    },
+    {
+      "id": "jsoup-httpclientexecutor",
+      "java_file": "src/main/java11/org/jsoup/helper/HttpClientExecutor.java",
+      "expected_test_path": "src/main/java11/org/jsoup/helper/HttpClientExecutorTest.java"
+    },
+    {
+      "id": "jsoup-requestauthhandler",
+      "java_file": "src/main/java11/org/jsoup/helper/RequestAuthHandler.java",
+      "expected_test_path": "src/main/java11/org/jsoup/helper/RequestAuthHandlerTest.java"
+    }
+  ],
+  "matrix": {
+    "providers": [
+      {
+        "name": "nvidia",
+        "model": "deepseek/deepseek-v4-pro"
+      }
+    ]
+  },
+  "run": {
+    "trials": 1,
+    "seed": 42,
+    "max_dependencies": 5,
+    "timeout_seconds": 300,
+    "retry_count": 1,
+    "concurrency": 1
+  },
+  "evaluation": {
+    "compile_cmd": "mvn test-compile -q -Drat.skip=true",
+    "test_cmd": "mvn test -q -Drat.skip=true -Dtest=AttributeTest,AttributesTest,AuthenticationHandlerTest,CDataNodeTest,CharacterReaderTest,CleanerTest,CollectorTest,CombiningEvaluatorTest,CommentTest,ControllableInputStreamTest,CookieUtilTest,DataNodeTest,DataUtilTest,DocumentTest,DocumentTypeTest,ElementTest,ElementsTest,EntitiesTest,EvaluatorTest,FormElementTest,HtmlToPlainTextTest,HtmlTreeBuilderTest,HttpClientExecutorTest,HttpConnectionTest,JsoupTest,LeafNodeTest,ListLinksTest,NodeIteratorTest,NodeTest,NodeTraversorTest,NodeUtilsTest,NodesTest,ParseSettingsTest,ParserTest,PrinterTest,QueryParserTest,QuietAppendableTest,RangeTest,Re2jRegexTest,RegexTest,RequestAuthHandlerTest,RequestDispatchTest,SafelistTest,SelectorTest,SimpleBufferedInputTest,SimpleStreamReaderTest,SoftPoolTest,StreamParserTest,StringUtilTest,StructuralEvaluatorTest,TagSetTest,TagTest,TextNodeTest,TokenDataTest,TokenQueueTest,TokenTest,TokeniserTest,TreeBuilderTest,UrlBuilderTest,UrlConnectionExecutorTest,ValidateTest,ValidationExceptionTest,W3CDomTest,WikipediaTest,XmlDeclarationTest,XmlTreeBuilderTest",
+    "run_pit": false
+  },
+  "scoring": {
+    "weights": {
+      "success": 0.5,
+      "coverage": 0.3,
+      "latency": 0.2
+    }
+  }
+}

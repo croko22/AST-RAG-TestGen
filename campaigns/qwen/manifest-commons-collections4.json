@@ -1,0 +1,1159 @@
+{
+  "manifest_version": 1,
+  "project_root": "datasets/reftest-12/commons-collections4",
+  "dataset": [
+    {
+      "id": "commons-collections4-arraystack",
+      "java_file": "src/main/java/org/apache/commons/collections4/ArrayStack.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/ArrayStackTest.java"
+    },
+    {
+      "id": "commons-collections4-arrayutils",
+      "java_file": "src/main/java/org/apache/commons/collections4/ArrayUtils.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/ArrayUtilsTest.java"
+    },
+    {
+      "id": "commons-collections4-closureutils",
+      "java_file": "src/main/java/org/apache/commons/collections4/ClosureUtils.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/ClosureUtilsTest.java"
+    },
+    {
+      "id": "commons-collections4-collectionutils",
+      "java_file": "src/main/java/org/apache/commons/collections4/CollectionUtils.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/CollectionUtilsTest.java"
+    },
+    {
+      "id": "commons-collections4-comparatorutils",
+      "java_file": "src/main/java/org/apache/commons/collections4/ComparatorUtils.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/ComparatorUtilsTest.java"
+    },
+    {
+      "id": "commons-collections4-enumerationutils",
+      "java_file": "src/main/java/org/apache/commons/collections4/EnumerationUtils.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/EnumerationUtilsTest.java"
+    },
+    {
+      "id": "commons-collections4-fluentiterable",
+      "java_file": "src/main/java/org/apache/commons/collections4/FluentIterable.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/FluentIterableTest.java"
+    },
+    {
+      "id": "commons-collections4-iterableutils",
+      "java_file": "src/main/java/org/apache/commons/collections4/IterableUtils.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/IterableUtilsTest.java"
+    },
+    {
+      "id": "commons-collections4-iteratorutils",
+      "java_file": "src/main/java/org/apache/commons/collections4/IteratorUtils.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/IteratorUtilsTest.java"
+    },
+    {
+      "id": "commons-collections4-listutils",
+      "java_file": "src/main/java/org/apache/commons/collections4/ListUtils.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/ListUtilsTest.java"
+    },
+    {
+      "id": "commons-collections4-maputils",
+      "java_file": "src/main/java/org/apache/commons/collections4/MapUtils.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/MapUtilsTest.java"
+    },
+    {
+      "id": "commons-collections4-multimaputils",
+      "java_file": "src/main/java/org/apache/commons/collections4/MultiMapUtils.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/MultiMapUtilsTest.java"
+    },
+    {
+      "id": "commons-collections4-predicateutils",
+      "java_file": "src/main/java/org/apache/commons/collections4/PredicateUtils.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/PredicateUtilsTest.java"
+    },
+    {
+      "id": "commons-collections4-setutils",
+      "java_file": "src/main/java/org/apache/commons/collections4/SetUtils.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/SetUtilsTest.java"
+    },
+    {
+      "id": "commons-collections4-splitmaputils",
+      "java_file": "src/main/java/org/apache/commons/collections4/SplitMapUtils.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/SplitMapUtilsTest.java"
+    },
+    {
+      "id": "commons-collections4-transformerutils",
+      "java_file": "src/main/java/org/apache/commons/collections4/TransformerUtils.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/TransformerUtilsTest.java"
+    },
+    {
+      "id": "commons-collections4-abstractmapbag",
+      "java_file": "src/main/java/org/apache/commons/collections4/bag/AbstractMapBag.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/bag/AbstractMapBagTest.java"
+    },
+    {
+      "id": "commons-collections4-collectionbag",
+      "java_file": "src/main/java/org/apache/commons/collections4/bag/CollectionBag.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/bag/CollectionBagTest.java"
+    },
+    {
+      "id": "commons-collections4-collectionsortedbag",
+      "java_file": "src/main/java/org/apache/commons/collections4/bag/CollectionSortedBag.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/bag/CollectionSortedBagTest.java"
+    },
+    {
+      "id": "commons-collections4-predicatedbag",
+      "java_file": "src/main/java/org/apache/commons/collections4/bag/PredicatedBag.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/bag/PredicatedBagTest.java"
+    },
+    {
+      "id": "commons-collections4-synchronizedbag",
+      "java_file": "src/main/java/org/apache/commons/collections4/bag/SynchronizedBag.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/bag/SynchronizedBagTest.java"
+    },
+    {
+      "id": "commons-collections4-synchronizedsortedbag",
+      "java_file": "src/main/java/org/apache/commons/collections4/bag/SynchronizedSortedBag.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/bag/SynchronizedSortedBagTest.java"
+    },
+    {
+      "id": "commons-collections4-transformedbag",
+      "java_file": "src/main/java/org/apache/commons/collections4/bag/TransformedBag.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/bag/TransformedBagTest.java"
+    },
+    {
+      "id": "commons-collections4-transformedsortedbag",
+      "java_file": "src/main/java/org/apache/commons/collections4/bag/TransformedSortedBag.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/bag/TransformedSortedBagTest.java"
+    },
+    {
+      "id": "commons-collections4-treebag",
+      "java_file": "src/main/java/org/apache/commons/collections4/bag/TreeBag.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/bag/TreeBagTest.java"
+    },
+    {
+      "id": "commons-collections4-unmodifiablebag",
+      "java_file": "src/main/java/org/apache/commons/collections4/bag/UnmodifiableBag.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/bag/UnmodifiableBagTest.java"
+    },
+    {
+      "id": "commons-collections4-unmodifiablesortedbag",
+      "java_file": "src/main/java/org/apache/commons/collections4/bag/UnmodifiableSortedBag.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/bag/UnmodifiableSortedBagTest.java"
+    },
+    {
+      "id": "commons-collections4-abstractdualbidimap",
+      "java_file": "src/main/java/org/apache/commons/collections4/bidimap/AbstractDualBidiMap.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/bidimap/AbstractDualBidiMapTest.java"
+    },
+    {
+      "id": "commons-collections4-dualtreebidimap",
+      "java_file": "src/main/java/org/apache/commons/collections4/bidimap/DualTreeBidiMap.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/bidimap/DualTreeBidiMapTest.java"
+    },
+    {
+      "id": "commons-collections4-treebidimap",
+      "java_file": "src/main/java/org/apache/commons/collections4/bidimap/TreeBidiMap.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/bidimap/TreeBidiMapTest.java"
+    },
+    {
+      "id": "commons-collections4-unmodifiablebidimap",
+      "java_file": "src/main/java/org/apache/commons/collections4/bidimap/UnmodifiableBidiMap.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/bidimap/UnmodifiableBidiMapTest.java"
+    },
+    {
+      "id": "commons-collections4-unmodifiableorderedbidimap",
+      "java_file": "src/main/java/org/apache/commons/collections4/bidimap/UnmodifiableOrderedBidiMap.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/bidimap/UnmodifiableOrderedBidiMapTest.java"
+    },
+    {
+      "id": "commons-collections4-unmodifiablesortedbidimap",
+      "java_file": "src/main/java/org/apache/commons/collections4/bidimap/UnmodifiableSortedBidiMap.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/bidimap/UnmodifiableSortedBidiMapTest.java"
+    },
+    {
+      "id": "commons-collections4-arraycountingbloomfilter",
+      "java_file": "src/main/java/org/apache/commons/collections4/bloomfilter/ArrayCountingBloomFilter.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/bloomfilter/ArrayCountingBloomFilterTest.java"
+    },
+    {
+      "id": "commons-collections4-bitmapextractor",
+      "java_file": "src/main/java/org/apache/commons/collections4/bloomfilter/BitMapExtractor.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/bloomfilter/BitMapExtractorTest.java"
+    },
+    {
+      "id": "commons-collections4-bitmaps",
+      "java_file": "src/main/java/org/apache/commons/collections4/bloomfilter/BitMaps.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/bloomfilter/BitMapsTest.java"
+    },
+    {
+      "id": "commons-collections4-bloomfilter",
+      "java_file": "src/main/java/org/apache/commons/collections4/bloomfilter/BloomFilter.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/bloomfilter/BloomFilterTest.java"
+    },
+    {
+      "id": "commons-collections4-bloomfilterextractor",
+      "java_file": "src/main/java/org/apache/commons/collections4/bloomfilter/BloomFilterExtractor.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/bloomfilter/BloomFilterExtractorTest.java"
+    },
+    {
+      "id": "commons-collections4-cellextractor",
+      "java_file": "src/main/java/org/apache/commons/collections4/bloomfilter/CellExtractor.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/bloomfilter/CellExtractorTest.java"
+    },
+    {
+      "id": "commons-collections4-countingbloomfilter",
+      "java_file": "src/main/java/org/apache/commons/collections4/bloomfilter/CountingBloomFilter.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/bloomfilter/CountingBloomFilterTest.java"
+    },
+    {
+      "id": "commons-collections4-countinglongpredicate",
+      "java_file": "src/main/java/org/apache/commons/collections4/bloomfilter/CountingLongPredicate.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/bloomfilter/CountingLongPredicateTest.java"
+    },
+    {
+      "id": "commons-collections4-countingpredicate",
+      "java_file": "src/main/java/org/apache/commons/collections4/bloomfilter/CountingPredicate.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/bloomfilter/CountingPredicateTest.java"
+    },
+    {
+      "id": "commons-collections4-enhanceddoublehasher",
+      "java_file": "src/main/java/org/apache/commons/collections4/bloomfilter/EnhancedDoubleHasher.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/bloomfilter/EnhancedDoubleHasherTest.java"
+    },
+    {
+      "id": "commons-collections4-indexextractor",
+      "java_file": "src/main/java/org/apache/commons/collections4/bloomfilter/IndexExtractor.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/bloomfilter/IndexExtractorTest.java"
+    },
+    {
+      "id": "commons-collections4-indexfilter",
+      "java_file": "src/main/java/org/apache/commons/collections4/bloomfilter/IndexFilter.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/bloomfilter/IndexFilterTest.java"
+    },
+    {
+      "id": "commons-collections4-indexutils",
+      "java_file": "src/main/java/org/apache/commons/collections4/bloomfilter/IndexUtils.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/bloomfilter/IndexUtilsTest.java"
+    },
+    {
+      "id": "commons-collections4-layermanager",
+      "java_file": "src/main/java/org/apache/commons/collections4/bloomfilter/LayerManager.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/bloomfilter/LayerManagerTest.java"
+    },
+    {
+      "id": "commons-collections4-layeredbloomfilter",
+      "java_file": "src/main/java/org/apache/commons/collections4/bloomfilter/LayeredBloomFilter.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/bloomfilter/LayeredBloomFilterTest.java"
+    },
+    {
+      "id": "commons-collections4-setoperations",
+      "java_file": "src/main/java/org/apache/commons/collections4/bloomfilter/SetOperations.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/bloomfilter/SetOperationsTest.java"
+    },
+    {
+      "id": "commons-collections4-shape",
+      "java_file": "src/main/java/org/apache/commons/collections4/bloomfilter/Shape.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/bloomfilter/ShapeTest.java"
+    },
+    {
+      "id": "commons-collections4-simplebloomfilter",
+      "java_file": "src/main/java/org/apache/commons/collections4/bloomfilter/SimpleBloomFilter.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/bloomfilter/SimpleBloomFilterTest.java"
+    },
+    {
+      "id": "commons-collections4-sparsebloomfilter",
+      "java_file": "src/main/java/org/apache/commons/collections4/bloomfilter/SparseBloomFilter.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/bloomfilter/SparseBloomFilterTest.java"
+    },
+    {
+      "id": "commons-collections4-compositecollection",
+      "java_file": "src/main/java/org/apache/commons/collections4/collection/CompositeCollection.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/collection/CompositeCollectionTest.java"
+    },
+    {
+      "id": "commons-collections4-indexedcollection",
+      "java_file": "src/main/java/org/apache/commons/collections4/collection/IndexedCollection.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/collection/IndexedCollectionTest.java"
+    },
+    {
+      "id": "commons-collections4-predicatedcollection",
+      "java_file": "src/main/java/org/apache/commons/collections4/collection/PredicatedCollection.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/collection/PredicatedCollectionTest.java"
+    },
+    {
+      "id": "commons-collections4-synchronizedcollection",
+      "java_file": "src/main/java/org/apache/commons/collections4/collection/SynchronizedCollection.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/collection/SynchronizedCollectionTest.java"
+    },
+    {
+      "id": "commons-collections4-transformedcollection",
+      "java_file": "src/main/java/org/apache/commons/collections4/collection/TransformedCollection.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/collection/TransformedCollectionTest.java"
+    },
+    {
+      "id": "commons-collections4-unmodifiableboundedcollection",
+      "java_file": "src/main/java/org/apache/commons/collections4/collection/UnmodifiableBoundedCollection.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/collection/UnmodifiableBoundedCollectionTest.java"
+    },
+    {
+      "id": "commons-collections4-unmodifiablecollection",
+      "java_file": "src/main/java/org/apache/commons/collections4/collection/UnmodifiableCollection.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/collection/UnmodifiableCollectionTest.java"
+    },
+    {
+      "id": "commons-collections4-booleancomparator",
+      "java_file": "src/main/java/org/apache/commons/collections4/comparators/BooleanComparator.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/comparators/BooleanComparatorTest.java"
+    },
+    {
+      "id": "commons-collections4-comparablecomparator",
+      "java_file": "src/main/java/org/apache/commons/collections4/comparators/ComparableComparator.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/comparators/ComparableComparatorTest.java"
+    },
+    {
+      "id": "commons-collections4-comparatorchain",
+      "java_file": "src/main/java/org/apache/commons/collections4/comparators/ComparatorChain.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/comparators/ComparatorChainTest.java"
+    },
+    {
+      "id": "commons-collections4-fixedordercomparator",
+      "java_file": "src/main/java/org/apache/commons/collections4/comparators/FixedOrderComparator.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/comparators/FixedOrderComparatorTest.java"
+    },
+    {
+      "id": "commons-collections4-nullcomparator",
+      "java_file": "src/main/java/org/apache/commons/collections4/comparators/NullComparator.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/comparators/NullComparatorTest.java"
+    },
+    {
+      "id": "commons-collections4-reversecomparator",
+      "java_file": "src/main/java/org/apache/commons/collections4/comparators/ReverseComparator.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/comparators/ReverseComparatorTest.java"
+    },
+    {
+      "id": "commons-collections4-transformingcomparator",
+      "java_file": "src/main/java/org/apache/commons/collections4/comparators/TransformingComparator.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/comparators/TransformingComparatorTest.java"
+    },
+    {
+      "id": "commons-collections4-allpredicate",
+      "java_file": "src/main/java/org/apache/commons/collections4/functors/AllPredicate.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/functors/AllPredicateTest.java"
+    },
+    {
+      "id": "commons-collections4-andpredicate",
+      "java_file": "src/main/java/org/apache/commons/collections4/functors/AndPredicate.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/functors/AndPredicateTest.java"
+    },
+    {
+      "id": "commons-collections4-anypredicate",
+      "java_file": "src/main/java/org/apache/commons/collections4/functors/AnyPredicate.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/functors/AnyPredicateTest.java"
+    },
+    {
+      "id": "commons-collections4-catchandrethrowclosure",
+      "java_file": "src/main/java/org/apache/commons/collections4/functors/CatchAndRethrowClosure.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/functors/CatchAndRethrowClosureTest.java"
+    },
+    {
+      "id": "commons-collections4-chainedclosure",
+      "java_file": "src/main/java/org/apache/commons/collections4/functors/ChainedClosure.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/functors/ChainedClosureTest.java"
+    },
+    {
+      "id": "commons-collections4-chainedtransformer",
+      "java_file": "src/main/java/org/apache/commons/collections4/functors/ChainedTransformer.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/functors/ChainedTransformerTest.java"
+    },
+    {
+      "id": "commons-collections4-clonetransformer",
+      "java_file": "src/main/java/org/apache/commons/collections4/functors/CloneTransformer.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/functors/CloneTransformerTest.java"
+    },
+    {
+      "id": "commons-collections4-closuretransformer",
+      "java_file": "src/main/java/org/apache/commons/collections4/functors/ClosureTransformer.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/functors/ClosureTransformerTest.java"
+    },
+    {
+      "id": "commons-collections4-comparatorpredicate",
+      "java_file": "src/main/java/org/apache/commons/collections4/functors/ComparatorPredicate.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/functors/ComparatorPredicateTest.java"
+    },
+    {
+      "id": "commons-collections4-constantfactory",
+      "java_file": "src/main/java/org/apache/commons/collections4/functors/ConstantFactory.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/functors/ConstantFactoryTest.java"
+    },
+    {
+      "id": "commons-collections4-constanttransformer",
+      "java_file": "src/main/java/org/apache/commons/collections4/functors/ConstantTransformer.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/functors/ConstantTransformerTest.java"
+    },
+    {
+      "id": "commons-collections4-equalpredicate",
+      "java_file": "src/main/java/org/apache/commons/collections4/functors/EqualPredicate.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/functors/EqualPredicateTest.java"
+    },
+    {
+      "id": "commons-collections4-forclosure",
+      "java_file": "src/main/java/org/apache/commons/collections4/functors/ForClosure.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/functors/ForClosureTest.java"
+    },
+    {
+      "id": "commons-collections4-functorutils",
+      "java_file": "src/main/java/org/apache/commons/collections4/functors/FunctorUtils.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/functors/FunctorUtilsTest.java"
+    },
+    {
+      "id": "commons-collections4-identitypredicate",
+      "java_file": "src/main/java/org/apache/commons/collections4/functors/IdentityPredicate.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/functors/IdentityPredicateTest.java"
+    },
+    {
+      "id": "commons-collections4-ifclosure",
+      "java_file": "src/main/java/org/apache/commons/collections4/functors/IfClosure.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/functors/IfClosureTest.java"
+    },
+    {
+      "id": "commons-collections4-iftransformer",
+      "java_file": "src/main/java/org/apache/commons/collections4/functors/IfTransformer.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/functors/IfTransformerTest.java"
+    },
+    {
+      "id": "commons-collections4-instantiatefactory",
+      "java_file": "src/main/java/org/apache/commons/collections4/functors/InstantiateFactory.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/functors/InstantiateFactoryTest.java"
+    },
+    {
+      "id": "commons-collections4-instantiatetransformer",
+      "java_file": "src/main/java/org/apache/commons/collections4/functors/InstantiateTransformer.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/functors/InstantiateTransformerTest.java"
+    },
+    {
+      "id": "commons-collections4-invokertransformer",
+      "java_file": "src/main/java/org/apache/commons/collections4/functors/InvokerTransformer.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/functors/InvokerTransformerTest.java"
+    },
+    {
+      "id": "commons-collections4-maptransformer",
+      "java_file": "src/main/java/org/apache/commons/collections4/functors/MapTransformer.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/functors/MapTransformerTest.java"
+    },
+    {
+      "id": "commons-collections4-nonepredicate",
+      "java_file": "src/main/java/org/apache/commons/collections4/functors/NonePredicate.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/functors/NonePredicateTest.java"
+    },
+    {
+      "id": "commons-collections4-nullisexceptionpredicate",
+      "java_file": "src/main/java/org/apache/commons/collections4/functors/NullIsExceptionPredicate.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/functors/NullIsExceptionPredicateTest.java"
+    },
+    {
+      "id": "commons-collections4-nullisfalsepredicate",
+      "java_file": "src/main/java/org/apache/commons/collections4/functors/NullIsFalsePredicate.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/functors/NullIsFalsePredicateTest.java"
+    },
+    {
+      "id": "commons-collections4-nullistruepredicate",
+      "java_file": "src/main/java/org/apache/commons/collections4/functors/NullIsTruePredicate.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/functors/NullIsTruePredicateTest.java"
+    },
+    {
+      "id": "commons-collections4-onepredicate",
+      "java_file": "src/main/java/org/apache/commons/collections4/functors/OnePredicate.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/functors/OnePredicateTest.java"
+    },
+    {
+      "id": "commons-collections4-orpredicate",
+      "java_file": "src/main/java/org/apache/commons/collections4/functors/OrPredicate.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/functors/OrPredicateTest.java"
+    },
+    {
+      "id": "commons-collections4-predicatetransformer",
+      "java_file": "src/main/java/org/apache/commons/collections4/functors/PredicateTransformer.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/functors/PredicateTransformerTest.java"
+    },
+    {
+      "id": "commons-collections4-prototypefactory",
+      "java_file": "src/main/java/org/apache/commons/collections4/functors/PrototypeFactory.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/functors/PrototypeFactoryTest.java"
+    },
+    {
+      "id": "commons-collections4-switchclosure",
+      "java_file": "src/main/java/org/apache/commons/collections4/functors/SwitchClosure.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/functors/SwitchClosureTest.java"
+    },
+    {
+      "id": "commons-collections4-switchtransformer",
+      "java_file": "src/main/java/org/apache/commons/collections4/functors/SwitchTransformer.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/functors/SwitchTransformerTest.java"
+    },
+    {
+      "id": "commons-collections4-transformedpredicate",
+      "java_file": "src/main/java/org/apache/commons/collections4/functors/TransformedPredicate.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/functors/TransformedPredicateTest.java"
+    },
+    {
+      "id": "commons-collections4-transformerclosure",
+      "java_file": "src/main/java/org/apache/commons/collections4/functors/TransformerClosure.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/functors/TransformerClosureTest.java"
+    },
+    {
+      "id": "commons-collections4-transformerpredicate",
+      "java_file": "src/main/java/org/apache/commons/collections4/functors/TransformerPredicate.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/functors/TransformerPredicateTest.java"
+    },
+    {
+      "id": "commons-collections4-whileclosure",
+      "java_file": "src/main/java/org/apache/commons/collections4/functors/WhileClosure.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/functors/WhileClosureTest.java"
+    },
+    {
+      "id": "commons-collections4-arrayiterator",
+      "java_file": "src/main/java/org/apache/commons/collections4/iterators/ArrayIterator.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/iterators/ArrayIteratorTest.java"
+    },
+    {
+      "id": "commons-collections4-arraylistiterator",
+      "java_file": "src/main/java/org/apache/commons/collections4/iterators/ArrayListIterator.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/iterators/ArrayListIteratorTest.java"
+    },
+    {
+      "id": "commons-collections4-boundediterator",
+      "java_file": "src/main/java/org/apache/commons/collections4/iterators/BoundedIterator.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/iterators/BoundedIteratorTest.java"
+    },
+    {
+      "id": "commons-collections4-cartesianproductiterator",
+      "java_file": "src/main/java/org/apache/commons/collections4/iterators/CartesianProductIterator.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/iterators/CartesianProductIteratorTest.java"
+    },
+    {
+      "id": "commons-collections4-collatingiterator",
+      "java_file": "src/main/java/org/apache/commons/collections4/iterators/CollatingIterator.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/iterators/CollatingIteratorTest.java"
+    },
+    {
+      "id": "commons-collections4-entrysetmapiterator",
+      "java_file": "src/main/java/org/apache/commons/collections4/iterators/EntrySetMapIterator.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/iterators/EntrySetMapIteratorTest.java"
+    },
+    {
+      "id": "commons-collections4-enumerationiterator",
+      "java_file": "src/main/java/org/apache/commons/collections4/iterators/EnumerationIterator.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/iterators/EnumerationIteratorTest.java"
+    },
+    {
+      "id": "commons-collections4-extendediterator",
+      "java_file": "src/main/java/org/apache/commons/collections4/iterators/ExtendedIterator.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/iterators/ExtendedIteratorTest.java"
+    },
+    {
+      "id": "commons-collections4-filteriterator",
+      "java_file": "src/main/java/org/apache/commons/collections4/iterators/FilterIterator.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/iterators/FilterIteratorTest.java"
+    },
+    {
+      "id": "commons-collections4-filterlistiterator",
+      "java_file": "src/main/java/org/apache/commons/collections4/iterators/FilterListIterator.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/iterators/FilterListIteratorTest.java"
+    },
+    {
+      "id": "commons-collections4-iteratorchain",
+      "java_file": "src/main/java/org/apache/commons/collections4/iterators/IteratorChain.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/iterators/IteratorChainTest.java"
+    },
+    {
+      "id": "commons-collections4-iteratoriterable",
+      "java_file": "src/main/java/org/apache/commons/collections4/iterators/IteratorIterable.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/iterators/IteratorIterableTest.java"
+    },
+    {
+      "id": "commons-collections4-iteratoroperations",
+      "java_file": "src/main/java/org/apache/commons/collections4/iterators/IteratorOperations.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/iterators/IteratorOperationsTest.java"
+    },
+    {
+      "id": "commons-collections4-lazyiteratorchain",
+      "java_file": "src/main/java/org/apache/commons/collections4/iterators/LazyIteratorChain.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/iterators/LazyIteratorChainTest.java"
+    },
+    {
+      "id": "commons-collections4-listiteratorwrapper",
+      "java_file": "src/main/java/org/apache/commons/collections4/iterators/ListIteratorWrapper.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/iterators/ListIteratorWrapperTest.java"
+    },
+    {
+      "id": "commons-collections4-loopingiterator",
+      "java_file": "src/main/java/org/apache/commons/collections4/iterators/LoopingIterator.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/iterators/LoopingIteratorTest.java"
+    },
+    {
+      "id": "commons-collections4-loopinglistiterator",
+      "java_file": "src/main/java/org/apache/commons/collections4/iterators/LoopingListIterator.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/iterators/LoopingListIteratorTest.java"
+    },
+    {
+      "id": "commons-collections4-nodelistiterator",
+      "java_file": "src/main/java/org/apache/commons/collections4/iterators/NodeListIterator.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/iterators/NodeListIteratorTest.java"
+    },
+    {
+      "id": "commons-collections4-objectarrayiterator",
+      "java_file": "src/main/java/org/apache/commons/collections4/iterators/ObjectArrayIterator.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/iterators/ObjectArrayIteratorTest.java"
+    },
+    {
+      "id": "commons-collections4-objectarraylistiterator",
+      "java_file": "src/main/java/org/apache/commons/collections4/iterators/ObjectArrayListIterator.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/iterators/ObjectArrayListIteratorTest.java"
+    },
+    {
+      "id": "commons-collections4-objectgraphiterator",
+      "java_file": "src/main/java/org/apache/commons/collections4/iterators/ObjectGraphIterator.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/iterators/ObjectGraphIteratorTest.java"
+    },
+    {
+      "id": "commons-collections4-peekingiterator",
+      "java_file": "src/main/java/org/apache/commons/collections4/iterators/PeekingIterator.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/iterators/PeekingIteratorTest.java"
+    },
+    {
+      "id": "commons-collections4-permutationiterator",
+      "java_file": "src/main/java/org/apache/commons/collections4/iterators/PermutationIterator.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/iterators/PermutationIteratorTest.java"
+    },
+    {
+      "id": "commons-collections4-pushbackiterator",
+      "java_file": "src/main/java/org/apache/commons/collections4/iterators/PushbackIterator.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/iterators/PushbackIteratorTest.java"
+    },
+    {
+      "id": "commons-collections4-reverselistiterator",
+      "java_file": "src/main/java/org/apache/commons/collections4/iterators/ReverseListIterator.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/iterators/ReverseListIteratorTest.java"
+    },
+    {
+      "id": "commons-collections4-singletoniterator",
+      "java_file": "src/main/java/org/apache/commons/collections4/iterators/SingletonIterator.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/iterators/SingletonIteratorTest.java"
+    },
+    {
+      "id": "commons-collections4-singletonlistiterator",
+      "java_file": "src/main/java/org/apache/commons/collections4/iterators/SingletonListIterator.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/iterators/SingletonListIteratorTest.java"
+    },
+    {
+      "id": "commons-collections4-skippingiterator",
+      "java_file": "src/main/java/org/apache/commons/collections4/iterators/SkippingIterator.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/iterators/SkippingIteratorTest.java"
+    },
+    {
+      "id": "commons-collections4-unmodifiableiterator",
+      "java_file": "src/main/java/org/apache/commons/collections4/iterators/UnmodifiableIterator.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/iterators/UnmodifiableIteratorTest.java"
+    },
+    {
+      "id": "commons-collections4-unmodifiablelistiterator",
+      "java_file": "src/main/java/org/apache/commons/collections4/iterators/UnmodifiableListIterator.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/iterators/UnmodifiableListIteratorTest.java"
+    },
+    {
+      "id": "commons-collections4-unmodifiablemapiterator",
+      "java_file": "src/main/java/org/apache/commons/collections4/iterators/UnmodifiableMapIterator.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/iterators/UnmodifiableMapIteratorTest.java"
+    },
+    {
+      "id": "commons-collections4-unmodifiableorderedmapiterator",
+      "java_file": "src/main/java/org/apache/commons/collections4/iterators/UnmodifiableOrderedMapIterator.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/iterators/UnmodifiableOrderedMapIteratorTest.java"
+    },
+    {
+      "id": "commons-collections4-zippingiterator",
+      "java_file": "src/main/java/org/apache/commons/collections4/iterators/ZippingIterator.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/iterators/ZippingIteratorTest.java"
+    },
+    {
+      "id": "commons-collections4-abstractkeyvalue",
+      "java_file": "src/main/java/org/apache/commons/collections4/keyvalue/AbstractKeyValue.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/keyvalue/AbstractKeyValueTest.java"
+    },
+    {
+      "id": "commons-collections4-abstractmapentry",
+      "java_file": "src/main/java/org/apache/commons/collections4/keyvalue/AbstractMapEntry.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/keyvalue/AbstractMapEntryTest.java"
+    },
+    {
+      "id": "commons-collections4-abstractmapentrydecorator",
+      "java_file": "src/main/java/org/apache/commons/collections4/keyvalue/AbstractMapEntryDecorator.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/keyvalue/AbstractMapEntryDecoratorTest.java"
+    },
+    {
+      "id": "commons-collections4-defaultkeyvalue",
+      "java_file": "src/main/java/org/apache/commons/collections4/keyvalue/DefaultKeyValue.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/keyvalue/DefaultKeyValueTest.java"
+    },
+    {
+      "id": "commons-collections4-multikey",
+      "java_file": "src/main/java/org/apache/commons/collections4/keyvalue/MultiKey.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/keyvalue/MultiKeyTest.java"
+    },
+    {
+      "id": "commons-collections4-tiedmapentry",
+      "java_file": "src/main/java/org/apache/commons/collections4/keyvalue/TiedMapEntry.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/keyvalue/TiedMapEntryTest.java"
+    },
+    {
+      "id": "commons-collections4-abstractlinkedlist",
+      "java_file": "src/main/java/org/apache/commons/collections4/list/AbstractLinkedList.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/list/AbstractLinkedListTest.java"
+    },
+    {
+      "id": "commons-collections4-abstractlinkedlistjava21",
+      "java_file": "src/main/java/org/apache/commons/collections4/list/AbstractLinkedListJava21.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/list/AbstractLinkedListJava21Test.java"
+    },
+    {
+      "id": "commons-collections4-cursorablelinkedlist",
+      "java_file": "src/main/java/org/apache/commons/collections4/list/CursorableLinkedList.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/list/CursorableLinkedListTest.java"
+    },
+    {
+      "id": "commons-collections4-fixedsizelist",
+      "java_file": "src/main/java/org/apache/commons/collections4/list/FixedSizeList.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/list/FixedSizeListTest.java"
+    },
+    {
+      "id": "commons-collections4-growthlist",
+      "java_file": "src/main/java/org/apache/commons/collections4/list/GrowthList.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/list/GrowthListTest.java"
+    },
+    {
+      "id": "commons-collections4-lazylist",
+      "java_file": "src/main/java/org/apache/commons/collections4/list/LazyList.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/list/LazyListTest.java"
+    },
+    {
+      "id": "commons-collections4-nodecachinglinkedlist",
+      "java_file": "src/main/java/org/apache/commons/collections4/list/NodeCachingLinkedList.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/list/NodeCachingLinkedListTest.java"
+    },
+    {
+      "id": "commons-collections4-predicatedlist",
+      "java_file": "src/main/java/org/apache/commons/collections4/list/PredicatedList.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/list/PredicatedListTest.java"
+    },
+    {
+      "id": "commons-collections4-setuniquelist",
+      "java_file": "src/main/java/org/apache/commons/collections4/list/SetUniqueList.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/list/SetUniqueListTest.java"
+    },
+    {
+      "id": "commons-collections4-transformedlist",
+      "java_file": "src/main/java/org/apache/commons/collections4/list/TransformedList.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/list/TransformedListTest.java"
+    },
+    {
+      "id": "commons-collections4-treelist",
+      "java_file": "src/main/java/org/apache/commons/collections4/list/TreeList.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/list/TreeListTest.java"
+    },
+    {
+      "id": "commons-collections4-unmodifiablelist",
+      "java_file": "src/main/java/org/apache/commons/collections4/list/UnmodifiableList.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/list/UnmodifiableListTest.java"
+    },
+    {
+      "id": "commons-collections4-abstracthashedmap",
+      "java_file": "src/main/java/org/apache/commons/collections4/map/AbstractHashedMap.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/map/AbstractHashedMapTest.java"
+    },
+    {
+      "id": "commons-collections4-abstractinputcheckedmapdecorator",
+      "java_file": "src/main/java/org/apache/commons/collections4/map/AbstractInputCheckedMapDecorator.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/map/AbstractInputCheckedMapDecoratorTest.java"
+    },
+    {
+      "id": "commons-collections4-abstractlinkedmap",
+      "java_file": "src/main/java/org/apache/commons/collections4/map/AbstractLinkedMap.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/map/AbstractLinkedMapTest.java"
+    },
+    {
+      "id": "commons-collections4-abstractmapdecorator",
+      "java_file": "src/main/java/org/apache/commons/collections4/map/AbstractMapDecorator.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/map/AbstractMapDecoratorTest.java"
+    },
+    {
+      "id": "commons-collections4-abstractreferencemap",
+      "java_file": "src/main/java/org/apache/commons/collections4/map/AbstractReferenceMap.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/map/AbstractReferenceMapTest.java"
+    },
+    {
+      "id": "commons-collections4-abstractsortedmapdecorator",
+      "java_file": "src/main/java/org/apache/commons/collections4/map/AbstractSortedMapDecorator.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/map/AbstractSortedMapDecoratorTest.java"
+    },
+    {
+      "id": "commons-collections4-caseinsensitivemap",
+      "java_file": "src/main/java/org/apache/commons/collections4/map/CaseInsensitiveMap.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/map/CaseInsensitiveMapTest.java"
+    },
+    {
+      "id": "commons-collections4-compositemap",
+      "java_file": "src/main/java/org/apache/commons/collections4/map/CompositeMap.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/map/CompositeMapTest.java"
+    },
+    {
+      "id": "commons-collections4-concurrentreferencehashmap",
+      "java_file": "src/main/java/org/apache/commons/collections4/map/ConcurrentReferenceHashMap.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/map/ConcurrentReferenceHashMapTest.java"
+    },
+    {
+      "id": "commons-collections4-defaultedmap",
+      "java_file": "src/main/java/org/apache/commons/collections4/map/DefaultedMap.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/map/DefaultedMapTest.java"
+    },
+    {
+      "id": "commons-collections4-entrysettomapiteratoradapter",
+      "java_file": "src/main/java/org/apache/commons/collections4/map/EntrySetToMapIteratorAdapter.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/map/EntrySetToMapIteratorAdapterTest.java"
+    },
+    {
+      "id": "commons-collections4-fixedsizemap",
+      "java_file": "src/main/java/org/apache/commons/collections4/map/FixedSizeMap.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/map/FixedSizeMapTest.java"
+    },
+    {
+      "id": "commons-collections4-fixedsizesortedmap",
+      "java_file": "src/main/java/org/apache/commons/collections4/map/FixedSizeSortedMap.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/map/FixedSizeSortedMapTest.java"
+    },
+    {
+      "id": "commons-collections4-flat3map",
+      "java_file": "src/main/java/org/apache/commons/collections4/map/Flat3Map.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/map/Flat3MapTest.java"
+    },
+    {
+      "id": "commons-collections4-lrumap",
+      "java_file": "src/main/java/org/apache/commons/collections4/map/LRUMap.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/map/LRUMapTest.java"
+    },
+    {
+      "id": "commons-collections4-lazymap",
+      "java_file": "src/main/java/org/apache/commons/collections4/map/LazyMap.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/map/LazyMapTest.java"
+    },
+    {
+      "id": "commons-collections4-lazysortedmap",
+      "java_file": "src/main/java/org/apache/commons/collections4/map/LazySortedMap.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/map/LazySortedMapTest.java"
+    },
+    {
+      "id": "commons-collections4-linkedmap",
+      "java_file": "src/main/java/org/apache/commons/collections4/map/LinkedMap.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/map/LinkedMapTest.java"
+    },
+    {
+      "id": "commons-collections4-listorderedmap",
+      "java_file": "src/main/java/org/apache/commons/collections4/map/ListOrderedMap.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/map/ListOrderedMapTest.java"
+    },
+    {
+      "id": "commons-collections4-multikeymap",
+      "java_file": "src/main/java/org/apache/commons/collections4/map/MultiKeyMap.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/map/MultiKeyMapTest.java"
+    },
+    {
+      "id": "commons-collections4-multivaluemap",
+      "java_file": "src/main/java/org/apache/commons/collections4/map/MultiValueMap.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/map/MultiValueMapTest.java"
+    },
+    {
+      "id": "commons-collections4-passiveexpiringmap",
+      "java_file": "src/main/java/org/apache/commons/collections4/map/PassiveExpiringMap.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/map/PassiveExpiringMapTest.java"
+    },
+    {
+      "id": "commons-collections4-predicatedmap",
+      "java_file": "src/main/java/org/apache/commons/collections4/map/PredicatedMap.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/map/PredicatedMapTest.java"
+    },
+    {
+      "id": "commons-collections4-predicatedsortedmap",
+      "java_file": "src/main/java/org/apache/commons/collections4/map/PredicatedSortedMap.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/map/PredicatedSortedMapTest.java"
+    },
+    {
+      "id": "commons-collections4-referenceidentitymap",
+      "java_file": "src/main/java/org/apache/commons/collections4/map/ReferenceIdentityMap.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/map/ReferenceIdentityMapTest.java"
+    },
+    {
+      "id": "commons-collections4-singletonmap",
+      "java_file": "src/main/java/org/apache/commons/collections4/map/SingletonMap.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/map/SingletonMapTest.java"
+    },
+    {
+      "id": "commons-collections4-staticbucketmap",
+      "java_file": "src/main/java/org/apache/commons/collections4/map/StaticBucketMap.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/map/StaticBucketMapTest.java"
+    },
+    {
+      "id": "commons-collections4-transformedmap",
+      "java_file": "src/main/java/org/apache/commons/collections4/map/TransformedMap.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/map/TransformedMapTest.java"
+    },
+    {
+      "id": "commons-collections4-transformedsortedmap",
+      "java_file": "src/main/java/org/apache/commons/collections4/map/TransformedSortedMap.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/map/TransformedSortedMapTest.java"
+    },
+    {
+      "id": "commons-collections4-unmodifiableentryset",
+      "java_file": "src/main/java/org/apache/commons/collections4/map/UnmodifiableEntrySet.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/map/UnmodifiableEntrySetTest.java"
+    },
+    {
+      "id": "commons-collections4-unmodifiablemap",
+      "java_file": "src/main/java/org/apache/commons/collections4/map/UnmodifiableMap.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/map/UnmodifiableMapTest.java"
+    },
+    {
+      "id": "commons-collections4-unmodifiableorderedmap",
+      "java_file": "src/main/java/org/apache/commons/collections4/map/UnmodifiableOrderedMap.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/map/UnmodifiableOrderedMapTest.java"
+    },
+    {
+      "id": "commons-collections4-unmodifiablesortedmap",
+      "java_file": "src/main/java/org/apache/commons/collections4/map/UnmodifiableSortedMap.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/map/UnmodifiableSortedMapTest.java"
+    },
+    {
+      "id": "commons-collections4-abstractmultivaluedmap",
+      "java_file": "src/main/java/org/apache/commons/collections4/multimap/AbstractMultiValuedMap.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/multimap/AbstractMultiValuedMapTest.java"
+    },
+    {
+      "id": "commons-collections4-abstractmultivaluedmapdecorator",
+      "java_file": "src/main/java/org/apache/commons/collections4/multimap/AbstractMultiValuedMapDecorator.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/multimap/AbstractMultiValuedMapDecoratorTest.java"
+    },
+    {
+      "id": "commons-collections4-arraylistvaluedhashmap",
+      "java_file": "src/main/java/org/apache/commons/collections4/multimap/ArrayListValuedHashMap.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/multimap/ArrayListValuedHashMapTest.java"
+    },
+    {
+      "id": "commons-collections4-arraylistvaluedlinkedhashmap",
+      "java_file": "src/main/java/org/apache/commons/collections4/multimap/ArrayListValuedLinkedHashMap.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/multimap/ArrayListValuedLinkedHashMapTest.java"
+    },
+    {
+      "id": "commons-collections4-transformedmultivaluedmap",
+      "java_file": "src/main/java/org/apache/commons/collections4/multimap/TransformedMultiValuedMap.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/multimap/TransformedMultiValuedMapTest.java"
+    },
+    {
+      "id": "commons-collections4-unmodifiablemultivaluedmap",
+      "java_file": "src/main/java/org/apache/commons/collections4/multimap/UnmodifiableMultiValuedMap.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/multimap/UnmodifiableMultiValuedMapTest.java"
+    },
+    {
+      "id": "commons-collections4-abstractmapmultiset",
+      "java_file": "src/main/java/org/apache/commons/collections4/multiset/AbstractMapMultiSet.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/multiset/AbstractMapMultiSetTest.java"
+    },
+    {
+      "id": "commons-collections4-abstractmultiset",
+      "java_file": "src/main/java/org/apache/commons/collections4/multiset/AbstractMultiSet.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/multiset/AbstractMultiSetTest.java"
+    },
+    {
+      "id": "commons-collections4-predicatedmultiset",
+      "java_file": "src/main/java/org/apache/commons/collections4/multiset/PredicatedMultiSet.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/multiset/PredicatedMultiSetTest.java"
+    },
+    {
+      "id": "commons-collections4-synchronizedmultiset",
+      "java_file": "src/main/java/org/apache/commons/collections4/multiset/SynchronizedMultiSet.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/multiset/SynchronizedMultiSetTest.java"
+    },
+    {
+      "id": "commons-collections4-unmodifiablemultiset",
+      "java_file": "src/main/java/org/apache/commons/collections4/multiset/UnmodifiableMultiSet.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/multiset/UnmodifiableMultiSetTest.java"
+    },
+    {
+      "id": "commons-collections4-abstractpropertiesfactory",
+      "java_file": "src/main/java/org/apache/commons/collections4/properties/AbstractPropertiesFactory.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/properties/AbstractPropertiesFactoryTest.java"
+    },
+    {
+      "id": "commons-collections4-orderedproperties",
+      "java_file": "src/main/java/org/apache/commons/collections4/properties/OrderedProperties.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/properties/OrderedPropertiesTest.java"
+    },
+    {
+      "id": "commons-collections4-sortedproperties",
+      "java_file": "src/main/java/org/apache/commons/collections4/properties/SortedProperties.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/properties/SortedPropertiesTest.java"
+    },
+    {
+      "id": "commons-collections4-circularfifoqueue",
+      "java_file": "src/main/java/org/apache/commons/collections4/queue/CircularFifoQueue.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/queue/CircularFifoQueueTest.java"
+    },
+    {
+      "id": "commons-collections4-predicatedqueue",
+      "java_file": "src/main/java/org/apache/commons/collections4/queue/PredicatedQueue.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/queue/PredicatedQueueTest.java"
+    },
+    {
+      "id": "commons-collections4-synchronizedqueue",
+      "java_file": "src/main/java/org/apache/commons/collections4/queue/SynchronizedQueue.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/queue/SynchronizedQueueTest.java"
+    },
+    {
+      "id": "commons-collections4-transformedqueue",
+      "java_file": "src/main/java/org/apache/commons/collections4/queue/TransformedQueue.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/queue/TransformedQueueTest.java"
+    },
+    {
+      "id": "commons-collections4-unmodifiablequeue",
+      "java_file": "src/main/java/org/apache/commons/collections4/queue/UnmodifiableQueue.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/queue/UnmodifiableQueueTest.java"
+    },
+    {
+      "id": "commons-collections4-editscript",
+      "java_file": "src/main/java/org/apache/commons/collections4/sequence/EditScript.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/sequence/EditScriptTest.java"
+    },
+    {
+      "id": "commons-collections4-replacementsfinder",
+      "java_file": "src/main/java/org/apache/commons/collections4/sequence/ReplacementsFinder.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/sequence/ReplacementsFinderTest.java"
+    },
+    {
+      "id": "commons-collections4-sequencescomparator",
+      "java_file": "src/main/java/org/apache/commons/collections4/sequence/SequencesComparator.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/sequence/SequencesComparatorTest.java"
+    },
+    {
+      "id": "commons-collections4-compositeset",
+      "java_file": "src/main/java/org/apache/commons/collections4/set/CompositeSet.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/set/CompositeSetTest.java"
+    },
+    {
+      "id": "commons-collections4-listorderedset",
+      "java_file": "src/main/java/org/apache/commons/collections4/set/ListOrderedSet.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/set/ListOrderedSetTest.java"
+    },
+    {
+      "id": "commons-collections4-mapbackedset",
+      "java_file": "src/main/java/org/apache/commons/collections4/set/MapBackedSet.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/set/MapBackedSetTest.java"
+    },
+    {
+      "id": "commons-collections4-predicatednavigableset",
+      "java_file": "src/main/java/org/apache/commons/collections4/set/PredicatedNavigableSet.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/set/PredicatedNavigableSetTest.java"
+    },
+    {
+      "id": "commons-collections4-predicatedsortedset",
+      "java_file": "src/main/java/org/apache/commons/collections4/set/PredicatedSortedSet.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/set/PredicatedSortedSetTest.java"
+    },
+    {
+      "id": "commons-collections4-transformednavigableset",
+      "java_file": "src/main/java/org/apache/commons/collections4/set/TransformedNavigableSet.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/set/TransformedNavigableSetTest.java"
+    },
+    {
+      "id": "commons-collections4-transformedset",
+      "java_file": "src/main/java/org/apache/commons/collections4/set/TransformedSet.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/set/TransformedSetTest.java"
+    },
+    {
+      "id": "commons-collections4-transformedsortedset",
+      "java_file": "src/main/java/org/apache/commons/collections4/set/TransformedSortedSet.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/set/TransformedSortedSetTest.java"
+    },
+    {
+      "id": "commons-collections4-unmodifiablenavigableset",
+      "java_file": "src/main/java/org/apache/commons/collections4/set/UnmodifiableNavigableSet.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/set/UnmodifiableNavigableSetTest.java"
+    },
+    {
+      "id": "commons-collections4-unmodifiableset",
+      "java_file": "src/main/java/org/apache/commons/collections4/set/UnmodifiableSet.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/set/UnmodifiableSetTest.java"
+    },
+    {
+      "id": "commons-collections4-unmodifiablesortedset",
+      "java_file": "src/main/java/org/apache/commons/collections4/set/UnmodifiableSortedSet.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/set/UnmodifiableSortedSetTest.java"
+    },
+    {
+      "id": "commons-collections4-abstractiterablegetmapdecorator",
+      "java_file": "src/main/java/org/apache/commons/collections4/splitmap/AbstractIterableGetMapDecorator.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/splitmap/AbstractIterableGetMapDecoratorTest.java"
+    },
+    {
+      "id": "commons-collections4-transformedsplitmap",
+      "java_file": "src/main/java/org/apache/commons/collections4/splitmap/TransformedSplitMap.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/splitmap/TransformedSplitMapTest.java"
+    },
+    {
+      "id": "commons-collections4-abstractbitwisetrie",
+      "java_file": "src/main/java/org/apache/commons/collections4/trie/AbstractBitwiseTrie.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/trie/AbstractBitwiseTrieTest.java"
+    },
+    {
+      "id": "commons-collections4-abstractpatriciatrie",
+      "java_file": "src/main/java/org/apache/commons/collections4/trie/AbstractPatriciaTrie.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/trie/AbstractPatriciaTrieTest.java"
+    },
+    {
+      "id": "commons-collections4-keyanalyzer",
+      "java_file": "src/main/java/org/apache/commons/collections4/trie/KeyAnalyzer.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/trie/KeyAnalyzerTest.java"
+    },
+    {
+      "id": "commons-collections4-unmodifiabletrie",
+      "java_file": "src/main/java/org/apache/commons/collections4/trie/UnmodifiableTrie.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/trie/UnmodifiableTrieTest.java"
+    },
+    {
+      "id": "commons-collections4-stringkeyanalyzer",
+      "java_file": "src/main/java/org/apache/commons/collections4/trie/analyzer/StringKeyAnalyzer.java",
+      "expected_test_path": "src/test/java/org/apache/commons/collections4/trie/analyzer/StringKeyAnalyzerTest.java"
+    }
+  ],
+  "matrix": {
+    "providers": [
+      {
+        "name": "openrouter",
+        "model": "qwen/qwen3.6-flash"
+      }
+    ]
+  },
+  "run": {
+    "trials": 1,
+    "seed": 42,
+    "max_dependencies": 5,
+    "timeout_seconds": 300,
+    "retry_count": 1,
+    "concurrency": 1
+  },
+  "evaluation": {
+    "compile_cmd": "mvn test-compile -q -Drat.skip=true",
+    "test_cmd": "mvn test -q -Drat.skip=true -Dtest=AbstractBitwiseTrieTest,AbstractDualBidiMapTest,AbstractHashedMapTest,AbstractInputCheckedMapDecoratorTest,AbstractIterableGetMapDecoratorTest,AbstractKeyValueTest,AbstractLinkedListJava21Test,AbstractLinkedListTest,AbstractLinkedMapTest,AbstractMapBagTest,AbstractMapDecoratorTest,AbstractMapEntryDecoratorTest,AbstractMapEntryTest,AbstractMapMultiSetTest,AbstractMultiSetTest,AbstractMultiValuedMapDecoratorTest,AbstractMultiValuedMapTest,AbstractPatriciaTrieTest,AbstractPropertiesFactoryTest,AbstractReferenceMapTest,AbstractSortedMapDecoratorTest,AllPredicateTest,AndPredicateTest,AnyPredicateTest,ArrayCountingBloomFilterTest,ArrayIteratorTest,ArrayListIteratorTest,ArrayListValuedHashMapTest,ArrayListValuedLinkedHashMapTest,ArrayStackTest,ArrayUtilsTest,BitMapExtractorTest,BitMapsTest,BloomFilterExtractorTest,BloomFilterTest,BooleanComparatorTest,BoundedIteratorTest,CartesianProductIteratorTest,CaseInsensitiveMapTest,CatchAndRethrowClosureTest,CellExtractorTest,ChainedClosureTest,ChainedTransformerTest,CircularFifoQueueTest,CloneTransformerTest,ClosureTransformerTest,ClosureUtilsTest,CollatingIteratorTest,CollectionBagTest,CollectionSortedBagTest,CollectionUtilsTest,ComparableComparatorTest,ComparatorChainTest,ComparatorPredicateTest,ComparatorUtilsTest,CompositeCollectionTest,CompositeMapTest,CompositeSetTest,ConcurrentReferenceHashMapTest,ConstantFactoryTest,ConstantTransformerTest,CountingBloomFilterTest,CountingLongPredicateTest,CountingPredicateTest,CursorableLinkedListTest,DefaultKeyValueTest,DefaultedMapTest,DualTreeBidiMapTest,EditScriptTest,EnhancedDoubleHasherTest,EntrySetMapIteratorTest,EntrySetToMapIteratorAdapterTest,EnumerationIteratorTest,EnumerationUtilsTest,EqualPredicateTest,ExtendedIteratorTest,FilterIteratorTest,FilterListIteratorTest,FixedOrderComparatorTest,FixedSizeListTest,FixedSizeMapTest,FixedSizeSortedMapTest,Flat3MapTest,FluentIterableTest,ForClosureTest,FunctorUtilsTest,GrowthListTest,IdentityPredicateTest,IfClosureTest,IfTransformerTest,IndexExtractorTest,IndexFilterTest,IndexUtilsTest,IndexedCollectionTest,InstantiateFactoryTest,InstantiateTransformerTest,InvokerTransformerTest,IterableUtilsTest,IteratorChainTest,IteratorIterableTest,IteratorOperationsTest,IteratorUtilsTest,KeyAnalyzerTest,LRUMapTest,LayerManagerTest,LayeredBloomFilterTest,LazyIteratorChainTest,LazyListTest,LazyMapTest,LazySortedMapTest,LinkedMapTest,ListIteratorWrapperTest,ListOrderedMapTest,ListOrderedSetTest,ListUtilsTest,LoopingIteratorTest,LoopingListIteratorTest,MapBackedSetTest,MapTransformerTest,MapUtilsTest,MultiKeyMapTest,MultiKeyTest,MultiMapUtilsTest,MultiValueMapTest,NodeCachingLinkedListTest,NodeListIteratorTest,NonePredicateTest,NullComparatorTest,NullIsExceptionPredicateTest,NullIsFalsePredicateTest,NullIsTruePredicateTest,ObjectArrayIteratorTest,ObjectArrayListIteratorTest,ObjectGraphIteratorTest,OnePredicateTest,OrPredicateTest,OrderedPropertiesTest,PassiveExpiringMapTest,PeekingIteratorTest,PermutationIteratorTest,PredicateTransformerTest,PredicateUtilsTest,PredicatedBagTest,PredicatedCollectionTest,PredicatedListTest,PredicatedMapTest,PredicatedMultiSetTest,PredicatedNavigableSetTest,PredicatedQueueTest,PredicatedSortedMapTest,PredicatedSortedSetTest,PrototypeFactoryTest,PushbackIteratorTest,ReferenceIdentityMapTest,ReplacementsFinderTest,ReverseComparatorTest,ReverseListIteratorTest,SequencesComparatorTest,SetOperationsTest,SetUniqueListTest,SetUtilsTest,ShapeTest,SimpleBloomFilterTest,SingletonIteratorTest,SingletonListIteratorTest,SingletonMapTest,SkippingIteratorTest,SortedPropertiesTest,SparseBloomFilterTest,SplitMapUtilsTest,StaticBucketMapTest,StringKeyAnalyzerTest,SwitchClosureTest,SwitchTransformerTest,SynchronizedBagTest,SynchronizedCollectionTest,SynchronizedMultiSetTest,SynchronizedQueueTest,SynchronizedSortedBagTest,TiedMapEntryTest,TransformedBagTest,TransformedCollectionTest,TransformedListTest,TransformedMapTest,TransformedMultiValuedMapTest,TransformedNavigableSetTest,TransformedPredicateTest,TransformedQueueTest,TransformedSetTest,TransformedSortedBagTest,TransformedSortedMapTest,TransformedSortedSetTest,TransformedSplitMapTest,TransformerClosureTest,TransformerPredicateTest,TransformerUtilsTest,TransformingComparatorTest,TreeBagTest,TreeBidiMapTest,TreeListTest,UnmodifiableBagTest,UnmodifiableBidiMapTest,UnmodifiableBoundedCollectionTest,UnmodifiableCollectionTest,UnmodifiableEntrySetTest,UnmodifiableIteratorTest,UnmodifiableListIteratorTest,UnmodifiableListTest,UnmodifiableMapIteratorTest,UnmodifiableMapTest,UnmodifiableMultiSetTest,UnmodifiableMultiValuedMapTest,UnmodifiableNavigableSetTest,UnmodifiableOrderedBidiMapTest,UnmodifiableOrderedMapIteratorTest,UnmodifiableOrderedMapTest,UnmodifiableQueueTest,UnmodifiableSetTest,UnmodifiableSortedBagTest,UnmodifiableSortedBidiMapTest,UnmodifiableSortedMapTest,UnmodifiableSortedSetTest,UnmodifiableTrieTest,WhileClosureTest,ZippingIteratorTest",
+    "run_pit": false
+  },
+  "scoring": {
+    "weights": {
+      "success": 0.5,
+      "coverage": 0.3,
+      "latency": 0.2
+    }
+  }
+}

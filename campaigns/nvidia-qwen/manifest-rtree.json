@@ -1,0 +1,279 @@
+{
+  "manifest_version": 1,
+  "project_root": "datasets/reftest-12/rtree",
+  "dataset": [
+    {
+      "id": "rtree-backpressure",
+      "java_file": "src/main/java/com/github/davidmoten/rtree/Backpressure.java",
+      "expected_test_path": "src/test/java/com/github/davidmoten/rtree/BackpressureTest.java"
+    },
+    {
+      "id": "rtree-imagesaver",
+      "java_file": "src/main/java/com/github/davidmoten/rtree/ImageSaver.java",
+      "expected_test_path": "src/test/java/com/github/davidmoten/rtree/ImageSaverTest.java"
+    },
+    {
+      "id": "rtree-nodeposition",
+      "java_file": "src/main/java/com/github/davidmoten/rtree/NodePosition.java",
+      "expected_test_path": "src/test/java/com/github/davidmoten/rtree/NodePositionTest.java"
+    },
+    {
+      "id": "rtree-rtree",
+      "java_file": "src/main/java/com/github/davidmoten/rtree/RTree.java",
+      "expected_test_path": "src/test/java/com/github/davidmoten/rtree/RTreeTest.java"
+    },
+    {
+      "id": "rtree-selectorminimaloverlaparea",
+      "java_file": "src/main/java/com/github/davidmoten/rtree/SelectorMinimalOverlapArea.java",
+      "expected_test_path": "src/test/java/com/github/davidmoten/rtree/SelectorMinimalOverlapAreaTest.java"
+    },
+    {
+      "id": "rtree-selectorrstar",
+      "java_file": "src/main/java/com/github/davidmoten/rtree/SelectorRStar.java",
+      "expected_test_path": "src/test/java/com/github/davidmoten/rtree/SelectorRStarTest.java"
+    },
+    {
+      "id": "rtree-splitterquadratic",
+      "java_file": "src/main/java/com/github/davidmoten/rtree/SplitterQuadratic.java",
+      "expected_test_path": "src/test/java/com/github/davidmoten/rtree/SplitterQuadraticTest.java"
+    },
+    {
+      "id": "rtree-splitterrstar",
+      "java_file": "src/main/java/com/github/davidmoten/rtree/SplitterRStar.java",
+      "expected_test_path": "src/test/java/com/github/davidmoten/rtree/SplitterRStarTest.java"
+    },
+    {
+      "id": "rtree-visualizer",
+      "java_file": "src/main/java/com/github/davidmoten/rtree/Visualizer.java",
+      "expected_test_path": "src/test/java/com/github/davidmoten/rtree/VisualizerTest.java"
+    },
+    {
+      "id": "rtree-flatbuffershelper",
+      "java_file": "src/main/java/com/github/davidmoten/rtree/fbs/FlatBuffersHelper.java",
+      "expected_test_path": "src/test/java/com/github/davidmoten/rtree/fbs/FlatBuffersHelperTest.java"
+    },
+    {
+      "id": "rtree-leafflatbuffers",
+      "java_file": "src/main/java/com/github/davidmoten/rtree/fbs/LeafFlatBuffers.java",
+      "expected_test_path": "src/test/java/com/github/davidmoten/rtree/fbs/LeafFlatBuffersTest.java"
+    },
+    {
+      "id": "rtree-nonleafflatbuffers",
+      "java_file": "src/main/java/com/github/davidmoten/rtree/fbs/NonLeafFlatBuffers.java",
+      "expected_test_path": "src/test/java/com/github/davidmoten/rtree/fbs/NonLeafFlatBuffersTest.java"
+    },
+    {
+      "id": "rtree-serializerflatbuffers",
+      "java_file": "src/main/java/com/github/davidmoten/rtree/fbs/SerializerFlatBuffers.java",
+      "expected_test_path": "src/test/java/com/github/davidmoten/rtree/fbs/SerializerFlatBuffersTest.java"
+    },
+    {
+      "id": "rtree-bounds_",
+      "java_file": "src/main/java/com/github/davidmoten/rtree/fbs/generated/Bounds_.java",
+      "expected_test_path": "src/test/java/com/github/davidmoten/rtree/fbs/generated/Bounds_Test.java"
+    },
+    {
+      "id": "rtree-boxdouble_",
+      "java_file": "src/main/java/com/github/davidmoten/rtree/fbs/generated/BoxDouble_.java",
+      "expected_test_path": "src/test/java/com/github/davidmoten/rtree/fbs/generated/BoxDouble_Test.java"
+    },
+    {
+      "id": "rtree-boxfloat_",
+      "java_file": "src/main/java/com/github/davidmoten/rtree/fbs/generated/BoxFloat_.java",
+      "expected_test_path": "src/test/java/com/github/davidmoten/rtree/fbs/generated/BoxFloat_Test.java"
+    },
+    {
+      "id": "rtree-circledouble_",
+      "java_file": "src/main/java/com/github/davidmoten/rtree/fbs/generated/CircleDouble_.java",
+      "expected_test_path": "src/test/java/com/github/davidmoten/rtree/fbs/generated/CircleDouble_Test.java"
+    },
+    {
+      "id": "rtree-circlefloat_",
+      "java_file": "src/main/java/com/github/davidmoten/rtree/fbs/generated/CircleFloat_.java",
+      "expected_test_path": "src/test/java/com/github/davidmoten/rtree/fbs/generated/CircleFloat_Test.java"
+    },
+    {
+      "id": "rtree-context_",
+      "java_file": "src/main/java/com/github/davidmoten/rtree/fbs/generated/Context_.java",
+      "expected_test_path": "src/test/java/com/github/davidmoten/rtree/fbs/generated/Context_Test.java"
+    },
+    {
+      "id": "rtree-entry_",
+      "java_file": "src/main/java/com/github/davidmoten/rtree/fbs/generated/Entry_.java",
+      "expected_test_path": "src/test/java/com/github/davidmoten/rtree/fbs/generated/Entry_Test.java"
+    },
+    {
+      "id": "rtree-geometry_",
+      "java_file": "src/main/java/com/github/davidmoten/rtree/fbs/generated/Geometry_.java",
+      "expected_test_path": "src/test/java/com/github/davidmoten/rtree/fbs/generated/Geometry_Test.java"
+    },
+    {
+      "id": "rtree-linedouble_",
+      "java_file": "src/main/java/com/github/davidmoten/rtree/fbs/generated/LineDouble_.java",
+      "expected_test_path": "src/test/java/com/github/davidmoten/rtree/fbs/generated/LineDouble_Test.java"
+    },
+    {
+      "id": "rtree-linefloat_",
+      "java_file": "src/main/java/com/github/davidmoten/rtree/fbs/generated/LineFloat_.java",
+      "expected_test_path": "src/test/java/com/github/davidmoten/rtree/fbs/generated/LineFloat_Test.java"
+    },
+    {
+      "id": "rtree-node_",
+      "java_file": "src/main/java/com/github/davidmoten/rtree/fbs/generated/Node_.java",
+      "expected_test_path": "src/test/java/com/github/davidmoten/rtree/fbs/generated/Node_Test.java"
+    },
+    {
+      "id": "rtree-pointdouble_",
+      "java_file": "src/main/java/com/github/davidmoten/rtree/fbs/generated/PointDouble_.java",
+      "expected_test_path": "src/test/java/com/github/davidmoten/rtree/fbs/generated/PointDouble_Test.java"
+    },
+    {
+      "id": "rtree-pointfloat_",
+      "java_file": "src/main/java/com/github/davidmoten/rtree/fbs/generated/PointFloat_.java",
+      "expected_test_path": "src/test/java/com/github/davidmoten/rtree/fbs/generated/PointFloat_Test.java"
+    },
+    {
+      "id": "rtree-tree_",
+      "java_file": "src/main/java/com/github/davidmoten/rtree/fbs/generated/Tree_.java",
+      "expected_test_path": "src/test/java/com/github/davidmoten/rtree/fbs/generated/Tree_Test.java"
+    },
+    {
+      "id": "rtree-geometries",
+      "java_file": "src/main/java/com/github/davidmoten/rtree/geometry/Geometries.java",
+      "expected_test_path": "src/test/java/com/github/davidmoten/rtree/geometry/GeometriesTest.java"
+    },
+    {
+      "id": "rtree-listpair",
+      "java_file": "src/main/java/com/github/davidmoten/rtree/geometry/ListPair.java",
+      "expected_test_path": "src/test/java/com/github/davidmoten/rtree/geometry/ListPairTest.java"
+    },
+    {
+      "id": "rtree-circledouble",
+      "java_file": "src/main/java/com/github/davidmoten/rtree/geometry/internal/CircleDouble.java",
+      "expected_test_path": "src/test/java/com/github/davidmoten/rtree/geometry/internal/CircleDoubleTest.java"
+    },
+    {
+      "id": "rtree-circlefloat",
+      "java_file": "src/main/java/com/github/davidmoten/rtree/geometry/internal/CircleFloat.java",
+      "expected_test_path": "src/test/java/com/github/davidmoten/rtree/geometry/internal/CircleFloatTest.java"
+    },
+    {
+      "id": "rtree-geometryutil",
+      "java_file": "src/main/java/com/github/davidmoten/rtree/geometry/internal/GeometryUtil.java",
+      "expected_test_path": "src/test/java/com/github/davidmoten/rtree/geometry/internal/GeometryUtilTest.java"
+    },
+    {
+      "id": "rtree-linedouble",
+      "java_file": "src/main/java/com/github/davidmoten/rtree/geometry/internal/LineDouble.java",
+      "expected_test_path": "src/test/java/com/github/davidmoten/rtree/geometry/internal/LineDoubleTest.java"
+    },
+    {
+      "id": "rtree-linefloat",
+      "java_file": "src/main/java/com/github/davidmoten/rtree/geometry/internal/LineFloat.java",
+      "expected_test_path": "src/test/java/com/github/davidmoten/rtree/geometry/internal/LineFloatTest.java"
+    },
+    {
+      "id": "rtree-pointdouble",
+      "java_file": "src/main/java/com/github/davidmoten/rtree/geometry/internal/PointDouble.java",
+      "expected_test_path": "src/test/java/com/github/davidmoten/rtree/geometry/internal/PointDoubleTest.java"
+    },
+    {
+      "id": "rtree-pointfloat",
+      "java_file": "src/main/java/com/github/davidmoten/rtree/geometry/internal/PointFloat.java",
+      "expected_test_path": "src/test/java/com/github/davidmoten/rtree/geometry/internal/PointFloatTest.java"
+    },
+    {
+      "id": "rtree-rectangledouble",
+      "java_file": "src/main/java/com/github/davidmoten/rtree/geometry/internal/RectangleDouble.java",
+      "expected_test_path": "src/test/java/com/github/davidmoten/rtree/geometry/internal/RectangleDoubleTest.java"
+    },
+    {
+      "id": "rtree-rectanglefloat",
+      "java_file": "src/main/java/com/github/davidmoten/rtree/geometry/internal/RectangleFloat.java",
+      "expected_test_path": "src/test/java/com/github/davidmoten/rtree/geometry/internal/RectangleFloatTest.java"
+    },
+    {
+      "id": "rtree-comparators",
+      "java_file": "src/main/java/com/github/davidmoten/rtree/internal/Comparators.java",
+      "expected_test_path": "src/test/java/com/github/davidmoten/rtree/internal/ComparatorsTest.java"
+    },
+    {
+      "id": "rtree-entrydefault",
+      "java_file": "src/main/java/com/github/davidmoten/rtree/internal/EntryDefault.java",
+      "expected_test_path": "src/test/java/com/github/davidmoten/rtree/internal/EntryDefaultTest.java"
+    },
+    {
+      "id": "rtree-leafhelper",
+      "java_file": "src/main/java/com/github/davidmoten/rtree/internal/LeafHelper.java",
+      "expected_test_path": "src/test/java/com/github/davidmoten/rtree/internal/LeafHelperTest.java"
+    },
+    {
+      "id": "rtree-line2d",
+      "java_file": "src/main/java/com/github/davidmoten/rtree/internal/Line2D.java",
+      "expected_test_path": "src/test/java/com/github/davidmoten/rtree/internal/Line2DTest.java"
+    },
+    {
+      "id": "rtree-nonleafhelper",
+      "java_file": "src/main/java/com/github/davidmoten/rtree/internal/NonLeafHelper.java",
+      "expected_test_path": "src/test/java/com/github/davidmoten/rtree/internal/NonLeafHelperTest.java"
+    },
+    {
+      "id": "rtree-rectangleutil",
+      "java_file": "src/main/java/com/github/davidmoten/rtree/internal/RectangleUtil.java",
+      "expected_test_path": "src/test/java/com/github/davidmoten/rtree/internal/RectangleUtilTest.java"
+    },
+    {
+      "id": "rtree-util",
+      "java_file": "src/main/java/com/github/davidmoten/rtree/internal/Util.java",
+      "expected_test_path": "src/test/java/com/github/davidmoten/rtree/internal/UtilTest.java"
+    },
+    {
+      "id": "rtree-operatorboundedpriorityqueue",
+      "java_file": "src/main/java/com/github/davidmoten/rtree/internal/operators/OperatorBoundedPriorityQueue.java",
+      "expected_test_path": "src/test/java/com/github/davidmoten/rtree/internal/operators/OperatorBoundedPriorityQueueTest.java"
+    },
+    {
+      "id": "rtree-boundedpriorityqueue",
+      "java_file": "src/main/java/com/github/davidmoten/rtree/internal/util/BoundedPriorityQueue.java",
+      "expected_test_path": "src/test/java/com/github/davidmoten/rtree/internal/util/BoundedPriorityQueueTest.java"
+    },
+    {
+      "id": "rtree-objectshelper",
+      "java_file": "src/main/java/com/github/davidmoten/rtree/internal/util/ObjectsHelper.java",
+      "expected_test_path": "src/test/java/com/github/davidmoten/rtree/internal/util/ObjectsHelperTest.java"
+    },
+    {
+      "id": "rtree-serializerkryo",
+      "java_file": "src/main/java/com/github/davidmoten/rtree/kryo/SerializerKryo.java",
+      "expected_test_path": "src/test/java/com/github/davidmoten/rtree/kryo/SerializerKryoTest.java"
+    }
+  ],
+  "matrix": {
+    "providers": [
+      {
+        "name": "nvidia",
+        "model": "qwen/qwen3.5-122b-a10b"
+      }
+    ]
+  },
+  "run": {
+    "trials": 1,
+    "seed": 42,
+    "max_dependencies": 5,
+    "timeout_seconds": 300,
+    "retry_count": 1,
+    "concurrency": 1
+  },
+  "evaluation": {
+    "compile_cmd": "mvn test-compile -q -Drat.skip=true",
+    "test_cmd": "mvn test -q -Drat.skip=true -Dtest=BackpressureTest,BoundedPriorityQueueTest,Bounds_Test,BoxDouble_Test,BoxFloat_Test,CircleDoubleTest,CircleDouble_Test,CircleFloatTest,CircleFloat_Test,ComparatorsTest,Context_Test,EntryDefaultTest,Entry_Test,FlatBuffersHelperTest,GeometriesTest,GeometryUtilTest,Geometry_Test,ImageSaverTest,LeafFlatBuffersTest,LeafHelperTest,Line2DTest,LineDoubleTest,LineDouble_Test,LineFloatTest,LineFloat_Test,ListPairTest,NodePositionTest,Node_Test,NonLeafFlatBuffersTest,NonLeafHelperTest,ObjectsHelperTest,OperatorBoundedPriorityQueueTest,PointDoubleTest,PointDouble_Test,PointFloatTest,PointFloat_Test,RTreeTest,RectangleDoubleTest,RectangleFloatTest,RectangleUtilTest,SelectorMinimalOverlapAreaTest,SelectorRStarTest,SerializerFlatBuffersTest,SerializerKryoTest,SplitterQuadraticTest,SplitterRStarTest,Tree_Test,UtilTest,VisualizerTest",
+    "run_pit": false
+  },
+  "scoring": {
+    "weights": {
+      "success": 0.5,
+      "coverage": 0.3,
+      "latency": 0.2
+    }
+  }
+}

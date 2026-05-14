@@ -1,0 +1,349 @@
+{
+  "manifest_version": 1,
+  "project_root": "datasets/reftest-12/datafaker",
+  "dataset": [
+    {
+      "id": "datafaker-fakeresolver",
+      "java_file": "src/main/java/net/datafaker/annotations/FakeResolver.java",
+      "expected_test_path": "src/test/java/net/datafaker/annotations/FakeResolverTest.java"
+    },
+    {
+      "id": "datafaker-enidnumber",
+      "java_file": "src/main/java/net/datafaker/idnumbers/EnIdNumber.java",
+      "expected_test_path": "src/test/java/net/datafaker/idnumbers/EnIdNumberTest.java"
+    },
+    {
+      "id": "datafaker-enzaidnumber",
+      "java_file": "src/main/java/net/datafaker/idnumbers/EnZAIdNumber.java",
+      "expected_test_path": "src/test/java/net/datafaker/idnumbers/EnZAIdNumberTest.java"
+    },
+    {
+      "id": "datafaker-esmxidnumber",
+      "java_file": "src/main/java/net/datafaker/idnumbers/EsMXIdNumber.java",
+      "expected_test_path": "src/test/java/net/datafaker/idnumbers/EsMXIdNumberTest.java"
+    },
+    {
+      "id": "datafaker-kokridnumber",
+      "java_file": "src/main/java/net/datafaker/idnumbers/KoKrIdNumber.java",
+      "expected_test_path": "src/test/java/net/datafaker/idnumbers/KoKrIdNumberTest.java"
+    },
+    {
+      "id": "datafaker-nricnumber",
+      "java_file": "src/main/java/net/datafaker/idnumbers/NricNumber.java",
+      "expected_test_path": "src/test/java/net/datafaker/idnumbers/NricNumberTest.java"
+    },
+    {
+      "id": "datafaker-ptnifidnumber",
+      "java_file": "src/main/java/net/datafaker/idnumbers/PtNifIdNumber.java",
+      "expected_test_path": "src/test/java/net/datafaker/idnumbers/PtNifIdNumberTest.java"
+    },
+    {
+      "id": "datafaker-svseidnumber",
+      "java_file": "src/main/java/net/datafaker/idnumbers/SvSEIdNumber.java",
+      "expected_test_path": "src/test/java/net/datafaker/idnumbers/SvSEIdNumberTest.java"
+    },
+    {
+      "id": "datafaker-zhcnidnumber",
+      "java_file": "src/main/java/net/datafaker/idnumbers/ZhCnIdNumber.java",
+      "expected_test_path": "src/test/java/net/datafaker/idnumbers/ZhCnIdNumberTest.java"
+    },
+    {
+      "id": "datafaker-idnumbergeneratorptbrutil",
+      "java_file": "src/main/java/net/datafaker/idnumbers/pt/br/IdNumberGeneratorPtBrUtil.java",
+      "expected_test_path": "src/test/java/net/datafaker/idnumbers/pt/br/IdNumberGeneratorPtBrUtilTest.java"
+    },
+    {
+      "id": "datafaker-singletonlocale",
+      "java_file": "src/main/java/net/datafaker/internal/helper/SingletonLocale.java",
+      "expected_test_path": "src/test/java/net/datafaker/internal/helper/SingletonLocaleTest.java"
+    },
+    {
+      "id": "datafaker-wordutils",
+      "java_file": "src/main/java/net/datafaker/internal/helper/WordUtils.java",
+      "expected_test_path": "src/test/java/net/datafaker/internal/helper/WordUtilsTest.java"
+    },
+    {
+      "id": "datafaker-address",
+      "java_file": "src/main/java/net/datafaker/providers/base/Address.java",
+      "expected_test_path": "src/test/java/net/datafaker/providers/base/AddressTest.java"
+    },
+    {
+      "id": "datafaker-aviation",
+      "java_file": "src/main/java/net/datafaker/providers/base/Aviation.java",
+      "expected_test_path": "src/test/java/net/datafaker/providers/base/AviationTest.java"
+    },
+    {
+      "id": "datafaker-aws",
+      "java_file": "src/main/java/net/datafaker/providers/base/Aws.java",
+      "expected_test_path": "src/test/java/net/datafaker/providers/base/AwsTest.java"
+    },
+    {
+      "id": "datafaker-azure",
+      "java_file": "src/main/java/net/datafaker/providers/base/Azure.java",
+      "expected_test_path": "src/test/java/net/datafaker/providers/base/AzureTest.java"
+    },
+    {
+      "id": "datafaker-basefaker",
+      "java_file": "src/main/java/net/datafaker/providers/base/BaseFaker.java",
+      "expected_test_path": "src/test/java/net/datafaker/providers/base/BaseFakerTest.java"
+    },
+    {
+      "id": "datafaker-code",
+      "java_file": "src/main/java/net/datafaker/providers/base/Code.java",
+      "expected_test_path": "src/test/java/net/datafaker/providers/base/CodeTest.java"
+    },
+    {
+      "id": "datafaker-color",
+      "java_file": "src/main/java/net/datafaker/providers/base/Color.java",
+      "expected_test_path": "src/test/java/net/datafaker/providers/base/ColorTest.java"
+    },
+    {
+      "id": "datafaker-commerce",
+      "java_file": "src/main/java/net/datafaker/providers/base/Commerce.java",
+      "expected_test_path": "src/test/java/net/datafaker/providers/base/CommerceTest.java"
+    },
+    {
+      "id": "datafaker-company",
+      "java_file": "src/main/java/net/datafaker/providers/base/Company.java",
+      "expected_test_path": "src/test/java/net/datafaker/providers/base/CompanyTest.java"
+    },
+    {
+      "id": "datafaker-compass",
+      "java_file": "src/main/java/net/datafaker/providers/base/Compass.java",
+      "expected_test_path": "src/test/java/net/datafaker/providers/base/CompassTest.java"
+    },
+    {
+      "id": "datafaker-dateandtime",
+      "java_file": "src/main/java/net/datafaker/providers/base/DateAndTime.java",
+      "expected_test_path": "src/test/java/net/datafaker/providers/base/DateAndTimeTest.java"
+    },
+    {
+      "id": "datafaker-domain",
+      "java_file": "src/main/java/net/datafaker/providers/base/Domain.java",
+      "expected_test_path": "src/test/java/net/datafaker/providers/base/DomainTest.java"
+    },
+    {
+      "id": "datafaker-educator",
+      "java_file": "src/main/java/net/datafaker/providers/base/Educator.java",
+      "expected_test_path": "src/test/java/net/datafaker/providers/base/EducatorTest.java"
+    },
+    {
+      "id": "datafaker-file",
+      "java_file": "src/main/java/net/datafaker/providers/base/File.java",
+      "expected_test_path": "src/test/java/net/datafaker/providers/base/FileTest.java"
+    },
+    {
+      "id": "datafaker-finance",
+      "java_file": "src/main/java/net/datafaker/providers/base/Finance.java",
+      "expected_test_path": "src/test/java/net/datafaker/providers/base/FinanceTest.java"
+    },
+    {
+      "id": "datafaker-idnumber",
+      "java_file": "src/main/java/net/datafaker/providers/base/IdNumber.java",
+      "expected_test_path": "src/test/java/net/datafaker/providers/base/IdNumberTest.java"
+    },
+    {
+      "id": "datafaker-internet",
+      "java_file": "src/main/java/net/datafaker/providers/base/Internet.java",
+      "expected_test_path": "src/test/java/net/datafaker/providers/base/InternetTest.java"
+    },
+    {
+      "id": "datafaker-locality",
+      "java_file": "src/main/java/net/datafaker/providers/base/Locality.java",
+      "expected_test_path": "src/test/java/net/datafaker/providers/base/LocalityTest.java"
+    },
+    {
+      "id": "datafaker-lorem",
+      "java_file": "src/main/java/net/datafaker/providers/base/Lorem.java",
+      "expected_test_path": "src/test/java/net/datafaker/providers/base/LoremTest.java"
+    },
+    {
+      "id": "datafaker-medical",
+      "java_file": "src/main/java/net/datafaker/providers/base/Medical.java",
+      "expected_test_path": "src/test/java/net/datafaker/providers/base/MedicalTest.java"
+    },
+    {
+      "id": "datafaker-name",
+      "java_file": "src/main/java/net/datafaker/providers/base/Name.java",
+      "expected_test_path": "src/test/java/net/datafaker/providers/base/NameTest.java"
+    },
+    {
+      "id": "datafaker-nation",
+      "java_file": "src/main/java/net/datafaker/providers/base/Nation.java",
+      "expected_test_path": "src/test/java/net/datafaker/providers/base/NationTest.java"
+    },
+    {
+      "id": "datafaker-number",
+      "java_file": "src/main/java/net/datafaker/providers/base/Number.java",
+      "expected_test_path": "src/test/java/net/datafaker/providers/base/NumberTest.java"
+    },
+    {
+      "id": "datafaker-options",
+      "java_file": "src/main/java/net/datafaker/providers/base/Options.java",
+      "expected_test_path": "src/test/java/net/datafaker/providers/base/OptionsTest.java"
+    },
+    {
+      "id": "datafaker-phonenumber",
+      "java_file": "src/main/java/net/datafaker/providers/base/PhoneNumber.java",
+      "expected_test_path": "src/test/java/net/datafaker/providers/base/PhoneNumberTest.java"
+    },
+    {
+      "id": "datafaker-relationship",
+      "java_file": "src/main/java/net/datafaker/providers/base/Relationship.java",
+      "expected_test_path": "src/test/java/net/datafaker/providers/base/RelationshipTest.java"
+    },
+    {
+      "id": "datafaker-sip",
+      "java_file": "src/main/java/net/datafaker/providers/base/Sip.java",
+      "expected_test_path": "src/test/java/net/datafaker/providers/base/SipTest.java"
+    },
+    {
+      "id": "datafaker-text",
+      "java_file": "src/main/java/net/datafaker/providers/base/Text.java",
+      "expected_test_path": "src/test/java/net/datafaker/providers/base/TextTest.java"
+    },
+    {
+      "id": "datafaker-time",
+      "java_file": "src/main/java/net/datafaker/providers/base/Time.java",
+      "expected_test_path": "src/test/java/net/datafaker/providers/base/TimeTest.java"
+    },
+    {
+      "id": "datafaker-twitter",
+      "java_file": "src/main/java/net/datafaker/providers/base/Twitter.java",
+      "expected_test_path": "src/test/java/net/datafaker/providers/base/TwitterTest.java"
+    },
+    {
+      "id": "datafaker-unique",
+      "java_file": "src/main/java/net/datafaker/providers/base/Unique.java",
+      "expected_test_path": "src/test/java/net/datafaker/providers/base/UniqueTest.java"
+    },
+    {
+      "id": "datafaker-vehicle",
+      "java_file": "src/main/java/net/datafaker/providers/base/Vehicle.java",
+      "expected_test_path": "src/test/java/net/datafaker/providers/base/VehicleTest.java"
+    },
+    {
+      "id": "datafaker-entertainmentproviders",
+      "java_file": "src/main/java/net/datafaker/providers/entertainment/EntertainmentProviders.java",
+      "expected_test_path": "src/test/java/net/datafaker/providers/entertainment/EntertainmentProvidersTest.java"
+    },
+    {
+      "id": "datafaker-food",
+      "java_file": "src/main/java/net/datafaker/providers/food/Food.java",
+      "expected_test_path": "src/test/java/net/datafaker/providers/food/FoodTest.java"
+    },
+    {
+      "id": "datafaker-hearthstone",
+      "java_file": "src/main/java/net/datafaker/providers/videogame/Hearthstone.java",
+      "expected_test_path": "src/test/java/net/datafaker/providers/videogame/HearthstoneTest.java"
+    },
+    {
+      "id": "datafaker-fakecollection",
+      "java_file": "src/main/java/net/datafaker/sequence/FakeCollection.java",
+      "expected_test_path": "src/test/java/net/datafaker/sequence/FakeCollectionTest.java"
+    },
+    {
+      "id": "datafaker-fakesequence",
+      "java_file": "src/main/java/net/datafaker/sequence/FakeSequence.java",
+      "expected_test_path": "src/test/java/net/datafaker/sequence/FakeSequenceTest.java"
+    },
+    {
+      "id": "datafaker-fakestream",
+      "java_file": "src/main/java/net/datafaker/sequence/FakeStream.java",
+      "expected_test_path": "src/test/java/net/datafaker/sequence/FakeStreamTest.java"
+    },
+    {
+      "id": "datafaker-fakevalues",
+      "java_file": "src/main/java/net/datafaker/service/FakeValues.java",
+      "expected_test_path": "src/test/java/net/datafaker/service/FakeValuesTest.java"
+    },
+    {
+      "id": "datafaker-fakevaluesgrouping",
+      "java_file": "src/main/java/net/datafaker/service/FakeValuesGrouping.java",
+      "expected_test_path": "src/test/java/net/datafaker/service/FakeValuesGroupingTest.java"
+    },
+    {
+      "id": "datafaker-fakevaluesservice",
+      "java_file": "src/main/java/net/datafaker/service/FakeValuesService.java",
+      "expected_test_path": "src/test/java/net/datafaker/service/FakeValuesServiceTest.java"
+    },
+    {
+      "id": "datafaker-fakercontext",
+      "java_file": "src/main/java/net/datafaker/service/FakerContext.java",
+      "expected_test_path": "src/test/java/net/datafaker/service/FakerContextTest.java"
+    },
+    {
+      "id": "datafaker-fakeridn",
+      "java_file": "src/main/java/net/datafaker/service/FakerIDN.java",
+      "expected_test_path": "src/test/java/net/datafaker/service/FakerIDNTest.java"
+    },
+    {
+      "id": "datafaker-randomservice",
+      "java_file": "src/main/java/net/datafaker/service/RandomService.java",
+      "expected_test_path": "src/test/java/net/datafaker/service/RandomServiceTest.java"
+    },
+    {
+      "id": "datafaker-csvtransformer",
+      "java_file": "src/main/java/net/datafaker/transformations/CsvTransformer.java",
+      "expected_test_path": "src/test/java/net/datafaker/transformations/CsvTransformerTest.java"
+    },
+    {
+      "id": "datafaker-javaobjecttransformer",
+      "java_file": "src/main/java/net/datafaker/transformations/JavaObjectTransformer.java",
+      "expected_test_path": "src/test/java/net/datafaker/transformations/JavaObjectTransformerTest.java"
+    },
+    {
+      "id": "datafaker-jsontransformer",
+      "java_file": "src/main/java/net/datafaker/transformations/JsonTransformer.java",
+      "expected_test_path": "src/test/java/net/datafaker/transformations/JsonTransformerTest.java"
+    },
+    {
+      "id": "datafaker-simplefield",
+      "java_file": "src/main/java/net/datafaker/transformations/SimpleField.java",
+      "expected_test_path": "src/test/java/net/datafaker/transformations/SimpleFieldTest.java"
+    },
+    {
+      "id": "datafaker-xmltransformer",
+      "java_file": "src/main/java/net/datafaker/transformations/XmlTransformer.java",
+      "expected_test_path": "src/test/java/net/datafaker/transformations/XmlTransformerTest.java"
+    },
+    {
+      "id": "datafaker-yamltransformer",
+      "java_file": "src/main/java/net/datafaker/transformations/YamlTransformer.java",
+      "expected_test_path": "src/test/java/net/datafaker/transformations/YamlTransformerTest.java"
+    },
+    {
+      "id": "datafaker-sqltransformer",
+      "java_file": "src/main/java/net/datafaker/transformations/sql/SqlTransformer.java",
+      "expected_test_path": "src/test/java/net/datafaker/transformations/sql/SqlTransformerTest.java"
+    }
+  ],
+  "matrix": {
+    "providers": [
+      {
+        "name": "openrouter",
+        "model": "glm/glm-5-turbo"
+      }
+    ]
+  },
+  "run": {
+    "trials": 1,
+    "seed": 42,
+    "max_dependencies": 5,
+    "timeout_seconds": 300,
+    "retry_count": 1,
+    "concurrency": 1
+  },
+  "evaluation": {
+    "compile_cmd": "mvn test-compile -q -Drat.skip=true",
+    "test_cmd": "mvn test -q -Drat.skip=true -Dtest=AddressTest,AviationTest,AwsTest,AzureTest,BaseFakerTest,CodeTest,ColorTest,CommerceTest,CompanyTest,CompassTest,CsvTransformerTest,DateAndTimeTest,DomainTest,EducatorTest,EnIdNumberTest,EnZAIdNumberTest,EntertainmentProvidersTest,EsMXIdNumberTest,FakeCollectionTest,FakeResolverTest,FakeSequenceTest,FakeStreamTest,FakeValuesGroupingTest,FakeValuesServiceTest,FakeValuesTest,FakerContextTest,FakerIDNTest,FileTest,FinanceTest,FoodTest,HearthstoneTest,IdNumberGeneratorPtBrUtilTest,IdNumberTest,InternetTest,JavaObjectTransformerTest,JsonTransformerTest,KoKrIdNumberTest,LocalityTest,LoremTest,MedicalTest,NameTest,NationTest,NricNumberTest,NumberTest,OptionsTest,PhoneNumberTest,PtNifIdNumberTest,RandomServiceTest,RelationshipTest,SimpleFieldTest,SingletonLocaleTest,SipTest,SqlTransformerTest,SvSEIdNumberTest,TextTest,TimeTest,TwitterTest,UniqueTest,VehicleTest,WordUtilsTest,XmlTransformerTest,YamlTransformerTest,ZhCnIdNumberTest",
+    "run_pit": false
+  },
+  "scoring": {
+    "weights": {
+      "success": 0.5,
+      "coverage": 0.3,
+      "latency": 0.2
+    }
+  }
+}

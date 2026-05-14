@@ -3,14 +3,74 @@
   "project_root": "datasets/reftest-12/commons-cli",
   "dataset": [
     {
+      "id": "commons-cli-commandline",
+      "java_file": "src/main/java/org/apache/commons/cli/CommandLine.java",
+      "expected_test_path": "src/test/java/org/apache/commons/cli/CommandLineTest.java"
+    },
+    {
+      "id": "commons-cli-defaultparser",
+      "java_file": "src/main/java/org/apache/commons/cli/DefaultParser.java",
+      "expected_test_path": "src/test/java/org/apache/commons/cli/DefaultParserTest.java"
+    },
+    {
+      "id": "commons-cli-gnuparser",
+      "java_file": "src/main/java/org/apache/commons/cli/GnuParser.java",
+      "expected_test_path": "src/test/java/org/apache/commons/cli/GnuParserTest.java"
+    },
+    {
       "id": "commons-cli-helpformatter",
       "java_file": "src/main/java/org/apache/commons/cli/HelpFormatter.java",
       "expected_test_path": "src/test/java/org/apache/commons/cli/HelpFormatterTest.java"
     },
     {
+      "id": "commons-cli-option",
+      "java_file": "src/main/java/org/apache/commons/cli/Option.java",
+      "expected_test_path": "src/test/java/org/apache/commons/cli/OptionTest.java"
+    },
+    {
+      "id": "commons-cli-optionbuilder",
+      "java_file": "src/main/java/org/apache/commons/cli/OptionBuilder.java",
+      "expected_test_path": "src/test/java/org/apache/commons/cli/OptionBuilderTest.java"
+    },
+    {
+      "id": "commons-cli-optiongroup",
+      "java_file": "src/main/java/org/apache/commons/cli/OptionGroup.java",
+      "expected_test_path": "src/test/java/org/apache/commons/cli/OptionGroupTest.java"
+    },
+    {
+      "id": "commons-cli-optionvalidator",
+      "java_file": "src/main/java/org/apache/commons/cli/OptionValidator.java",
+      "expected_test_path": "src/test/java/org/apache/commons/cli/OptionValidatorTest.java"
+    },
+    {
       "id": "commons-cli-options",
       "java_file": "src/main/java/org/apache/commons/cli/Options.java",
       "expected_test_path": "src/test/java/org/apache/commons/cli/OptionsTest.java"
+    },
+    {
+      "id": "commons-cli-parser",
+      "java_file": "src/main/java/org/apache/commons/cli/Parser.java",
+      "expected_test_path": "src/test/java/org/apache/commons/cli/ParserTest.java"
+    },
+    {
+      "id": "commons-cli-patternoptionbuilder",
+      "java_file": "src/main/java/org/apache/commons/cli/PatternOptionBuilder.java",
+      "expected_test_path": "src/test/java/org/apache/commons/cli/PatternOptionBuilderTest.java"
+    },
+    {
+      "id": "commons-cli-posixparser",
+      "java_file": "src/main/java/org/apache/commons/cli/PosixParser.java",
+      "expected_test_path": "src/test/java/org/apache/commons/cli/PosixParserTest.java"
+    },
+    {
+      "id": "commons-cli-typehandler",
+      "java_file": "src/main/java/org/apache/commons/cli/TypeHandler.java",
+      "expected_test_path": "src/test/java/org/apache/commons/cli/TypeHandlerTest.java"
+    },
+    {
+      "id": "commons-cli-util",
+      "java_file": "src/main/java/org/apache/commons/cli/Util.java",
+      "expected_test_path": "src/test/java/org/apache/commons/cli/UtilTest.java"
     }
   ],
   "matrix": {
@@ -25,13 +85,13 @@
     "trials": 1,
     "seed": 42,
     "max_dependencies": 5,
-    "timeout_seconds": 180,
+    "timeout_seconds": 300,
     "retry_count": 1,
     "concurrency": 1
   },
   "evaluation": {
-    "compile_cmd": "mvn test-compile -q -Drat.skip=true -Dmaven.compiler.source=1.8 -Dmaven.compiler.target=1.8",
-    "test_cmd": "mvn test -q -Drat.skip=true -Dmaven.compiler.source=1.8 -Dmaven.compiler.target=1.8 -Dtest=HelpFormatterTest,OptionsTest",
+    "compile_cmd": "mvn test-compile -q -Drat.skip=true",
+    "test_cmd": "mvn test -q -Drat.skip=true -Dtest=CommandLineTest,DefaultParserTest,GnuParserTest,HelpFormatterTest,OptionBuilderTest,OptionGroupTest,OptionTest,OptionValidatorTest,OptionsTest,ParserTest,PatternOptionBuilderTest,PosixParserTest,TypeHandlerTest,UtilTest",
     "run_pit": false
   },
   "scoring": {

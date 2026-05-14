@@ -1,0 +1,539 @@
+{
+  "manifest_version": 1,
+  "project_root": "datasets/reftest-12/morel",
+  "dataset": [
+    {
+      "id": "morel-darn",
+      "java_file": "src/main/java/net/hydromatic/morel/Darn.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/DarnTest.java"
+    },
+    {
+      "id": "morel-main",
+      "java_file": "src/main/java/net/hydromatic/morel/Main.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/MainTest.java"
+    },
+    {
+      "id": "morel-shell",
+      "java_file": "src/main/java/net/hydromatic/morel/Shell.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/ShellTest.java"
+    },
+    {
+      "id": "morel-astwriter",
+      "java_file": "src/main/java/net/hydromatic/morel/ast/AstWriter.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/ast/AstWriterTest.java"
+    },
+    {
+      "id": "morel-frombuilder",
+      "java_file": "src/main/java/net/hydromatic/morel/ast/FromBuilder.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/ast/FromBuilderTest.java"
+    },
+    {
+      "id": "morel-pos",
+      "java_file": "src/main/java/net/hydromatic/morel/ast/Pos.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/ast/PosTest.java"
+    },
+    {
+      "id": "morel-shuttle",
+      "java_file": "src/main/java/net/hydromatic/morel/ast/Shuttle.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/ast/ShuttleTest.java"
+    },
+    {
+      "id": "morel-visitor",
+      "java_file": "src/main/java/net/hydromatic/morel/ast/Visitor.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/ast/VisitorTest.java"
+    },
+    {
+      "id": "morel-analyzer",
+      "java_file": "src/main/java/net/hydromatic/morel/compile/Analyzer.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/compile/AnalyzerTest.java"
+    },
+    {
+      "id": "morel-calcitecompiler",
+      "java_file": "src/main/java/net/hydromatic/morel/compile/CalciteCompiler.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/compile/CalciteCompilerTest.java"
+    },
+    {
+      "id": "morel-compileexception",
+      "java_file": "src/main/java/net/hydromatic/morel/compile/CompileException.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/compile/CompileExceptionTest.java"
+    },
+    {
+      "id": "morel-compiler",
+      "java_file": "src/main/java/net/hydromatic/morel/compile/Compiler.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/compile/CompilerTest.java"
+    },
+    {
+      "id": "morel-compiles",
+      "java_file": "src/main/java/net/hydromatic/morel/compile/Compiles.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/compile/CompilesTest.java"
+    },
+    {
+      "id": "morel-envshuttle",
+      "java_file": "src/main/java/net/hydromatic/morel/compile/EnvShuttle.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/compile/EnvShuttleTest.java"
+    },
+    {
+      "id": "morel-envvisitor",
+      "java_file": "src/main/java/net/hydromatic/morel/compile/EnvVisitor.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/compile/EnvVisitorTest.java"
+    },
+    {
+      "id": "morel-environment",
+      "java_file": "src/main/java/net/hydromatic/morel/compile/Environment.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/compile/EnvironmentTest.java"
+    },
+    {
+      "id": "morel-environments",
+      "java_file": "src/main/java/net/hydromatic/morel/compile/Environments.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/compile/EnvironmentsTest.java"
+    },
+    {
+      "id": "morel-expander",
+      "java_file": "src/main/java/net/hydromatic/morel/compile/Expander.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/compile/ExpanderTest.java"
+    },
+    {
+      "id": "morel-extents",
+      "java_file": "src/main/java/net/hydromatic/morel/compile/Extents.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/compile/ExtentsTest.java"
+    },
+    {
+      "id": "morel-freefinder",
+      "java_file": "src/main/java/net/hydromatic/morel/compile/FreeFinder.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/compile/FreeFinderTest.java"
+    },
+    {
+      "id": "morel-generators",
+      "java_file": "src/main/java/net/hydromatic/morel/compile/Generators.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/compile/GeneratorsTest.java"
+    },
+    {
+      "id": "morel-globalfreevarcollector",
+      "java_file": "src/main/java/net/hydromatic/morel/compile/GlobalFreeVarCollector.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/compile/GlobalFreeVarCollectorTest.java"
+    },
+    {
+      "id": "morel-inliner",
+      "java_file": "src/main/java/net/hydromatic/morel/compile/Inliner.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/compile/InlinerTest.java"
+    },
+    {
+      "id": "morel-namegenerator",
+      "java_file": "src/main/java/net/hydromatic/morel/compile/NameGenerator.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/compile/NameGeneratorTest.java"
+    },
+    {
+      "id": "morel-outputmatcher",
+      "java_file": "src/main/java/net/hydromatic/morel/compile/OutputMatcher.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/compile/OutputMatcherTest.java"
+    },
+    {
+      "id": "morel-patterncoveragechecker",
+      "java_file": "src/main/java/net/hydromatic/morel/compile/PatternCoverageChecker.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/compile/PatternCoverageCheckerTest.java"
+    },
+    {
+      "id": "morel-pretty",
+      "java_file": "src/main/java/net/hydromatic/morel/compile/Pretty.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/compile/PrettyTest.java"
+    },
+    {
+      "id": "morel-refchecker",
+      "java_file": "src/main/java/net/hydromatic/morel/compile/RefChecker.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/compile/RefCheckerTest.java"
+    },
+    {
+      "id": "morel-relationalizer",
+      "java_file": "src/main/java/net/hydromatic/morel/compile/Relationalizer.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/compile/RelationalizerTest.java"
+    },
+    {
+      "id": "morel-replacer",
+      "java_file": "src/main/java/net/hydromatic/morel/compile/Replacer.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/compile/ReplacerTest.java"
+    },
+    {
+      "id": "morel-resolver",
+      "java_file": "src/main/java/net/hydromatic/morel/compile/Resolver.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/compile/ResolverTest.java"
+    },
+    {
+      "id": "morel-simplifier",
+      "java_file": "src/main/java/net/hydromatic/morel/compile/Simplifier.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/compile/SimplifierTest.java"
+    },
+    {
+      "id": "morel-stacklayout",
+      "java_file": "src/main/java/net/hydromatic/morel/compile/StackLayout.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/compile/StackLayoutTest.java"
+    },
+    {
+      "id": "morel-suchthatshuttle",
+      "java_file": "src/main/java/net/hydromatic/morel/compile/SuchThatShuttle.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/compile/SuchThatShuttleTest.java"
+    },
+    {
+      "id": "morel-tracers",
+      "java_file": "src/main/java/net/hydromatic/morel/compile/Tracers.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/compile/TracersTest.java"
+    },
+    {
+      "id": "morel-typemap",
+      "java_file": "src/main/java/net/hydromatic/morel/compile/TypeMap.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/compile/TypeMapTest.java"
+    },
+    {
+      "id": "morel-typeresolver",
+      "java_file": "src/main/java/net/hydromatic/morel/compile/TypeResolver.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/compile/TypeResolverTest.java"
+    },
+    {
+      "id": "morel-variablecollector",
+      "java_file": "src/main/java/net/hydromatic/morel/compile/VariableCollector.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/compile/VariableCollectorTest.java"
+    },
+    {
+      "id": "morel-dataloganalyzer",
+      "java_file": "src/main/java/net/hydromatic/morel/datalog/DatalogAnalyzer.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/datalog/DatalogAnalyzerTest.java"
+    },
+    {
+      "id": "morel-datalogevaluator",
+      "java_file": "src/main/java/net/hydromatic/morel/datalog/DatalogEvaluator.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/datalog/DatalogEvaluatorTest.java"
+    },
+    {
+      "id": "morel-datalogtranslator",
+      "java_file": "src/main/java/net/hydromatic/morel/datalog/DatalogTranslator.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/datalog/DatalogTranslatorTest.java"
+    },
+    {
+      "id": "morel-applicable",
+      "java_file": "src/main/java/net/hydromatic/morel/eval/Applicable.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/eval/ApplicableTest.java"
+    },
+    {
+      "id": "morel-applicableimpl",
+      "java_file": "src/main/java/net/hydromatic/morel/eval/ApplicableImpl.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/eval/ApplicableImplTest.java"
+    },
+    {
+      "id": "morel-bound",
+      "java_file": "src/main/java/net/hydromatic/morel/eval/Bound.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/eval/BoundTest.java"
+    },
+    {
+      "id": "morel-closure",
+      "java_file": "src/main/java/net/hydromatic/morel/eval/Closure.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/eval/ClosureTest.java"
+    },
+    {
+      "id": "morel-code",
+      "java_file": "src/main/java/net/hydromatic/morel/eval/Code.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/eval/CodeTest.java"
+    },
+    {
+      "id": "morel-codevisitor",
+      "java_file": "src/main/java/net/hydromatic/morel/eval/CodeVisitor.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/eval/CodeVisitorTest.java"
+    },
+    {
+      "id": "morel-codes",
+      "java_file": "src/main/java/net/hydromatic/morel/eval/Codes.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/eval/CodesTest.java"
+    },
+    {
+      "id": "morel-describerimpl",
+      "java_file": "src/main/java/net/hydromatic/morel/eval/DescriberImpl.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/eval/DescriberImplTest.java"
+    },
+    {
+      "id": "morel-discretes",
+      "java_file": "src/main/java/net/hydromatic/morel/eval/Discretes.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/eval/DiscretesTest.java"
+    },
+    {
+      "id": "morel-evalenv",
+      "java_file": "src/main/java/net/hydromatic/morel/eval/EvalEnv.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/eval/EvalEnvTest.java"
+    },
+    {
+      "id": "morel-files",
+      "java_file": "src/main/java/net/hydromatic/morel/eval/Files.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/eval/FilesTest.java"
+    },
+    {
+      "id": "morel-rowsinks",
+      "java_file": "src/main/java/net/hydromatic/morel/eval/RowSinks.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/eval/RowSinksTest.java"
+    },
+    {
+      "id": "morel-session",
+      "java_file": "src/main/java/net/hydromatic/morel/eval/Session.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/eval/SessionTest.java"
+    },
+    {
+      "id": "morel-slots",
+      "java_file": "src/main/java/net/hydromatic/morel/eval/Slots.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/eval/SlotsTest.java"
+    },
+    {
+      "id": "morel-stack",
+      "java_file": "src/main/java/net/hydromatic/morel/eval/Stack.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/eval/StackTest.java"
+    },
+    {
+      "id": "morel-variant",
+      "java_file": "src/main/java/net/hydromatic/morel/eval/Variant.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/eval/VariantTest.java"
+    },
+    {
+      "id": "morel-variants",
+      "java_file": "src/main/java/net/hydromatic/morel/eval/Variants.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/eval/VariantsTest.java"
+    },
+    {
+      "id": "morel-calcite",
+      "java_file": "src/main/java/net/hydromatic/morel/foreign/Calcite.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/foreign/CalciteTest.java"
+    },
+    {
+      "id": "morel-converters",
+      "java_file": "src/main/java/net/hydromatic/morel/foreign/Converters.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/foreign/ConvertersTest.java"
+    },
+    {
+      "id": "morel-parsers",
+      "java_file": "src/main/java/net/hydromatic/morel/parse/Parsers.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/parse/ParsersTest.java"
+    },
+    {
+      "id": "morel-span",
+      "java_file": "src/main/java/net/hydromatic/morel/parse/Span.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/parse/SpanTest.java"
+    },
+    {
+      "id": "morel-aliastype",
+      "java_file": "src/main/java/net/hydromatic/morel/type/AliasType.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/type/AliasTypeTest.java"
+    },
+    {
+      "id": "morel-basetype",
+      "java_file": "src/main/java/net/hydromatic/morel/type/BaseType.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/type/BaseTypeTest.java"
+    },
+    {
+      "id": "morel-binding",
+      "java_file": "src/main/java/net/hydromatic/morel/type/Binding.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/type/BindingTest.java"
+    },
+    {
+      "id": "morel-datatype",
+      "java_file": "src/main/java/net/hydromatic/morel/type/DataType.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/type/DataTypeTest.java"
+    },
+    {
+      "id": "morel-fntype",
+      "java_file": "src/main/java/net/hydromatic/morel/type/FnType.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/type/FnTypeTest.java"
+    },
+    {
+      "id": "morel-foralltype",
+      "java_file": "src/main/java/net/hydromatic/morel/type/ForallType.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/type/ForallTypeTest.java"
+    },
+    {
+      "id": "morel-keys",
+      "java_file": "src/main/java/net/hydromatic/morel/type/Keys.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/type/KeysTest.java"
+    },
+    {
+      "id": "morel-listtype",
+      "java_file": "src/main/java/net/hydromatic/morel/type/ListType.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/type/ListTypeTest.java"
+    },
+    {
+      "id": "morel-parameterizedtype",
+      "java_file": "src/main/java/net/hydromatic/morel/type/ParameterizedType.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/type/ParameterizedTypeTest.java"
+    },
+    {
+      "id": "morel-rangeextent",
+      "java_file": "src/main/java/net/hydromatic/morel/type/RangeExtent.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/type/RangeExtentTest.java"
+    },
+    {
+      "id": "morel-recordtype",
+      "java_file": "src/main/java/net/hydromatic/morel/type/RecordType.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/type/RecordTypeTest.java"
+    },
+    {
+      "id": "morel-tupletype",
+      "java_file": "src/main/java/net/hydromatic/morel/type/TupleType.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/type/TupleTypeTest.java"
+    },
+    {
+      "id": "morel-type",
+      "java_file": "src/main/java/net/hydromatic/morel/type/Type.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/type/TypeTest.java"
+    },
+    {
+      "id": "morel-typesystem",
+      "java_file": "src/main/java/net/hydromatic/morel/type/TypeSystem.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/type/TypeSystemTest.java"
+    },
+    {
+      "id": "morel-typeunifier",
+      "java_file": "src/main/java/net/hydromatic/morel/type/TypeUnifier.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/type/TypeUnifierTest.java"
+    },
+    {
+      "id": "morel-typevar",
+      "java_file": "src/main/java/net/hydromatic/morel/type/TypeVar.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/type/TypeVarTest.java"
+    },
+    {
+      "id": "morel-typevisitor",
+      "java_file": "src/main/java/net/hydromatic/morel/type/TypeVisitor.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/type/TypeVisitorTest.java"
+    },
+    {
+      "id": "morel-abstractimmutablelist",
+      "java_file": "src/main/java/net/hydromatic/morel/util/AbstractImmutableList.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/util/AbstractImmutableListTest.java"
+    },
+    {
+      "id": "morel-arrayqueue",
+      "java_file": "src/main/java/net/hydromatic/morel/util/ArrayQueue.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/util/ArrayQueueTest.java"
+    },
+    {
+      "id": "morel-comparablesingletonlist",
+      "java_file": "src/main/java/net/hydromatic/morel/util/ComparableSingletonList.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/util/ComparableSingletonListTest.java"
+    },
+    {
+      "id": "morel-conslist",
+      "java_file": "src/main/java/net/hydromatic/morel/util/ConsList.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/util/ConsListTest.java"
+    },
+    {
+      "id": "morel-folder",
+      "java_file": "src/main/java/net/hydromatic/morel/util/Folder.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/util/FolderTest.java"
+    },
+    {
+      "id": "morel-immutablepairlist",
+      "java_file": "src/main/java/net/hydromatic/morel/util/ImmutablePairList.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/util/ImmutablePairListTest.java"
+    },
+    {
+      "id": "morel-javaversion",
+      "java_file": "src/main/java/net/hydromatic/morel/util/JavaVersion.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/util/JavaVersionTest.java"
+    },
+    {
+      "id": "morel-mapentry",
+      "java_file": "src/main/java/net/hydromatic/morel/util/MapEntry.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/util/MapEntryTest.java"
+    },
+    {
+      "id": "morel-martelliunifier",
+      "java_file": "src/main/java/net/hydromatic/morel/util/MartelliUnifier.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/util/MartelliUnifierTest.java"
+    },
+    {
+      "id": "morel-morelhighlighter",
+      "java_file": "src/main/java/net/hydromatic/morel/util/MorelHighlighter.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/util/MorelHighlighterTest.java"
+    },
+    {
+      "id": "morel-ord",
+      "java_file": "src/main/java/net/hydromatic/morel/util/Ord.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/util/OrdTest.java"
+    },
+    {
+      "id": "morel-pair",
+      "java_file": "src/main/java/net/hydromatic/morel/util/Pair.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/util/PairTest.java"
+    },
+    {
+      "id": "morel-pairlist",
+      "java_file": "src/main/java/net/hydromatic/morel/util/PairList.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/util/PairListTest.java"
+    },
+    {
+      "id": "morel-pairlists",
+      "java_file": "src/main/java/net/hydromatic/morel/util/PairLists.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/util/PairListsTest.java"
+    },
+    {
+      "id": "morel-robinsonunifier",
+      "java_file": "src/main/java/net/hydromatic/morel/util/RobinsonUnifier.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/util/RobinsonUnifierTest.java"
+    },
+    {
+      "id": "morel-sat",
+      "java_file": "src/main/java/net/hydromatic/morel/util/Sat.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/util/SatTest.java"
+    },
+    {
+      "id": "morel-static",
+      "java_file": "src/main/java/net/hydromatic/morel/util/Static.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/util/StaticTest.java"
+    },
+    {
+      "id": "morel-taillist",
+      "java_file": "src/main/java/net/hydromatic/morel/util/TailList.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/util/TailListTest.java"
+    },
+    {
+      "id": "morel-threadlocals",
+      "java_file": "src/main/java/net/hydromatic/morel/util/ThreadLocals.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/util/ThreadLocalsTest.java"
+    },
+    {
+      "id": "morel-tracers",
+      "java_file": "src/main/java/net/hydromatic/morel/util/Tracers.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/util/TracersTest.java"
+    },
+    {
+      "id": "morel-unifier",
+      "java_file": "src/main/java/net/hydromatic/morel/util/Unifier.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/util/UnifierTest.java"
+    },
+    {
+      "id": "morel-unifiers",
+      "java_file": "src/main/java/net/hydromatic/morel/util/Unifiers.java",
+      "expected_test_path": "src/test/java/net/hydromatic/morel/util/UnifiersTest.java"
+    }
+  ],
+  "matrix": {
+    "providers": [
+      {
+        "name": "openrouter",
+        "model": "qwen/qwen3.6-flash"
+      }
+    ]
+  },
+  "run": {
+    "trials": 1,
+    "seed": 42,
+    "max_dependencies": 5,
+    "timeout_seconds": 300,
+    "retry_count": 1,
+    "concurrency": 1
+  },
+  "evaluation": {
+    "compile_cmd": "mvn test-compile -q -Drat.skip=true",
+    "test_cmd": "mvn test -q -Drat.skip=true -Dtest=AbstractImmutableListTest,AliasTypeTest,AnalyzerTest,ApplicableImplTest,ApplicableTest,ArrayQueueTest,AstWriterTest,BaseTypeTest,BindingTest,BoundTest,CalciteCompilerTest,CalciteTest,ClosureTest,CodeTest,CodeVisitorTest,CodesTest,ComparableSingletonListTest,CompileExceptionTest,CompilerTest,CompilesTest,ConsListTest,ConvertersTest,DarnTest,DataTypeTest,DatalogAnalyzerTest,DatalogEvaluatorTest,DatalogTranslatorTest,DescriberImplTest,DiscretesTest,EnvShuttleTest,EnvVisitorTest,EnvironmentTest,EnvironmentsTest,EvalEnvTest,ExpanderTest,ExtentsTest,FilesTest,FnTypeTest,FolderTest,ForallTypeTest,FreeFinderTest,FromBuilderTest,GeneratorsTest,GlobalFreeVarCollectorTest,ImmutablePairListTest,InlinerTest,JavaVersionTest,KeysTest,ListTypeTest,MainTest,MapEntryTest,MartelliUnifierTest,MorelHighlighterTest,NameGeneratorTest,OrdTest,OutputMatcherTest,PairListTest,PairListsTest,PairTest,ParameterizedTypeTest,ParsersTest,PatternCoverageCheckerTest,PosTest,PrettyTest,RangeExtentTest,RecordTypeTest,RefCheckerTest,RelationalizerTest,ReplacerTest,ResolverTest,RobinsonUnifierTest,RowSinksTest,SatTest,SessionTest,ShellTest,ShuttleTest,SimplifierTest,SlotsTest,SpanTest,StackLayoutTest,StackTest,StaticTest,SuchThatShuttleTest,TailListTest,ThreadLocalsTest,TracersTest,TupleTypeTest,TypeMapTest,TypeResolverTest,TypeSystemTest,TypeTest,TypeUnifierTest,TypeVarTest,TypeVisitorTest,UnifierTest,UnifiersTest,VariableCollectorTest,VariantTest,VariantsTest,VisitorTest",
+    "run_pit": false
+  },
+  "scoring": {
+    "weights": {
+      "success": 0.5,
+      "coverage": 0.3,
+      "latency": 0.2
+    }
+  }
+}

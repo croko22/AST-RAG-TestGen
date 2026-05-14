@@ -1,0 +1,149 @@
+{
+  "manifest_version": 1,
+  "project_root": "datasets/reftest-12/cucumber-expressions",
+  "dataset": [
+    {
+      "id": "cucumber-expressions-argument",
+      "java_file": "java/src/main/java/io/cucumber/cucumberexpressions/Argument.java",
+      "expected_test_path": "java/src/test/java/io/cucumber/cucumberexpressions/ArgumentTest.java"
+    },
+    {
+      "id": "cucumber-expressions-combinatorialgeneratedexpressionfactory",
+      "java_file": "java/src/main/java/io/cucumber/cucumberexpressions/CombinatorialGeneratedExpressionFactory.java",
+      "expected_test_path": "java/src/test/java/io/cucumber/cucumberexpressions/CombinatorialGeneratedExpressionFactoryTest.java"
+    },
+    {
+      "id": "cucumber-expressions-cucumberexpression",
+      "java_file": "java/src/main/java/io/cucumber/cucumberexpressions/CucumberExpression.java",
+      "expected_test_path": "java/src/test/java/io/cucumber/cucumberexpressions/CucumberExpressionTest.java"
+    },
+    {
+      "id": "cucumber-expressions-cucumberexpressionexception",
+      "java_file": "java/src/main/java/io/cucumber/cucumberexpressions/CucumberExpressionException.java",
+      "expected_test_path": "java/src/test/java/io/cucumber/cucumberexpressions/CucumberExpressionExceptionTest.java"
+    },
+    {
+      "id": "cucumber-expressions-cucumberexpressiongenerator",
+      "java_file": "java/src/main/java/io/cucumber/cucumberexpressions/CucumberExpressionGenerator.java",
+      "expected_test_path": "java/src/test/java/io/cucumber/cucumberexpressions/CucumberExpressionGeneratorTest.java"
+    },
+    {
+      "id": "cucumber-expressions-cucumberexpressionparser",
+      "java_file": "java/src/main/java/io/cucumber/cucumberexpressions/CucumberExpressionParser.java",
+      "expected_test_path": "java/src/test/java/io/cucumber/cucumberexpressions/CucumberExpressionParserTest.java"
+    },
+    {
+      "id": "cucumber-expressions-cucumberexpressiontokenizer",
+      "java_file": "java/src/main/java/io/cucumber/cucumberexpressions/CucumberExpressionTokenizer.java",
+      "expected_test_path": "java/src/test/java/io/cucumber/cucumberexpressions/CucumberExpressionTokenizerTest.java"
+    },
+    {
+      "id": "cucumber-expressions-expressionfactory",
+      "java_file": "java/src/main/java/io/cucumber/cucumberexpressions/ExpressionFactory.java",
+      "expected_test_path": "java/src/test/java/io/cucumber/cucumberexpressions/ExpressionFactoryTest.java"
+    },
+    {
+      "id": "cucumber-expressions-generatedexpression",
+      "java_file": "java/src/main/java/io/cucumber/cucumberexpressions/GeneratedExpression.java",
+      "expected_test_path": "java/src/test/java/io/cucumber/cucumberexpressions/GeneratedExpressionTest.java"
+    },
+    {
+      "id": "cucumber-expressions-group",
+      "java_file": "java/src/main/java/io/cucumber/cucumberexpressions/Group.java",
+      "expected_test_path": "java/src/test/java/io/cucumber/cucumberexpressions/GroupTest.java"
+    },
+    {
+      "id": "cucumber-expressions-groupbuilder",
+      "java_file": "java/src/main/java/io/cucumber/cucumberexpressions/GroupBuilder.java",
+      "expected_test_path": "java/src/test/java/io/cucumber/cucumberexpressions/GroupBuilderTest.java"
+    },
+    {
+      "id": "cucumber-expressions-keyboardfriendlydecimalformatsymbols",
+      "java_file": "java/src/main/java/io/cucumber/cucumberexpressions/KeyboardFriendlyDecimalFormatSymbols.java",
+      "expected_test_path": "java/src/test/java/io/cucumber/cucumberexpressions/KeyboardFriendlyDecimalFormatSymbolsTest.java"
+    },
+    {
+      "id": "cucumber-expressions-node",
+      "java_file": "java/src/main/java/io/cucumber/cucumberexpressions/Node.java",
+      "expected_test_path": "java/src/test/java/io/cucumber/cucumberexpressions/NodeTest.java"
+    },
+    {
+      "id": "cucumber-expressions-numberparser",
+      "java_file": "java/src/main/java/io/cucumber/cucumberexpressions/NumberParser.java",
+      "expected_test_path": "java/src/test/java/io/cucumber/cucumberexpressions/NumberParserTest.java"
+    },
+    {
+      "id": "cucumber-expressions-parametertype",
+      "java_file": "java/src/main/java/io/cucumber/cucumberexpressions/ParameterType.java",
+      "expected_test_path": "java/src/test/java/io/cucumber/cucumberexpressions/ParameterTypeTest.java"
+    },
+    {
+      "id": "cucumber-expressions-parametertypematcher",
+      "java_file": "java/src/main/java/io/cucumber/cucumberexpressions/ParameterTypeMatcher.java",
+      "expected_test_path": "java/src/test/java/io/cucumber/cucumberexpressions/ParameterTypeMatcherTest.java"
+    },
+    {
+      "id": "cucumber-expressions-parametertyperegistry",
+      "java_file": "java/src/main/java/io/cucumber/cucumberexpressions/ParameterTypeRegistry.java",
+      "expected_test_path": "java/src/test/java/io/cucumber/cucumberexpressions/ParameterTypeRegistryTest.java"
+    },
+    {
+      "id": "cucumber-expressions-patterncompilerprovider",
+      "java_file": "java/src/main/java/io/cucumber/cucumberexpressions/PatternCompilerProvider.java",
+      "expected_test_path": "java/src/test/java/io/cucumber/cucumberexpressions/PatternCompilerProviderTest.java"
+    },
+    {
+      "id": "cucumber-expressions-regexputils",
+      "java_file": "java/src/main/java/io/cucumber/cucumberexpressions/RegexpUtils.java",
+      "expected_test_path": "java/src/test/java/io/cucumber/cucumberexpressions/RegexpUtilsTest.java"
+    },
+    {
+      "id": "cucumber-expressions-regularexpression",
+      "java_file": "java/src/main/java/io/cucumber/cucumberexpressions/RegularExpression.java",
+      "expected_test_path": "java/src/test/java/io/cucumber/cucumberexpressions/RegularExpressionTest.java"
+    },
+    {
+      "id": "cucumber-expressions-token",
+      "java_file": "java/src/main/java/io/cucumber/cucumberexpressions/Token.java",
+      "expected_test_path": "java/src/test/java/io/cucumber/cucumberexpressions/TokenTest.java"
+    },
+    {
+      "id": "cucumber-expressions-treeregexp",
+      "java_file": "java/src/main/java/io/cucumber/cucumberexpressions/TreeRegexp.java",
+      "expected_test_path": "java/src/test/java/io/cucumber/cucumberexpressions/TreeRegexpTest.java"
+    },
+    {
+      "id": "cucumber-expressions-undefinedparametertypeexception",
+      "java_file": "java/src/main/java/io/cucumber/cucumberexpressions/UndefinedParameterTypeException.java",
+      "expected_test_path": "java/src/test/java/io/cucumber/cucumberexpressions/UndefinedParameterTypeExceptionTest.java"
+    }
+  ],
+  "matrix": {
+    "providers": [
+      {
+        "name": "nvidia",
+        "model": "qwen/qwen3.5-122b-a10b"
+      }
+    ]
+  },
+  "run": {
+    "trials": 1,
+    "seed": 42,
+    "max_dependencies": 5,
+    "timeout_seconds": 300,
+    "retry_count": 1,
+    "concurrency": 1
+  },
+  "evaluation": {
+    "compile_cmd": "mvn test-compile -q -Drat.skip=true",
+    "test_cmd": "mvn test -q -Drat.skip=true -Dtest=ArgumentTest,CombinatorialGeneratedExpressionFactoryTest,CucumberExpressionExceptionTest,CucumberExpressionGeneratorTest,CucumberExpressionParserTest,CucumberExpressionTest,CucumberExpressionTokenizerTest,ExpressionFactoryTest,GeneratedExpressionTest,GroupBuilderTest,GroupTest,KeyboardFriendlyDecimalFormatSymbolsTest,NodeTest,NumberParserTest,ParameterTypeMatcherTest,ParameterTypeRegistryTest,ParameterTypeTest,PatternCompilerProviderTest,RegexpUtilsTest,RegularExpressionTest,TokenTest,TreeRegexpTest,UndefinedParameterTypeExceptionTest",
+    "run_pit": false
+  },
+  "scoring": {
+    "weights": {
+      "success": 0.5,
+      "coverage": 0.3,
+      "latency": 0.2
+    }
+  }
+}

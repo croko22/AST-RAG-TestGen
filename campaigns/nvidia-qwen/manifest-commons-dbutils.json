@@ -1,0 +1,129 @@
+{
+  "manifest_version": 1,
+  "project_root": "datasets/reftest-12/commons-dbutils",
+  "dataset": [
+    {
+      "id": "commons-dbutils-abstractqueryrunner",
+      "java_file": "src/main/java/org/apache/commons/dbutils/AbstractQueryRunner.java",
+      "expected_test_path": "src/test/java/org/apache/commons/dbutils/AbstractQueryRunnerTest.java"
+    },
+    {
+      "id": "commons-dbutils-baseresultsethandler",
+      "java_file": "src/main/java/org/apache/commons/dbutils/BaseResultSetHandler.java",
+      "expected_test_path": "src/test/java/org/apache/commons/dbutils/BaseResultSetHandlerTest.java"
+    },
+    {
+      "id": "commons-dbutils-basicrowprocessor",
+      "java_file": "src/main/java/org/apache/commons/dbutils/BasicRowProcessor.java",
+      "expected_test_path": "src/test/java/org/apache/commons/dbutils/BasicRowProcessorTest.java"
+    },
+    {
+      "id": "commons-dbutils-beanprocessor",
+      "java_file": "src/main/java/org/apache/commons/dbutils/BeanProcessor.java",
+      "expected_test_path": "src/test/java/org/apache/commons/dbutils/BeanProcessorTest.java"
+    },
+    {
+      "id": "commons-dbutils-dbutils",
+      "java_file": "src/main/java/org/apache/commons/dbutils/DbUtils.java",
+      "expected_test_path": "src/test/java/org/apache/commons/dbutils/DbUtilsTest.java"
+    },
+    {
+      "id": "commons-dbutils-generousbeanprocessor",
+      "java_file": "src/main/java/org/apache/commons/dbutils/GenerousBeanProcessor.java",
+      "expected_test_path": "src/test/java/org/apache/commons/dbutils/GenerousBeanProcessorTest.java"
+    },
+    {
+      "id": "commons-dbutils-outparameter",
+      "java_file": "src/main/java/org/apache/commons/dbutils/OutParameter.java",
+      "expected_test_path": "src/test/java/org/apache/commons/dbutils/OutParameterTest.java"
+    },
+    {
+      "id": "commons-dbutils-queryloader",
+      "java_file": "src/main/java/org/apache/commons/dbutils/QueryLoader.java",
+      "expected_test_path": "src/test/java/org/apache/commons/dbutils/QueryLoaderTest.java"
+    },
+    {
+      "id": "commons-dbutils-queryrunner",
+      "java_file": "src/main/java/org/apache/commons/dbutils/QueryRunner.java",
+      "expected_test_path": "src/test/java/org/apache/commons/dbutils/QueryRunnerTest.java"
+    },
+    {
+      "id": "commons-dbutils-resultsetiterator",
+      "java_file": "src/main/java/org/apache/commons/dbutils/ResultSetIterator.java",
+      "expected_test_path": "src/test/java/org/apache/commons/dbutils/ResultSetIteratorTest.java"
+    },
+    {
+      "id": "commons-dbutils-abstractkeyedhandler",
+      "java_file": "src/main/java/org/apache/commons/dbutils/handlers/AbstractKeyedHandler.java",
+      "expected_test_path": "src/test/java/org/apache/commons/dbutils/handlers/AbstractKeyedHandlerTest.java"
+    },
+    {
+      "id": "commons-dbutils-abstractlisthandler",
+      "java_file": "src/main/java/org/apache/commons/dbutils/handlers/AbstractListHandler.java",
+      "expected_test_path": "src/test/java/org/apache/commons/dbutils/handlers/AbstractListHandlerTest.java"
+    },
+    {
+      "id": "commons-dbutils-beanmaphandler",
+      "java_file": "src/main/java/org/apache/commons/dbutils/handlers/BeanMapHandler.java",
+      "expected_test_path": "src/test/java/org/apache/commons/dbutils/handlers/BeanMapHandlerTest.java"
+    },
+    {
+      "id": "commons-dbutils-columnlisthandler",
+      "java_file": "src/main/java/org/apache/commons/dbutils/handlers/ColumnListHandler.java",
+      "expected_test_path": "src/test/java/org/apache/commons/dbutils/handlers/ColumnListHandlerTest.java"
+    },
+    {
+      "id": "commons-dbutils-keyedhandler",
+      "java_file": "src/main/java/org/apache/commons/dbutils/handlers/KeyedHandler.java",
+      "expected_test_path": "src/test/java/org/apache/commons/dbutils/handlers/KeyedHandlerTest.java"
+    },
+    {
+      "id": "commons-dbutils-scalarhandler",
+      "java_file": "src/main/java/org/apache/commons/dbutils/handlers/ScalarHandler.java",
+      "expected_test_path": "src/test/java/org/apache/commons/dbutils/handlers/ScalarHandlerTest.java"
+    },
+    {
+      "id": "commons-dbutils-datepropertyhandler",
+      "java_file": "src/main/java/org/apache/commons/dbutils/handlers/properties/DatePropertyHandler.java",
+      "expected_test_path": "src/test/java/org/apache/commons/dbutils/handlers/properties/DatePropertyHandlerTest.java"
+    },
+    {
+      "id": "commons-dbutils-sqlnullcheckedresultset",
+      "java_file": "src/main/java/org/apache/commons/dbutils/wrappers/SqlNullCheckedResultSet.java",
+      "expected_test_path": "src/test/java/org/apache/commons/dbutils/wrappers/SqlNullCheckedResultSetTest.java"
+    },
+    {
+      "id": "commons-dbutils-stringtrimmedresultset",
+      "java_file": "src/main/java/org/apache/commons/dbutils/wrappers/StringTrimmedResultSet.java",
+      "expected_test_path": "src/test/java/org/apache/commons/dbutils/wrappers/StringTrimmedResultSetTest.java"
+    }
+  ],
+  "matrix": {
+    "providers": [
+      {
+        "name": "nvidia",
+        "model": "qwen/qwen3.5-122b-a10b"
+      }
+    ]
+  },
+  "run": {
+    "trials": 1,
+    "seed": 42,
+    "max_dependencies": 5,
+    "timeout_seconds": 300,
+    "retry_count": 1,
+    "concurrency": 1
+  },
+  "evaluation": {
+    "compile_cmd": "mvn test-compile -q -Drat.skip=true",
+    "test_cmd": "mvn test -q -Drat.skip=true -Dtest=AbstractKeyedHandlerTest,AbstractListHandlerTest,AbstractQueryRunnerTest,BaseResultSetHandlerTest,BasicRowProcessorTest,BeanMapHandlerTest,BeanProcessorTest,ColumnListHandlerTest,DatePropertyHandlerTest,DbUtilsTest,GenerousBeanProcessorTest,KeyedHandlerTest,OutParameterTest,QueryLoaderTest,QueryRunnerTest,ResultSetIteratorTest,ScalarHandlerTest,SqlNullCheckedResultSetTest,StringTrimmedResultSetTest",
+    "run_pit": false
+  },
+  "scoring": {
+    "weights": {
+      "success": 0.5,
+      "coverage": 0.3,
+      "latency": 0.2
+    }
+  }
+}

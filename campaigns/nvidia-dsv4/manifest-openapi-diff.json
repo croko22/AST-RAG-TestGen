@@ -1,0 +1,554 @@
+{
+  "manifest_version": 1,
+  "project_root": "datasets/reftest-12/openapi-diff",
+  "dataset": [
+    {
+      "id": "openapi-diff-main",
+      "java_file": "cli/src/main/java/org/openapitools/openapidiff/cli/Main.java",
+      "expected_test_path": "cli/src/test/java/org/openapitools/openapidiff/cli/MainTest.java"
+    },
+    {
+      "id": "openapi-diff-abstractopenapischema",
+      "java_file": "clients/common/src/main/java/com/binance/connector/client/common/AbstractOpenApiSchema.java",
+      "expected_test_path": "clients/common/src/test/java/com/binance/connector/client/common/AbstractOpenApiSchemaTest.java"
+    },
+    {
+      "id": "openapi-diff-abstractopenapischema",
+      "java_file": "clients/derivatives-trading-coin-futures/src/main/java/com/binance/connector/client/derivatives_trading_coin_futures/websocket/api/model/AbstractOpenApiSchema.java",
+      "expected_test_path": "clients/derivatives-trading-coin-futures/src/test/java/com/binance/connector/client/derivatives_trading_coin_futures/websocket/api/model/AbstractOpenApiSchemaTest.java"
+    },
+    {
+      "id": "openapi-diff-abstractopenapischema",
+      "java_file": "clients/derivatives-trading-coin-futures/src/main/java/com/binance/connector/client/derivatives_trading_coin_futures/websocket/stream/model/AbstractOpenApiSchema.java",
+      "expected_test_path": "clients/derivatives-trading-coin-futures/src/test/java/com/binance/connector/client/derivatives_trading_coin_futures/websocket/stream/model/AbstractOpenApiSchemaTest.java"
+    },
+    {
+      "id": "openapi-diff-abstractopenapischema",
+      "java_file": "clients/derivatives-trading-options/src/main/java/com/binance/connector/client/derivatives_trading_options/websocket/stream/model/AbstractOpenApiSchema.java",
+      "expected_test_path": "clients/derivatives-trading-options/src/test/java/com/binance/connector/client/derivatives_trading_options/websocket/stream/model/AbstractOpenApiSchemaTest.java"
+    },
+    {
+      "id": "openapi-diff-abstractopenapischema",
+      "java_file": "clients/derivatives-trading-portfolio-margin-pro/src/main/java/com/binance/connector/client/derivatives_trading_portfolio_margin_pro/websocket/stream/model/AbstractOpenApiSchema.java",
+      "expected_test_path": "clients/derivatives-trading-portfolio-margin-pro/src/test/java/com/binance/connector/client/derivatives_trading_portfolio_margin_pro/websocket/stream/model/AbstractOpenApiSchemaTest.java"
+    },
+    {
+      "id": "openapi-diff-abstractopenapischema",
+      "java_file": "clients/derivatives-trading-portfolio-margin/src/main/java/com/binance/connector/client/derivatives_trading_portfolio_margin/websocket/stream/model/AbstractOpenApiSchema.java",
+      "expected_test_path": "clients/derivatives-trading-portfolio-margin/src/test/java/com/binance/connector/client/derivatives_trading_portfolio_margin/websocket/stream/model/AbstractOpenApiSchemaTest.java"
+    },
+    {
+      "id": "openapi-diff-abstractopenapischema",
+      "java_file": "clients/derivatives-trading-usds-futures/src/main/java/com/binance/connector/client/derivatives_trading_usds_futures/websocket/api/model/AbstractOpenApiSchema.java",
+      "expected_test_path": "clients/derivatives-trading-usds-futures/src/test/java/com/binance/connector/client/derivatives_trading_usds_futures/websocket/api/model/AbstractOpenApiSchemaTest.java"
+    },
+    {
+      "id": "openapi-diff-abstractopenapischema",
+      "java_file": "clients/derivatives-trading-usds-futures/src/main/java/com/binance/connector/client/derivatives_trading_usds_futures/websocket/stream/model/AbstractOpenApiSchema.java",
+      "expected_test_path": "clients/derivatives-trading-usds-futures/src/test/java/com/binance/connector/client/derivatives_trading_usds_futures/websocket/stream/model/AbstractOpenApiSchemaTest.java"
+    },
+    {
+      "id": "openapi-diff-abstractopenapischema",
+      "java_file": "clients/margin-trading/src/main/java/com/binance/connector/client/margin_trading/websocket/stream/model/AbstractOpenApiSchema.java",
+      "expected_test_path": "clients/margin-trading/src/test/java/com/binance/connector/client/margin_trading/websocket/stream/model/AbstractOpenApiSchemaTest.java"
+    },
+    {
+      "id": "openapi-diff-abstractopenapischema",
+      "java_file": "clients/spot/src/main/java/com/binance/connector/client/spot/websocket/api/model/AbstractOpenApiSchema.java",
+      "expected_test_path": "clients/spot/src/test/java/com/binance/connector/client/spot/websocket/api/model/AbstractOpenApiSchemaTest.java"
+    },
+    {
+      "id": "openapi-diff-abstractopenapischema",
+      "java_file": "clients/spot/src/main/java/com/binance/connector/client/spot/websocket/stream/model/AbstractOpenApiSchema.java",
+      "expected_test_path": "clients/spot/src/test/java/com/binance/connector/client/spot/websocket/stream/model/AbstractOpenApiSchemaTest.java"
+    },
+    {
+      "id": "openapi-diff-openapicompare",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/OpenApiCompare.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/OpenApiCompareTest.java"
+    },
+    {
+      "id": "openapi-diff-apiresponsediff",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/compare/ApiResponseDiff.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/compare/ApiResponseDiffTest.java"
+    },
+    {
+      "id": "openapi-diff-cachekey",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/compare/CacheKey.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/compare/CacheKeyTest.java"
+    },
+    {
+      "id": "openapi-diff-contentdiff",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/compare/ContentDiff.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/compare/ContentDiffTest.java"
+    },
+    {
+      "id": "openapi-diff-extensionsdiff",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/compare/ExtensionsDiff.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/compare/ExtensionsDiffTest.java"
+    },
+    {
+      "id": "openapi-diff-headerdiff",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/compare/HeaderDiff.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/compare/HeaderDiffTest.java"
+    },
+    {
+      "id": "openapi-diff-headersdiff",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/compare/HeadersDiff.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/compare/HeadersDiffTest.java"
+    },
+    {
+      "id": "openapi-diff-listdiff",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/compare/ListDiff.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/compare/ListDiffTest.java"
+    },
+    {
+      "id": "openapi-diff-mapkeydiff",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/compare/MapKeyDiff.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/compare/MapKeyDiffTest.java"
+    },
+    {
+      "id": "openapi-diff-mediatypediff",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/compare/MediaTypeDiff.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/compare/MediaTypeDiffTest.java"
+    },
+    {
+      "id": "openapi-diff-oauthflowdiff",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/compare/OAuthFlowDiff.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/compare/OAuthFlowDiffTest.java"
+    },
+    {
+      "id": "openapi-diff-oauthflowsdiff",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/compare/OAuthFlowsDiff.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/compare/OAuthFlowsDiffTest.java"
+    },
+    {
+      "id": "openapi-diff-operationdiff",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/compare/OperationDiff.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/compare/OperationDiffTest.java"
+    },
+    {
+      "id": "openapi-diff-parameterdiff",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/compare/ParameterDiff.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/compare/ParameterDiffTest.java"
+    },
+    {
+      "id": "openapi-diff-parametersdiff",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/compare/ParametersDiff.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/compare/ParametersDiffTest.java"
+    },
+    {
+      "id": "openapi-diff-pathdiff",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/compare/PathDiff.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/compare/PathDiffTest.java"
+    },
+    {
+      "id": "openapi-diff-pathsdiff",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/compare/PathsDiff.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/compare/PathsDiffTest.java"
+    },
+    {
+      "id": "openapi-diff-referencediffcache",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/compare/ReferenceDiffCache.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/compare/ReferenceDiffCacheTest.java"
+    },
+    {
+      "id": "openapi-diff-requestbodydiff",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/compare/RequestBodyDiff.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/compare/RequestBodyDiffTest.java"
+    },
+    {
+      "id": "openapi-diff-responsediff",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/compare/ResponseDiff.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/compare/ResponseDiffTest.java"
+    },
+    {
+      "id": "openapi-diff-schemadiff",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/compare/SchemaDiff.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/compare/SchemaDiffTest.java"
+    },
+    {
+      "id": "openapi-diff-securitydiffinfo",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/compare/SecurityDiffInfo.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/compare/SecurityDiffInfoTest.java"
+    },
+    {
+      "id": "openapi-diff-securityrequirementdiff",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/compare/SecurityRequirementDiff.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/compare/SecurityRequirementDiffTest.java"
+    },
+    {
+      "id": "openapi-diff-securityrequirementsdiff",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/compare/SecurityRequirementsDiff.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/compare/SecurityRequirementsDiffTest.java"
+    },
+    {
+      "id": "openapi-diff-securityschemediff",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/compare/SecuritySchemeDiff.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/compare/SecuritySchemeDiffTest.java"
+    },
+    {
+      "id": "openapi-diff-defaultpathmatcher",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/compare/matchers/DefaultPathMatcher.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/compare/matchers/DefaultPathMatcherTest.java"
+    },
+    {
+      "id": "openapi-diff-arrayschemadiffresult",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/compare/schemadiffresult/ArraySchemaDiffResult.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/compare/schemadiffresult/ArraySchemaDiffResultTest.java"
+    },
+    {
+      "id": "openapi-diff-composedschemadiffresult",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/compare/schemadiffresult/ComposedSchemaDiffResult.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/compare/schemadiffresult/ComposedSchemaDiffResultTest.java"
+    },
+    {
+      "id": "openapi-diff-schemadiffresult",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/compare/schemadiffresult/SchemaDiffResult.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/compare/schemadiffresult/SchemaDiffResultTest.java"
+    },
+    {
+      "id": "openapi-diff-change",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/model/Change.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/model/ChangeTest.java"
+    },
+    {
+      "id": "openapi-diff-changedapiresponse",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/model/ChangedApiResponse.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/model/ChangedApiResponseTest.java"
+    },
+    {
+      "id": "openapi-diff-changedcontent",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/model/ChangedContent.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/model/ChangedContentTest.java"
+    },
+    {
+      "id": "openapi-diff-changedexample",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/model/ChangedExample.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/model/ChangedExampleTest.java"
+    },
+    {
+      "id": "openapi-diff-changedexamples",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/model/ChangedExamples.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/model/ChangedExamplesTest.java"
+    },
+    {
+      "id": "openapi-diff-changedextensions",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/model/ChangedExtensions.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/model/ChangedExtensionsTest.java"
+    },
+    {
+      "id": "openapi-diff-changedheader",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/model/ChangedHeader.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/model/ChangedHeaderTest.java"
+    },
+    {
+      "id": "openapi-diff-changedheaders",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/model/ChangedHeaders.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/model/ChangedHeadersTest.java"
+    },
+    {
+      "id": "openapi-diff-changedlist",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/model/ChangedList.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/model/ChangedListTest.java"
+    },
+    {
+      "id": "openapi-diff-changedmediatype",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/model/ChangedMediaType.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/model/ChangedMediaTypeTest.java"
+    },
+    {
+      "id": "openapi-diff-changedmetadata",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/model/ChangedMetadata.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/model/ChangedMetadataTest.java"
+    },
+    {
+      "id": "openapi-diff-changedoauthflow",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/model/ChangedOAuthFlow.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/model/ChangedOAuthFlowTest.java"
+    },
+    {
+      "id": "openapi-diff-changedoauthflows",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/model/ChangedOAuthFlows.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/model/ChangedOAuthFlowsTest.java"
+    },
+    {
+      "id": "openapi-diff-changedopenapi",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/model/ChangedOpenApi.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/model/ChangedOpenApiTest.java"
+    },
+    {
+      "id": "openapi-diff-changedoperation",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/model/ChangedOperation.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/model/ChangedOperationTest.java"
+    },
+    {
+      "id": "openapi-diff-changedparameter",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/model/ChangedParameter.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/model/ChangedParameterTest.java"
+    },
+    {
+      "id": "openapi-diff-changedparameters",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/model/ChangedParameters.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/model/ChangedParametersTest.java"
+    },
+    {
+      "id": "openapi-diff-changedpath",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/model/ChangedPath.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/model/ChangedPathTest.java"
+    },
+    {
+      "id": "openapi-diff-changedpaths",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/model/ChangedPaths.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/model/ChangedPathsTest.java"
+    },
+    {
+      "id": "openapi-diff-changedrequestbody",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/model/ChangedRequestBody.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/model/ChangedRequestBodyTest.java"
+    },
+    {
+      "id": "openapi-diff-changedresponse",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/model/ChangedResponse.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/model/ChangedResponseTest.java"
+    },
+    {
+      "id": "openapi-diff-changedschema",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/model/ChangedSchema.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/model/ChangedSchemaTest.java"
+    },
+    {
+      "id": "openapi-diff-changedsecurityrequirement",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/model/ChangedSecurityRequirement.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/model/ChangedSecurityRequirementTest.java"
+    },
+    {
+      "id": "openapi-diff-changedsecurityrequirements",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/model/ChangedSecurityRequirements.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/model/ChangedSecurityRequirementsTest.java"
+    },
+    {
+      "id": "openapi-diff-changedsecurityscheme",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/model/ChangedSecurityScheme.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/model/ChangedSecuritySchemeTest.java"
+    },
+    {
+      "id": "openapi-diff-composedchanged",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/model/ComposedChanged.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/model/ComposedChangedTest.java"
+    },
+    {
+      "id": "openapi-diff-diffcontext",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/model/DiffContext.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/model/DiffContextTest.java"
+    },
+    {
+      "id": "openapi-diff-endpoint",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/model/Endpoint.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/model/EndpointTest.java"
+    },
+    {
+      "id": "openapi-diff-deferredbuilder",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/model/deferred/DeferredBuilder.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/model/deferred/DeferredBuilderTest.java"
+    },
+    {
+      "id": "openapi-diff-deferredlogger",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/model/deferred/DeferredLogger.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/model/deferred/DeferredLoggerTest.java"
+    },
+    {
+      "id": "openapi-diff-deferredschemacache",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/model/deferred/DeferredSchemaCache.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/model/deferred/DeferredSchemaCacheTest.java"
+    },
+    {
+      "id": "openapi-diff-pendingchanged",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/model/deferred/PendingChanged.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/model/deferred/PendingChangedTest.java"
+    },
+    {
+      "id": "openapi-diff-recursiveschemaset",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/model/deferred/RecursiveSchemaSet.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/model/deferred/RecursiveSchemaSetTest.java"
+    },
+    {
+      "id": "openapi-diff-changedenum",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/model/schema/ChangedEnum.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/model/schema/ChangedEnumTest.java"
+    },
+    {
+      "id": "openapi-diff-changedmaxitems",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/model/schema/ChangedMaxItems.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/model/schema/ChangedMaxItemsTest.java"
+    },
+    {
+      "id": "openapi-diff-changedmaxlength",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/model/schema/ChangedMaxLength.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/model/schema/ChangedMaxLengthTest.java"
+    },
+    {
+      "id": "openapi-diff-changedmaxproperties",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/model/schema/ChangedMaxProperties.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/model/schema/ChangedMaxPropertiesTest.java"
+    },
+    {
+      "id": "openapi-diff-changedminitems",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/model/schema/ChangedMinItems.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/model/schema/ChangedMinItemsTest.java"
+    },
+    {
+      "id": "openapi-diff-changedminlength",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/model/schema/ChangedMinLength.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/model/schema/ChangedMinLengthTest.java"
+    },
+    {
+      "id": "openapi-diff-changedminproperties",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/model/schema/ChangedMinProperties.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/model/schema/ChangedMinPropertiesTest.java"
+    },
+    {
+      "id": "openapi-diff-changedmultipleof",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/model/schema/ChangedMultipleOf.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/model/schema/ChangedMultipleOfTest.java"
+    },
+    {
+      "id": "openapi-diff-changednullable",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/model/schema/ChangedNullable.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/model/schema/ChangedNullableTest.java"
+    },
+    {
+      "id": "openapi-diff-changednumericrange",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/model/schema/ChangedNumericRange.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/model/schema/ChangedNumericRangeTest.java"
+    },
+    {
+      "id": "openapi-diff-changedoneofschema",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/model/schema/ChangedOneOfSchema.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/model/schema/ChangedOneOfSchemaTest.java"
+    },
+    {
+      "id": "openapi-diff-changedoperationid",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/model/schema/ChangedOperationId.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/model/schema/ChangedOperationIdTest.java"
+    },
+    {
+      "id": "openapi-diff-changedpattern",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/model/schema/ChangedPattern.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/model/schema/ChangedPatternTest.java"
+    },
+    {
+      "id": "openapi-diff-changedreadonly",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/model/schema/ChangedReadOnly.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/model/schema/ChangedReadOnlyTest.java"
+    },
+    {
+      "id": "openapi-diff-changedrequired",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/model/schema/ChangedRequired.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/model/schema/ChangedRequiredTest.java"
+    },
+    {
+      "id": "openapi-diff-changeduniqueitems",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/model/schema/ChangedUniqueItems.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/model/schema/ChangedUniqueItemsTest.java"
+    },
+    {
+      "id": "openapi-diff-changedwriteonly",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/model/schema/ChangedWriteOnly.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/model/schema/ChangedWriteOnlyTest.java"
+    },
+    {
+      "id": "openapi-diff-asciidocrender",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/output/AsciidocRender.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/output/AsciidocRenderTest.java"
+    },
+    {
+      "id": "openapi-diff-consolerender",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/output/ConsoleRender.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/output/ConsoleRenderTest.java"
+    },
+    {
+      "id": "openapi-diff-htmlrender",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/output/HtmlRender.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/output/HtmlRenderTest.java"
+    },
+    {
+      "id": "openapi-diff-httpstatus",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/output/HttpStatus.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/output/HttpStatusTest.java"
+    },
+    {
+      "id": "openapi-diff-jsonrender",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/output/JsonRender.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/output/JsonRenderTest.java"
+    },
+    {
+      "id": "openapi-diff-markdownrender",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/output/MarkdownRender.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/output/MarkdownRenderTest.java"
+    },
+    {
+      "id": "openapi-diff-render",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/output/Render.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/output/RenderTest.java"
+    },
+    {
+      "id": "openapi-diff-changedutils",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/utils/ChangedUtils.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/utils/ChangedUtilsTest.java"
+    },
+    {
+      "id": "openapi-diff-copy",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/utils/Copy.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/utils/CopyTest.java"
+    },
+    {
+      "id": "openapi-diff-endpointutils",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/utils/EndpointUtils.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/utils/EndpointUtilsTest.java"
+    },
+    {
+      "id": "openapi-diff-fileutils",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/utils/FileUtils.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/utils/FileUtilsTest.java"
+    },
+    {
+      "id": "openapi-diff-refpointer",
+      "java_file": "core/src/main/java/org/openapitools/openapidiff/core/utils/RefPointer.java",
+      "expected_test_path": "core/src/test/java/org/openapitools/openapidiff/core/utils/RefPointerTest.java"
+    },
+    {
+      "id": "openapi-diff-openapidiffmojo",
+      "java_file": "maven/src/main/java/org/openapitools/openapidiff/maven/OpenApiDiffMojo.java",
+      "expected_test_path": "maven/src/test/java/org/openapitools/openapidiff/maven/OpenApiDiffMojoTest.java"
+    }
+  ],
+  "matrix": {
+    "providers": [
+      {
+        "name": "nvidia",
+        "model": "deepseek/deepseek-v4-pro"
+      }
+    ]
+  },
+  "run": {
+    "trials": 1,
+    "seed": 42,
+    "max_dependencies": 5,
+    "timeout_seconds": 300,
+    "retry_count": 1,
+    "concurrency": 1
+  },
+  "evaluation": {
+    "compile_cmd": "mvn test-compile -q -Drat.skip=true",
+    "test_cmd": "mvn test -q -Drat.skip=true -Dtest=AbstractOpenApiSchemaTest,ApiResponseDiffTest,ArraySchemaDiffResultTest,AsciidocRenderTest,CacheKeyTest,ChangeTest,ChangedApiResponseTest,ChangedContentTest,ChangedEnumTest,ChangedExampleTest,ChangedExamplesTest,ChangedExtensionsTest,ChangedHeaderTest,ChangedHeadersTest,ChangedListTest,ChangedMaxItemsTest,ChangedMaxLengthTest,ChangedMaxPropertiesTest,ChangedMediaTypeTest,ChangedMetadataTest,ChangedMinItemsTest,ChangedMinLengthTest,ChangedMinPropertiesTest,ChangedMultipleOfTest,ChangedNullableTest,ChangedNumericRangeTest,ChangedOAuthFlowTest,ChangedOAuthFlowsTest,ChangedOneOfSchemaTest,ChangedOpenApiTest,ChangedOperationIdTest,ChangedOperationTest,ChangedParameterTest,ChangedParametersTest,ChangedPathTest,ChangedPathsTest,ChangedPatternTest,ChangedReadOnlyTest,ChangedRequestBodyTest,ChangedRequiredTest,ChangedResponseTest,ChangedSchemaTest,ChangedSecurityRequirementTest,ChangedSecurityRequirementsTest,ChangedSecuritySchemeTest,ChangedUniqueItemsTest,ChangedUtilsTest,ChangedWriteOnlyTest,ComposedChangedTest,ComposedSchemaDiffResultTest,ConsoleRenderTest,ContentDiffTest,CopyTest,DefaultPathMatcherTest,DeferredBuilderTest,DeferredLoggerTest,DeferredSchemaCacheTest,DiffContextTest,EndpointTest,EndpointUtilsTest,ExtensionsDiffTest,FileUtilsTest,HeaderDiffTest,HeadersDiffTest,HtmlRenderTest,HttpStatusTest,JsonRenderTest,ListDiffTest,MainTest,MapKeyDiffTest,MarkdownRenderTest,MediaTypeDiffTest,OAuthFlowDiffTest,OAuthFlowsDiffTest,OpenApiCompareTest,OpenApiDiffMojoTest,OperationDiffTest,ParameterDiffTest,ParametersDiffTest,PathDiffTest,PathsDiffTest,PendingChangedTest,RecursiveSchemaSetTest,RefPointerTest,ReferenceDiffCacheTest,RenderTest,RequestBodyDiffTest,ResponseDiffTest,SchemaDiffResultTest,SchemaDiffTest,SecurityDiffInfoTest,SecurityRequirementDiffTest,SecurityRequirementsDiffTest,SecuritySchemeDiffTest",
+    "run_pit": false
+  },
+  "scoring": {
+    "weights": {
+      "success": 0.5,
+      "coverage": 0.3,
+      "latency": 0.2
+    }
+  }
+}

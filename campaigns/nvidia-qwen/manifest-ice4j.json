@@ -1,0 +1,654 @@
+{
+  "manifest_version": 1,
+  "project_root": "datasets/reftest-12/ice4j",
+  "dataset": [
+    {
+      "id": "ice4j-basestunmessageevent",
+      "java_file": "src/main/java/org/ice4j/BaseStunMessageEvent.java",
+      "expected_test_path": "src/test/java/org/ice4j/BaseStunMessageEventTest.java"
+    },
+    {
+      "id": "ice4j-stackproperties",
+      "java_file": "src/main/java/org/ice4j/StackProperties.java",
+      "expected_test_path": "src/test/java/org/ice4j/StackPropertiesTest.java"
+    },
+    {
+      "id": "ice4j-stunfailureevent",
+      "java_file": "src/main/java/org/ice4j/StunFailureEvent.java",
+      "expected_test_path": "src/test/java/org/ice4j/StunFailureEventTest.java"
+    },
+    {
+      "id": "ice4j-stunmessageevent",
+      "java_file": "src/main/java/org/ice4j/StunMessageEvent.java",
+      "expected_test_path": "src/test/java/org/ice4j/StunMessageEventTest.java"
+    },
+    {
+      "id": "ice4j-stuntimeoutevent",
+      "java_file": "src/main/java/org/ice4j/StunTimeoutEvent.java",
+      "expected_test_path": "src/test/java/org/ice4j/StunTimeoutEventTest.java"
+    },
+    {
+      "id": "ice4j-transportaddress",
+      "java_file": "src/main/java/org/ice4j/TransportAddress.java",
+      "expected_test_path": "src/test/java/org/ice4j/TransportAddressTest.java"
+    },
+    {
+      "id": "ice4j-addressattribute",
+      "java_file": "src/main/java/org/ice4j/attribute/AddressAttribute.java",
+      "expected_test_path": "src/test/java/org/ice4j/attribute/AddressAttributeTest.java"
+    },
+    {
+      "id": "ice4j-attributedecoder",
+      "java_file": "src/main/java/org/ice4j/attribute/AttributeDecoder.java",
+      "expected_test_path": "src/test/java/org/ice4j/attribute/AttributeDecoderTest.java"
+    },
+    {
+      "id": "ice4j-attributefactory",
+      "java_file": "src/main/java/org/ice4j/attribute/AttributeFactory.java",
+      "expected_test_path": "src/test/java/org/ice4j/attribute/AttributeFactoryTest.java"
+    },
+    {
+      "id": "ice4j-changerequestattribute",
+      "java_file": "src/main/java/org/ice4j/attribute/ChangeRequestAttribute.java",
+      "expected_test_path": "src/test/java/org/ice4j/attribute/ChangeRequestAttributeTest.java"
+    },
+    {
+      "id": "ice4j-channelnumberattribute",
+      "java_file": "src/main/java/org/ice4j/attribute/ChannelNumberAttribute.java",
+      "expected_test_path": "src/test/java/org/ice4j/attribute/ChannelNumberAttributeTest.java"
+    },
+    {
+      "id": "ice4j-connectionidattribute",
+      "java_file": "src/main/java/org/ice4j/attribute/ConnectionIdAttribute.java",
+      "expected_test_path": "src/test/java/org/ice4j/attribute/ConnectionIdAttributeTest.java"
+    },
+    {
+      "id": "ice4j-dataattribute",
+      "java_file": "src/main/java/org/ice4j/attribute/DataAttribute.java",
+      "expected_test_path": "src/test/java/org/ice4j/attribute/DataAttributeTest.java"
+    },
+    {
+      "id": "ice4j-dontfragmentattribute",
+      "java_file": "src/main/java/org/ice4j/attribute/DontFragmentAttribute.java",
+      "expected_test_path": "src/test/java/org/ice4j/attribute/DontFragmentAttributeTest.java"
+    },
+    {
+      "id": "ice4j-errorcodeattribute",
+      "java_file": "src/main/java/org/ice4j/attribute/ErrorCodeAttribute.java",
+      "expected_test_path": "src/test/java/org/ice4j/attribute/ErrorCodeAttributeTest.java"
+    },
+    {
+      "id": "ice4j-evenportattribute",
+      "java_file": "src/main/java/org/ice4j/attribute/EvenPortAttribute.java",
+      "expected_test_path": "src/test/java/org/ice4j/attribute/EvenPortAttributeTest.java"
+    },
+    {
+      "id": "ice4j-fingerprintattribute",
+      "java_file": "src/main/java/org/ice4j/attribute/FingerprintAttribute.java",
+      "expected_test_path": "src/test/java/org/ice4j/attribute/FingerprintAttributeTest.java"
+    },
+    {
+      "id": "ice4j-icecontrolattribute",
+      "java_file": "src/main/java/org/ice4j/attribute/IceControlAttribute.java",
+      "expected_test_path": "src/test/java/org/ice4j/attribute/IceControlAttributeTest.java"
+    },
+    {
+      "id": "ice4j-lifetimeattribute",
+      "java_file": "src/main/java/org/ice4j/attribute/LifetimeAttribute.java",
+      "expected_test_path": "src/test/java/org/ice4j/attribute/LifetimeAttributeTest.java"
+    },
+    {
+      "id": "ice4j-magiccookieattribute",
+      "java_file": "src/main/java/org/ice4j/attribute/MagicCookieAttribute.java",
+      "expected_test_path": "src/test/java/org/ice4j/attribute/MagicCookieAttributeTest.java"
+    },
+    {
+      "id": "ice4j-messageintegrityattribute",
+      "java_file": "src/main/java/org/ice4j/attribute/MessageIntegrityAttribute.java",
+      "expected_test_path": "src/test/java/org/ice4j/attribute/MessageIntegrityAttributeTest.java"
+    },
+    {
+      "id": "ice4j-nonceattribute",
+      "java_file": "src/main/java/org/ice4j/attribute/NonceAttribute.java",
+      "expected_test_path": "src/test/java/org/ice4j/attribute/NonceAttributeTest.java"
+    },
+    {
+      "id": "ice4j-optionalattribute",
+      "java_file": "src/main/java/org/ice4j/attribute/OptionalAttribute.java",
+      "expected_test_path": "src/test/java/org/ice4j/attribute/OptionalAttributeTest.java"
+    },
+    {
+      "id": "ice4j-priorityattribute",
+      "java_file": "src/main/java/org/ice4j/attribute/PriorityAttribute.java",
+      "expected_test_path": "src/test/java/org/ice4j/attribute/PriorityAttributeTest.java"
+    },
+    {
+      "id": "ice4j-realmattribute",
+      "java_file": "src/main/java/org/ice4j/attribute/RealmAttribute.java",
+      "expected_test_path": "src/test/java/org/ice4j/attribute/RealmAttributeTest.java"
+    },
+    {
+      "id": "ice4j-requestedaddressfamilyattribute",
+      "java_file": "src/main/java/org/ice4j/attribute/RequestedAddressFamilyAttribute.java",
+      "expected_test_path": "src/test/java/org/ice4j/attribute/RequestedAddressFamilyAttributeTest.java"
+    },
+    {
+      "id": "ice4j-requestedtransportattribute",
+      "java_file": "src/main/java/org/ice4j/attribute/RequestedTransportAttribute.java",
+      "expected_test_path": "src/test/java/org/ice4j/attribute/RequestedTransportAttributeTest.java"
+    },
+    {
+      "id": "ice4j-reservationtokenattribute",
+      "java_file": "src/main/java/org/ice4j/attribute/ReservationTokenAttribute.java",
+      "expected_test_path": "src/test/java/org/ice4j/attribute/ReservationTokenAttributeTest.java"
+    },
+    {
+      "id": "ice4j-softwareattribute",
+      "java_file": "src/main/java/org/ice4j/attribute/SoftwareAttribute.java",
+      "expected_test_path": "src/test/java/org/ice4j/attribute/SoftwareAttributeTest.java"
+    },
+    {
+      "id": "ice4j-unknownattributesattribute",
+      "java_file": "src/main/java/org/ice4j/attribute/UnknownAttributesAttribute.java",
+      "expected_test_path": "src/test/java/org/ice4j/attribute/UnknownAttributesAttributeTest.java"
+    },
+    {
+      "id": "ice4j-usecandidateattribute",
+      "java_file": "src/main/java/org/ice4j/attribute/UseCandidateAttribute.java",
+      "expected_test_path": "src/test/java/org/ice4j/attribute/UseCandidateAttributeTest.java"
+    },
+    {
+      "id": "ice4j-usernameattribute",
+      "java_file": "src/main/java/org/ice4j/attribute/UsernameAttribute.java",
+      "expected_test_path": "src/test/java/org/ice4j/attribute/UsernameAttributeTest.java"
+    },
+    {
+      "id": "ice4j-xormappedaddressattribute",
+      "java_file": "src/main/java/org/ice4j/attribute/XorMappedAddressAttribute.java",
+      "expected_test_path": "src/test/java/org/ice4j/attribute/XorMappedAddressAttributeTest.java"
+    },
+    {
+      "id": "ice4j-xoronlyattribute",
+      "java_file": "src/main/java/org/ice4j/attribute/XorOnlyAttribute.java",
+      "expected_test_path": "src/test/java/org/ice4j/attribute/XorOnlyAttributeTest.java"
+    },
+    {
+      "id": "ice4j-agent",
+      "java_file": "src/main/java/org/ice4j/ice/Agent.java",
+      "expected_test_path": "src/test/java/org/ice4j/ice/AgentTest.java"
+    },
+    {
+      "id": "ice4j-candidate",
+      "java_file": "src/main/java/org/ice4j/ice/Candidate.java",
+      "expected_test_path": "src/test/java/org/ice4j/ice/CandidateTest.java"
+    },
+    {
+      "id": "ice4j-candidatepair",
+      "java_file": "src/main/java/org/ice4j/ice/CandidatePair.java",
+      "expected_test_path": "src/test/java/org/ice4j/ice/CandidatePairTest.java"
+    },
+    {
+      "id": "ice4j-candidateprioritizer",
+      "java_file": "src/main/java/org/ice4j/ice/CandidatePrioritizer.java",
+      "expected_test_path": "src/test/java/org/ice4j/ice/CandidatePrioritizerTest.java"
+    },
+    {
+      "id": "ice4j-checklist",
+      "java_file": "src/main/java/org/ice4j/ice/CheckList.java",
+      "expected_test_path": "src/test/java/org/ice4j/ice/CheckListTest.java"
+    },
+    {
+      "id": "ice4j-component",
+      "java_file": "src/main/java/org/ice4j/ice/Component.java",
+      "expected_test_path": "src/test/java/org/ice4j/ice/ComponentTest.java"
+    },
+    {
+      "id": "ice4j-componentsocket",
+      "java_file": "src/main/java/org/ice4j/ice/ComponentSocket.java",
+      "expected_test_path": "src/test/java/org/ice4j/ice/ComponentSocketTest.java"
+    },
+    {
+      "id": "ice4j-connectivitycheckclient",
+      "java_file": "src/main/java/org/ice4j/ice/ConnectivityCheckClient.java",
+      "expected_test_path": "src/test/java/org/ice4j/ice/ConnectivityCheckClientTest.java"
+    },
+    {
+      "id": "ice4j-connectivitycheckserver",
+      "java_file": "src/main/java/org/ice4j/ice/ConnectivityCheckServer.java",
+      "expected_test_path": "src/test/java/org/ice4j/ice/ConnectivityCheckServerTest.java"
+    },
+    {
+      "id": "ice4j-defaultnominator",
+      "java_file": "src/main/java/org/ice4j/ice/DefaultNominator.java",
+      "expected_test_path": "src/test/java/org/ice4j/ice/DefaultNominatorTest.java"
+    },
+    {
+      "id": "ice4j-foundationsregistry",
+      "java_file": "src/main/java/org/ice4j/ice/FoundationsRegistry.java",
+      "expected_test_path": "src/test/java/org/ice4j/ice/FoundationsRegistryTest.java"
+    },
+    {
+      "id": "ice4j-googlerelayedcandidate",
+      "java_file": "src/main/java/org/ice4j/ice/GoogleRelayedCandidate.java",
+      "expected_test_path": "src/test/java/org/ice4j/ice/GoogleRelayedCandidateTest.java"
+    },
+    {
+      "id": "ice4j-icemediastream",
+      "java_file": "src/main/java/org/ice4j/ice/IceMediaStream.java",
+      "expected_test_path": "src/test/java/org/ice4j/ice/IceMediaStreamTest.java"
+    },
+    {
+      "id": "ice4j-localcandidate",
+      "java_file": "src/main/java/org/ice4j/ice/LocalCandidate.java",
+      "expected_test_path": "src/test/java/org/ice4j/ice/LocalCandidateTest.java"
+    },
+    {
+      "id": "ice4j-networkutils",
+      "java_file": "src/main/java/org/ice4j/ice/NetworkUtils.java",
+      "expected_test_path": "src/test/java/org/ice4j/ice/NetworkUtilsTest.java"
+    },
+    {
+      "id": "ice4j-relayedcandidate",
+      "java_file": "src/main/java/org/ice4j/ice/RelayedCandidate.java",
+      "expected_test_path": "src/test/java/org/ice4j/ice/RelayedCandidateTest.java"
+    },
+    {
+      "id": "ice4j-remotecandidate",
+      "java_file": "src/main/java/org/ice4j/ice/RemoteCandidate.java",
+      "expected_test_path": "src/test/java/org/ice4j/ice/RemoteCandidateTest.java"
+    },
+    {
+      "id": "ice4j-serverreflexivecandidate",
+      "java_file": "src/main/java/org/ice4j/ice/ServerReflexiveCandidate.java",
+      "expected_test_path": "src/test/java/org/ice4j/ice/ServerReflexiveCandidateTest.java"
+    },
+    {
+      "id": "ice4j-tcphostcandidate",
+      "java_file": "src/main/java/org/ice4j/ice/TcpHostCandidate.java",
+      "expected_test_path": "src/test/java/org/ice4j/ice/TcpHostCandidateTest.java"
+    },
+    {
+      "id": "ice4j-upnpcandidate",
+      "java_file": "src/main/java/org/ice4j/ice/UPNPCandidate.java",
+      "expected_test_path": "src/test/java/org/ice4j/ice/UPNPCandidateTest.java"
+    },
+    {
+      "id": "ice4j-abstracttcplistener",
+      "java_file": "src/main/java/org/ice4j/ice/harvest/AbstractTcpListener.java",
+      "expected_test_path": "src/test/java/org/ice4j/ice/harvest/AbstractTcpListenerTest.java"
+    },
+    {
+      "id": "ice4j-abstractudplistener",
+      "java_file": "src/main/java/org/ice4j/ice/harvest/AbstractUdpListener.java",
+      "expected_test_path": "src/test/java/org/ice4j/ice/harvest/AbstractUdpListenerTest.java"
+    },
+    {
+      "id": "ice4j-awscandidateharvester",
+      "java_file": "src/main/java/org/ice4j/ice/harvest/AwsCandidateHarvester.java",
+      "expected_test_path": "src/test/java/org/ice4j/ice/harvest/AwsCandidateHarvesterTest.java"
+    },
+    {
+      "id": "ice4j-candidateharvesterset",
+      "java_file": "src/main/java/org/ice4j/ice/harvest/CandidateHarvesterSet.java",
+      "expected_test_path": "src/test/java/org/ice4j/ice/harvest/CandidateHarvesterSetTest.java"
+    },
+    {
+      "id": "ice4j-candidateharvestersetelement",
+      "java_file": "src/main/java/org/ice4j/ice/harvest/CandidateHarvesterSetElement.java",
+      "expected_test_path": "src/test/java/org/ice4j/ice/harvest/CandidateHarvesterSetElementTest.java"
+    },
+    {
+      "id": "ice4j-candidateharvestersettask",
+      "java_file": "src/main/java/org/ice4j/ice/harvest/CandidateHarvesterSetTask.java",
+      "expected_test_path": "src/test/java/org/ice4j/ice/harvest/CandidateHarvesterSetTaskTest.java"
+    },
+    {
+      "id": "ice4j-googleturncandidateharvest",
+      "java_file": "src/main/java/org/ice4j/ice/harvest/GoogleTurnCandidateHarvest.java",
+      "expected_test_path": "src/test/java/org/ice4j/ice/harvest/GoogleTurnCandidateHarvestTest.java"
+    },
+    {
+      "id": "ice4j-googleturncandidateharvester",
+      "java_file": "src/main/java/org/ice4j/ice/harvest/GoogleTurnCandidateHarvester.java",
+      "expected_test_path": "src/test/java/org/ice4j/ice/harvest/GoogleTurnCandidateHarvesterTest.java"
+    },
+    {
+      "id": "ice4j-googleturnsslcandidateharvester",
+      "java_file": "src/main/java/org/ice4j/ice/harvest/GoogleTurnSSLCandidateHarvester.java",
+      "expected_test_path": "src/test/java/org/ice4j/ice/harvest/GoogleTurnSSLCandidateHarvesterTest.java"
+    },
+    {
+      "id": "ice4j-harveststatistics",
+      "java_file": "src/main/java/org/ice4j/ice/harvest/HarvestStatistics.java",
+      "expected_test_path": "src/test/java/org/ice4j/ice/harvest/HarvestStatisticsTest.java"
+    },
+    {
+      "id": "ice4j-hostcandidateharvester",
+      "java_file": "src/main/java/org/ice4j/ice/harvest/HostCandidateHarvester.java",
+      "expected_test_path": "src/test/java/org/ice4j/ice/harvest/HostCandidateHarvesterTest.java"
+    },
+    {
+      "id": "ice4j-mappingcandidateharvesters",
+      "java_file": "src/main/java/org/ice4j/ice/harvest/MappingCandidateHarvesters.java",
+      "expected_test_path": "src/test/java/org/ice4j/ice/harvest/MappingCandidateHarvestersTest.java"
+    },
+    {
+      "id": "ice4j-singleportudpharvester",
+      "java_file": "src/main/java/org/ice4j/ice/harvest/SinglePortUdpHarvester.java",
+      "expected_test_path": "src/test/java/org/ice4j/ice/harvest/SinglePortUdpHarvesterTest.java"
+    },
+    {
+      "id": "ice4j-stuncandidateharvest",
+      "java_file": "src/main/java/org/ice4j/ice/harvest/StunCandidateHarvest.java",
+      "expected_test_path": "src/test/java/org/ice4j/ice/harvest/StunCandidateHarvestTest.java"
+    },
+    {
+      "id": "ice4j-stuncandidateharvester",
+      "java_file": "src/main/java/org/ice4j/ice/harvest/StunCandidateHarvester.java",
+      "expected_test_path": "src/test/java/org/ice4j/ice/harvest/StunCandidateHarvesterTest.java"
+    },
+    {
+      "id": "ice4j-stunmappingcandidateharvester",
+      "java_file": "src/main/java/org/ice4j/ice/harvest/StunMappingCandidateHarvester.java",
+      "expected_test_path": "src/test/java/org/ice4j/ice/harvest/StunMappingCandidateHarvesterTest.java"
+    },
+    {
+      "id": "ice4j-tcpharvester",
+      "java_file": "src/main/java/org/ice4j/ice/harvest/TcpHarvester.java",
+      "expected_test_path": "src/test/java/org/ice4j/ice/harvest/TcpHarvesterTest.java"
+    },
+    {
+      "id": "ice4j-turncandidateharvest",
+      "java_file": "src/main/java/org/ice4j/ice/harvest/TurnCandidateHarvest.java",
+      "expected_test_path": "src/test/java/org/ice4j/ice/harvest/TurnCandidateHarvestTest.java"
+    },
+    {
+      "id": "ice4j-upnpharvester",
+      "java_file": "src/main/java/org/ice4j/ice/harvest/UPNPHarvester.java",
+      "expected_test_path": "src/test/java/org/ice4j/ice/harvest/UPNPHarvesterTest.java"
+    },
+    {
+      "id": "ice4j-candidateattribute",
+      "java_file": "src/main/java/org/ice4j/ice/sdp/CandidateAttribute.java",
+      "expected_test_path": "src/test/java/org/ice4j/ice/sdp/CandidateAttributeTest.java"
+    },
+    {
+      "id": "ice4j-icesdputils",
+      "java_file": "src/main/java/org/ice4j/ice/sdp/IceSdpUtils.java",
+      "expected_test_path": "src/test/java/org/ice4j/ice/sdp/IceSdpUtilsTest.java"
+    },
+    {
+      "id": "ice4j-channeldata",
+      "java_file": "src/main/java/org/ice4j/message/ChannelData.java",
+      "expected_test_path": "src/test/java/org/ice4j/message/ChannelDataTest.java"
+    },
+    {
+      "id": "ice4j-indication",
+      "java_file": "src/main/java/org/ice4j/message/Indication.java",
+      "expected_test_path": "src/test/java/org/ice4j/message/IndicationTest.java"
+    },
+    {
+      "id": "ice4j-message",
+      "java_file": "src/main/java/org/ice4j/message/Message.java",
+      "expected_test_path": "src/test/java/org/ice4j/message/MessageTest.java"
+    },
+    {
+      "id": "ice4j-messagefactory",
+      "java_file": "src/main/java/org/ice4j/message/MessageFactory.java",
+      "expected_test_path": "src/test/java/org/ice4j/message/MessageFactoryTest.java"
+    },
+    {
+      "id": "ice4j-request",
+      "java_file": "src/main/java/org/ice4j/message/Request.java",
+      "expected_test_path": "src/test/java/org/ice4j/message/RequestTest.java"
+    },
+    {
+      "id": "ice4j-response",
+      "java_file": "src/main/java/org/ice4j/message/Response.java",
+      "expected_test_path": "src/test/java/org/ice4j/message/ResponseTest.java"
+    },
+    {
+      "id": "ice4j-credentialsmanager",
+      "java_file": "src/main/java/org/ice4j/security/CredentialsManager.java",
+      "expected_test_path": "src/test/java/org/ice4j/security/CredentialsManagerTest.java"
+    },
+    {
+      "id": "ice4j-longtermcredential",
+      "java_file": "src/main/java/org/ice4j/security/LongTermCredential.java",
+      "expected_test_path": "src/test/java/org/ice4j/security/LongTermCredentialTest.java"
+    },
+    {
+      "id": "ice4j-longtermcredentialsession",
+      "java_file": "src/main/java/org/ice4j/security/LongTermCredentialSession.java",
+      "expected_test_path": "src/test/java/org/ice4j/security/LongTermCredentialSessionTest.java"
+    },
+    {
+      "id": "ice4j-basedelegatingserversocketchannel",
+      "java_file": "src/main/java/org/ice4j/socket/BaseDelegatingServerSocketChannel.java",
+      "expected_test_path": "src/test/java/org/ice4j/socket/BaseDelegatingServerSocketChannelTest.java"
+    },
+    {
+      "id": "ice4j-basedelegatingsocketchannel",
+      "java_file": "src/main/java/org/ice4j/socket/BaseDelegatingSocketChannel.java",
+      "expected_test_path": "src/test/java/org/ice4j/socket/BaseDelegatingSocketChannelTest.java"
+    },
+    {
+      "id": "ice4j-dtlsdatagramfilter",
+      "java_file": "src/main/java/org/ice4j/socket/DTLSDatagramFilter.java",
+      "expected_test_path": "src/test/java/org/ice4j/socket/DTLSDatagramFilterTest.java"
+    },
+    {
+      "id": "ice4j-delegatingdatagramsocket",
+      "java_file": "src/main/java/org/ice4j/socket/DelegatingDatagramSocket.java",
+      "expected_test_path": "src/test/java/org/ice4j/socket/DelegatingDatagramSocketTest.java"
+    },
+    {
+      "id": "ice4j-delegatingserversocket",
+      "java_file": "src/main/java/org/ice4j/socket/DelegatingServerSocket.java",
+      "expected_test_path": "src/test/java/org/ice4j/socket/DelegatingServerSocketTest.java"
+    },
+    {
+      "id": "ice4j-delegatingsocket",
+      "java_file": "src/main/java/org/ice4j/socket/DelegatingSocket.java",
+      "expected_test_path": "src/test/java/org/ice4j/socket/DelegatingSocketTest.java"
+    },
+    {
+      "id": "ice4j-googlerelayedcandidatedatagramsocket",
+      "java_file": "src/main/java/org/ice4j/socket/GoogleRelayedCandidateDatagramSocket.java",
+      "expected_test_path": "src/test/java/org/ice4j/socket/GoogleRelayedCandidateDatagramSocketTest.java"
+    },
+    {
+      "id": "ice4j-googlerelayedcandidatedelegate",
+      "java_file": "src/main/java/org/ice4j/socket/GoogleRelayedCandidateDelegate.java",
+      "expected_test_path": "src/test/java/org/ice4j/socket/GoogleRelayedCandidateDelegateTest.java"
+    },
+    {
+      "id": "ice4j-googlerelayedcandidatesocket",
+      "java_file": "src/main/java/org/ice4j/socket/GoogleRelayedCandidateSocket.java",
+      "expected_test_path": "src/test/java/org/ice4j/socket/GoogleRelayedCandidateSocketTest.java"
+    },
+    {
+      "id": "ice4j-httpdemuxfilter",
+      "java_file": "src/main/java/org/ice4j/socket/HttpDemuxFilter.java",
+      "expected_test_path": "src/test/java/org/ice4j/socket/HttpDemuxFilterTest.java"
+    },
+    {
+      "id": "ice4j-icetcpserversocketwrapper",
+      "java_file": "src/main/java/org/ice4j/socket/IceTcpServerSocketWrapper.java",
+      "expected_test_path": "src/test/java/org/ice4j/socket/IceTcpServerSocketWrapperTest.java"
+    },
+    {
+      "id": "ice4j-icetcpsocketwrapper",
+      "java_file": "src/main/java/org/ice4j/socket/IceTcpSocketWrapper.java",
+      "expected_test_path": "src/test/java/org/ice4j/socket/IceTcpSocketWrapperTest.java"
+    },
+    {
+      "id": "ice4j-mergingdatagramsocket",
+      "java_file": "src/main/java/org/ice4j/socket/MergingDatagramSocket.java",
+      "expected_test_path": "src/test/java/org/ice4j/socket/MergingDatagramSocketTest.java"
+    },
+    {
+      "id": "ice4j-multiplexingdatagramsocket",
+      "java_file": "src/main/java/org/ice4j/socket/MultiplexingDatagramSocket.java",
+      "expected_test_path": "src/test/java/org/ice4j/socket/MultiplexingDatagramSocketTest.java"
+    },
+    {
+      "id": "ice4j-multiplexingsocket",
+      "java_file": "src/main/java/org/ice4j/socket/MultiplexingSocket.java",
+      "expected_test_path": "src/test/java/org/ice4j/socket/MultiplexingSocketTest.java"
+    },
+    {
+      "id": "ice4j-multiplexingxxxsocketsupport",
+      "java_file": "src/main/java/org/ice4j/socket/MultiplexingXXXSocketSupport.java",
+      "expected_test_path": "src/test/java/org/ice4j/socket/MultiplexingXXXSocketSupportTest.java"
+    },
+    {
+      "id": "ice4j-muxserversocketchannelfactory",
+      "java_file": "src/main/java/org/ice4j/socket/MuxServerSocketChannelFactory.java",
+      "expected_test_path": "src/test/java/org/ice4j/socket/MuxServerSocketChannelFactoryTest.java"
+    },
+    {
+      "id": "ice4j-relayedcandidatedatagramsocket",
+      "java_file": "src/main/java/org/ice4j/socket/RelayedCandidateDatagramSocket.java",
+      "expected_test_path": "src/test/java/org/ice4j/socket/RelayedCandidateDatagramSocketTest.java"
+    },
+    {
+      "id": "ice4j-rtcpdemuxpacketfilter",
+      "java_file": "src/main/java/org/ice4j/socket/RtcpDemuxPacketFilter.java",
+      "expected_test_path": "src/test/java/org/ice4j/socket/RtcpDemuxPacketFilterTest.java"
+    },
+    {
+      "id": "ice4j-safeclosedatagramsocket",
+      "java_file": "src/main/java/org/ice4j/socket/SafeCloseDatagramSocket.java",
+      "expected_test_path": "src/test/java/org/ice4j/socket/SafeCloseDatagramSocketTest.java"
+    },
+    {
+      "id": "ice4j-socketreceivebuffer",
+      "java_file": "src/main/java/org/ice4j/socket/SocketReceiveBuffer.java",
+      "expected_test_path": "src/test/java/org/ice4j/socket/SocketReceiveBufferTest.java"
+    },
+    {
+      "id": "ice4j-stundatagrampacketfilter",
+      "java_file": "src/main/java/org/ice4j/socket/StunDatagramPacketFilter.java",
+      "expected_test_path": "src/test/java/org/ice4j/socket/StunDatagramPacketFilterTest.java"
+    },
+    {
+      "id": "ice4j-tcpinputstream",
+      "java_file": "src/main/java/org/ice4j/socket/TCPInputStream.java",
+      "expected_test_path": "src/test/java/org/ice4j/socket/TCPInputStreamTest.java"
+    },
+    {
+      "id": "ice4j-tcpoutputstream",
+      "java_file": "src/main/java/org/ice4j/socket/TCPOutputStream.java",
+      "expected_test_path": "src/test/java/org/ice4j/socket/TCPOutputStreamTest.java"
+    },
+    {
+      "id": "ice4j-turndatagrampacketfilter",
+      "java_file": "src/main/java/org/ice4j/socket/TurnDatagramPacketFilter.java",
+      "expected_test_path": "src/test/java/org/ice4j/socket/TurnDatagramPacketFilterTest.java"
+    },
+    {
+      "id": "ice4j-connector",
+      "java_file": "src/main/java/org/ice4j/stack/Connector.java",
+      "expected_test_path": "src/test/java/org/ice4j/stack/ConnectorTest.java"
+    },
+    {
+      "id": "ice4j-eventdispatcher",
+      "java_file": "src/main/java/org/ice4j/stack/EventDispatcher.java",
+      "expected_test_path": "src/test/java/org/ice4j/stack/EventDispatcherTest.java"
+    },
+    {
+      "id": "ice4j-messageprocessingtask",
+      "java_file": "src/main/java/org/ice4j/stack/MessageProcessingTask.java",
+      "expected_test_path": "src/test/java/org/ice4j/stack/MessageProcessingTaskTest.java"
+    },
+    {
+      "id": "ice4j-netaccessmanager",
+      "java_file": "src/main/java/org/ice4j/stack/NetAccessManager.java",
+      "expected_test_path": "src/test/java/org/ice4j/stack/NetAccessManagerTest.java"
+    },
+    {
+      "id": "ice4j-rawmessage",
+      "java_file": "src/main/java/org/ice4j/stack/RawMessage.java",
+      "expected_test_path": "src/test/java/org/ice4j/stack/RawMessageTest.java"
+    },
+    {
+      "id": "ice4j-stunclienttransaction",
+      "java_file": "src/main/java/org/ice4j/stack/StunClientTransaction.java",
+      "expected_test_path": "src/test/java/org/ice4j/stack/StunClientTransactionTest.java"
+    },
+    {
+      "id": "ice4j-stunservertransaction",
+      "java_file": "src/main/java/org/ice4j/stack/StunServerTransaction.java",
+      "expected_test_path": "src/test/java/org/ice4j/stack/StunServerTransactionTest.java"
+    },
+    {
+      "id": "ice4j-stunstack",
+      "java_file": "src/main/java/org/ice4j/stack/StunStack.java",
+      "expected_test_path": "src/test/java/org/ice4j/stack/StunStackTest.java"
+    },
+    {
+      "id": "ice4j-transactionid",
+      "java_file": "src/main/java/org/ice4j/stack/TransactionID.java",
+      "expected_test_path": "src/test/java/org/ice4j/stack/TransactionIDTest.java"
+    },
+    {
+      "id": "ice4j-blockingrequestsender",
+      "java_file": "src/main/java/org/ice4j/stunclient/BlockingRequestSender.java",
+      "expected_test_path": "src/test/java/org/ice4j/stunclient/BlockingRequestSenderTest.java"
+    },
+    {
+      "id": "ice4j-networkconfigurationdiscoveryprocess",
+      "java_file": "src/main/java/org/ice4j/stunclient/NetworkConfigurationDiscoveryProcess.java",
+      "expected_test_path": "src/test/java/org/ice4j/stunclient/NetworkConfigurationDiscoveryProcessTest.java"
+    },
+    {
+      "id": "ice4j-simpleaddressdetector",
+      "java_file": "src/main/java/org/ice4j/stunclient/SimpleAddressDetector.java",
+      "expected_test_path": "src/test/java/org/ice4j/stunclient/SimpleAddressDetectorTest.java"
+    },
+    {
+      "id": "ice4j-stundiscoveryreport",
+      "java_file": "src/main/java/org/ice4j/stunclient/StunDiscoveryReport.java",
+      "expected_test_path": "src/test/java/org/ice4j/stunclient/StunDiscoveryReportTest.java"
+    },
+    {
+      "id": "ice4j-ice4jlogformatter",
+      "java_file": "src/main/java/org/ice4j/util/Ice4jLogFormatter.java",
+      "expected_test_path": "src/test/java/org/ice4j/util/Ice4jLogFormatterTest.java"
+    },
+    {
+      "id": "ice4j-periodicrunnable",
+      "java_file": "src/main/java/org/ice4j/util/PeriodicRunnable.java",
+      "expected_test_path": "src/test/java/org/ice4j/util/PeriodicRunnableTest.java"
+    }
+  ],
+  "matrix": {
+    "providers": [
+      {
+        "name": "nvidia",
+        "model": "qwen/qwen3.5-122b-a10b"
+      }
+    ]
+  },
+  "run": {
+    "trials": 1,
+    "seed": 42,
+    "max_dependencies": 5,
+    "timeout_seconds": 300,
+    "retry_count": 1,
+    "concurrency": 1
+  },
+  "evaluation": {
+    "compile_cmd": "mvn test-compile -q -Drat.skip=true",
+    "test_cmd": "mvn test -q -Drat.skip=true -Dtest=AbstractTcpListenerTest,AbstractUdpListenerTest,AddressAttributeTest,AgentTest,AttributeDecoderTest,AttributeFactoryTest,AwsCandidateHarvesterTest,BaseDelegatingServerSocketChannelTest,BaseDelegatingSocketChannelTest,BaseStunMessageEventTest,BlockingRequestSenderTest,CandidateAttributeTest,CandidateHarvesterSetElementTest,CandidateHarvesterSetTaskTest,CandidateHarvesterSetTest,CandidatePairTest,CandidatePrioritizerTest,CandidateTest,ChangeRequestAttributeTest,ChannelDataTest,ChannelNumberAttributeTest,CheckListTest,ComponentSocketTest,ComponentTest,ConnectionIdAttributeTest,ConnectivityCheckClientTest,ConnectivityCheckServerTest,ConnectorTest,CredentialsManagerTest,DTLSDatagramFilterTest,DataAttributeTest,DefaultNominatorTest,DelegatingDatagramSocketTest,DelegatingServerSocketTest,DelegatingSocketTest,DontFragmentAttributeTest,ErrorCodeAttributeTest,EvenPortAttributeTest,EventDispatcherTest,FingerprintAttributeTest,FoundationsRegistryTest,GoogleRelayedCandidateDatagramSocketTest,GoogleRelayedCandidateDelegateTest,GoogleRelayedCandidateSocketTest,GoogleRelayedCandidateTest,GoogleTurnCandidateHarvestTest,GoogleTurnCandidateHarvesterTest,GoogleTurnSSLCandidateHarvesterTest,HarvestStatisticsTest,HostCandidateHarvesterTest,HttpDemuxFilterTest,Ice4jLogFormatterTest,IceControlAttributeTest,IceMediaStreamTest,IceSdpUtilsTest,IceTcpServerSocketWrapperTest,IceTcpSocketWrapperTest,IndicationTest,LifetimeAttributeTest,LocalCandidateTest,LongTermCredentialSessionTest,LongTermCredentialTest,MagicCookieAttributeTest,MappingCandidateHarvestersTest,MergingDatagramSocketTest,MessageFactoryTest,MessageIntegrityAttributeTest,MessageProcessingTaskTest,MessageTest,MultiplexingDatagramSocketTest,MultiplexingSocketTest,MultiplexingXXXSocketSupportTest,MuxServerSocketChannelFactoryTest,NetAccessManagerTest,NetworkConfigurationDiscoveryProcessTest,NetworkUtilsTest,NonceAttributeTest,OptionalAttributeTest,PeriodicRunnableTest,PriorityAttributeTest,RawMessageTest,RealmAttributeTest,RelayedCandidateDatagramSocketTest,RelayedCandidateTest,RemoteCandidateTest,RequestTest,RequestedAddressFamilyAttributeTest,RequestedTransportAttributeTest,ReservationTokenAttributeTest,ResponseTest,RtcpDemuxPacketFilterTest,SafeCloseDatagramSocketTest,ServerReflexiveCandidateTest,SimpleAddressDetectorTest,SinglePortUdpHarvesterTest,SocketReceiveBufferTest,SoftwareAttributeTest,StackPropertiesTest,StunCandidateHarvestTest,StunCandidateHarvesterTest,StunClientTransactionTest,StunDatagramPacketFilterTest,StunDiscoveryReportTest,StunFailureEventTest,StunMappingCandidateHarvesterTest,StunMessageEventTest,StunServerTransactionTest,StunStackTest,StunTimeoutEventTest,TCPInputStreamTest,TCPOutputStreamTest,TcpHarvesterTest,TcpHostCandidateTest,TransactionIDTest,TransportAddressTest,TurnCandidateHarvestTest,TurnDatagramPacketFilterTest,UPNPCandidateTest,UPNPHarvesterTest,UnknownAttributesAttributeTest,UseCandidateAttributeTest,UsernameAttributeTest,XorMappedAddressAttributeTest,XorOnlyAttributeTest",
+    "run_pit": false
+  },
+  "scoring": {
+    "weights": {
+      "success": 0.5,
+      "coverage": 0.3,
+      "latency": 0.2
+    }
+  }
+}

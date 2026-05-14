@@ -1,0 +1,339 @@
+{
+  "manifest_version": 1,
+  "project_root": "datasets/reftest-12/commons-validator",
+  "dataset": [
+    {
+      "id": "commons-validator-validatebean",
+      "java_file": "src/example/org/apache/commons/validator/example/ValidateBean.java",
+      "expected_test_path": "src/example/org/apache/commons/validator/example/ValidateBeanTest.java"
+    },
+    {
+      "id": "commons-validator-validateexample",
+      "java_file": "src/example/org/apache/commons/validator/example/ValidateExample.java",
+      "expected_test_path": "src/example/org/apache/commons/validator/example/ValidateExampleTest.java"
+    },
+    {
+      "id": "commons-validator-arg",
+      "java_file": "src/main/java/org/apache/commons/validator/Arg.java",
+      "expected_test_path": "src/test/java/org/apache/commons/validator/ArgTest.java"
+    },
+    {
+      "id": "commons-validator-creditcardvalidator",
+      "java_file": "src/main/java/org/apache/commons/validator/CreditCardValidator.java",
+      "expected_test_path": "src/test/java/org/apache/commons/validator/CreditCardValidatorTest.java"
+    },
+    {
+      "id": "commons-validator-datevalidator",
+      "java_file": "src/main/java/org/apache/commons/validator/DateValidator.java",
+      "expected_test_path": "src/test/java/org/apache/commons/validator/DateValidatorTest.java"
+    },
+    {
+      "id": "commons-validator-emailvalidator",
+      "java_file": "src/main/java/org/apache/commons/validator/EmailValidator.java",
+      "expected_test_path": "src/test/java/org/apache/commons/validator/EmailValidatorTest.java"
+    },
+    {
+      "id": "commons-validator-field",
+      "java_file": "src/main/java/org/apache/commons/validator/Field.java",
+      "expected_test_path": "src/test/java/org/apache/commons/validator/FieldTest.java"
+    },
+    {
+      "id": "commons-validator-form",
+      "java_file": "src/main/java/org/apache/commons/validator/Form.java",
+      "expected_test_path": "src/test/java/org/apache/commons/validator/FormTest.java"
+    },
+    {
+      "id": "commons-validator-formset",
+      "java_file": "src/main/java/org/apache/commons/validator/FormSet.java",
+      "expected_test_path": "src/test/java/org/apache/commons/validator/FormSetTest.java"
+    },
+    {
+      "id": "commons-validator-formsetfactory",
+      "java_file": "src/main/java/org/apache/commons/validator/FormSetFactory.java",
+      "expected_test_path": "src/test/java/org/apache/commons/validator/FormSetFactoryTest.java"
+    },
+    {
+      "id": "commons-validator-generictypevalidator",
+      "java_file": "src/main/java/org/apache/commons/validator/GenericTypeValidator.java",
+      "expected_test_path": "src/test/java/org/apache/commons/validator/GenericTypeValidatorTest.java"
+    },
+    {
+      "id": "commons-validator-genericvalidator",
+      "java_file": "src/main/java/org/apache/commons/validator/GenericValidator.java",
+      "expected_test_path": "src/test/java/org/apache/commons/validator/GenericValidatorTest.java"
+    },
+    {
+      "id": "commons-validator-msg",
+      "java_file": "src/main/java/org/apache/commons/validator/Msg.java",
+      "expected_test_path": "src/test/java/org/apache/commons/validator/MsgTest.java"
+    },
+    {
+      "id": "commons-validator-urlvalidator",
+      "java_file": "src/main/java/org/apache/commons/validator/UrlValidator.java",
+      "expected_test_path": "src/test/java/org/apache/commons/validator/UrlValidatorTest.java"
+    },
+    {
+      "id": "commons-validator-validator",
+      "java_file": "src/main/java/org/apache/commons/validator/Validator.java",
+      "expected_test_path": "src/test/java/org/apache/commons/validator/ValidatorTest.java"
+    },
+    {
+      "id": "commons-validator-validatoraction",
+      "java_file": "src/main/java/org/apache/commons/validator/ValidatorAction.java",
+      "expected_test_path": "src/test/java/org/apache/commons/validator/ValidatorActionTest.java"
+    },
+    {
+      "id": "commons-validator-validatorresources",
+      "java_file": "src/main/java/org/apache/commons/validator/ValidatorResources.java",
+      "expected_test_path": "src/test/java/org/apache/commons/validator/ValidatorResourcesTest.java"
+    },
+    {
+      "id": "commons-validator-validatorresult",
+      "java_file": "src/main/java/org/apache/commons/validator/ValidatorResult.java",
+      "expected_test_path": "src/test/java/org/apache/commons/validator/ValidatorResultTest.java"
+    },
+    {
+      "id": "commons-validator-validatorresults",
+      "java_file": "src/main/java/org/apache/commons/validator/ValidatorResults.java",
+      "expected_test_path": "src/test/java/org/apache/commons/validator/ValidatorResultsTest.java"
+    },
+    {
+      "id": "commons-validator-var",
+      "java_file": "src/main/java/org/apache/commons/validator/Var.java",
+      "expected_test_path": "src/test/java/org/apache/commons/validator/VarTest.java"
+    },
+    {
+      "id": "commons-validator-abstractcalendarvalidator",
+      "java_file": "src/main/java/org/apache/commons/validator/routines/AbstractCalendarValidator.java",
+      "expected_test_path": "src/test/java/org/apache/commons/validator/routines/AbstractCalendarValidatorTest.java"
+    },
+    {
+      "id": "commons-validator-abstractformatvalidator",
+      "java_file": "src/main/java/org/apache/commons/validator/routines/AbstractFormatValidator.java",
+      "expected_test_path": "src/test/java/org/apache/commons/validator/routines/AbstractFormatValidatorTest.java"
+    },
+    {
+      "id": "commons-validator-abstractnumbervalidator",
+      "java_file": "src/main/java/org/apache/commons/validator/routines/AbstractNumberValidator.java",
+      "expected_test_path": "src/test/java/org/apache/commons/validator/routines/AbstractNumberValidatorTest.java"
+    },
+    {
+      "id": "commons-validator-bigdecimalvalidator",
+      "java_file": "src/main/java/org/apache/commons/validator/routines/BigDecimalValidator.java",
+      "expected_test_path": "src/test/java/org/apache/commons/validator/routines/BigDecimalValidatorTest.java"
+    },
+    {
+      "id": "commons-validator-bytevalidator",
+      "java_file": "src/main/java/org/apache/commons/validator/routines/ByteValidator.java",
+      "expected_test_path": "src/test/java/org/apache/commons/validator/routines/ByteValidatorTest.java"
+    },
+    {
+      "id": "commons-validator-calendarvalidator",
+      "java_file": "src/main/java/org/apache/commons/validator/routines/CalendarValidator.java",
+      "expected_test_path": "src/test/java/org/apache/commons/validator/routines/CalendarValidatorTest.java"
+    },
+    {
+      "id": "commons-validator-codevalidator",
+      "java_file": "src/main/java/org/apache/commons/validator/routines/CodeValidator.java",
+      "expected_test_path": "src/test/java/org/apache/commons/validator/routines/CodeValidatorTest.java"
+    },
+    {
+      "id": "commons-validator-creditcardvalidator",
+      "java_file": "src/main/java/org/apache/commons/validator/routines/CreditCardValidator.java",
+      "expected_test_path": "src/test/java/org/apache/commons/validator/routines/CreditCardValidatorTest.java"
+    },
+    {
+      "id": "commons-validator-currencyvalidator",
+      "java_file": "src/main/java/org/apache/commons/validator/routines/CurrencyValidator.java",
+      "expected_test_path": "src/test/java/org/apache/commons/validator/routines/CurrencyValidatorTest.java"
+    },
+    {
+      "id": "commons-validator-datevalidator",
+      "java_file": "src/main/java/org/apache/commons/validator/routines/DateValidator.java",
+      "expected_test_path": "src/test/java/org/apache/commons/validator/routines/DateValidatorTest.java"
+    },
+    {
+      "id": "commons-validator-domainvalidator",
+      "java_file": "src/main/java/org/apache/commons/validator/routines/DomainValidator.java",
+      "expected_test_path": "src/test/java/org/apache/commons/validator/routines/DomainValidatorTest.java"
+    },
+    {
+      "id": "commons-validator-doublevalidator",
+      "java_file": "src/main/java/org/apache/commons/validator/routines/DoubleValidator.java",
+      "expected_test_path": "src/test/java/org/apache/commons/validator/routines/DoubleValidatorTest.java"
+    },
+    {
+      "id": "commons-validator-emailvalidator",
+      "java_file": "src/main/java/org/apache/commons/validator/routines/EmailValidator.java",
+      "expected_test_path": "src/test/java/org/apache/commons/validator/routines/EmailValidatorTest.java"
+    },
+    {
+      "id": "commons-validator-floatvalidator",
+      "java_file": "src/main/java/org/apache/commons/validator/routines/FloatValidator.java",
+      "expected_test_path": "src/test/java/org/apache/commons/validator/routines/FloatValidatorTest.java"
+    },
+    {
+      "id": "commons-validator-ibanvalidator",
+      "java_file": "src/main/java/org/apache/commons/validator/routines/IBANValidator.java",
+      "expected_test_path": "src/test/java/org/apache/commons/validator/routines/IBANValidatorTest.java"
+    },
+    {
+      "id": "commons-validator-isbnvalidator",
+      "java_file": "src/main/java/org/apache/commons/validator/routines/ISBNValidator.java",
+      "expected_test_path": "src/test/java/org/apache/commons/validator/routines/ISBNValidatorTest.java"
+    },
+    {
+      "id": "commons-validator-isinvalidator",
+      "java_file": "src/main/java/org/apache/commons/validator/routines/ISINValidator.java",
+      "expected_test_path": "src/test/java/org/apache/commons/validator/routines/ISINValidatorTest.java"
+    },
+    {
+      "id": "commons-validator-issnvalidator",
+      "java_file": "src/main/java/org/apache/commons/validator/routines/ISSNValidator.java",
+      "expected_test_path": "src/test/java/org/apache/commons/validator/routines/ISSNValidatorTest.java"
+    },
+    {
+      "id": "commons-validator-inetaddressvalidator",
+      "java_file": "src/main/java/org/apache/commons/validator/routines/InetAddressValidator.java",
+      "expected_test_path": "src/test/java/org/apache/commons/validator/routines/InetAddressValidatorTest.java"
+    },
+    {
+      "id": "commons-validator-integervalidator",
+      "java_file": "src/main/java/org/apache/commons/validator/routines/IntegerValidator.java",
+      "expected_test_path": "src/test/java/org/apache/commons/validator/routines/IntegerValidatorTest.java"
+    },
+    {
+      "id": "commons-validator-longvalidator",
+      "java_file": "src/main/java/org/apache/commons/validator/routines/LongValidator.java",
+      "expected_test_path": "src/test/java/org/apache/commons/validator/routines/LongValidatorTest.java"
+    },
+    {
+      "id": "commons-validator-percentvalidator",
+      "java_file": "src/main/java/org/apache/commons/validator/routines/PercentValidator.java",
+      "expected_test_path": "src/test/java/org/apache/commons/validator/routines/PercentValidatorTest.java"
+    },
+    {
+      "id": "commons-validator-regexvalidator",
+      "java_file": "src/main/java/org/apache/commons/validator/routines/RegexValidator.java",
+      "expected_test_path": "src/test/java/org/apache/commons/validator/routines/RegexValidatorTest.java"
+    },
+    {
+      "id": "commons-validator-shortvalidator",
+      "java_file": "src/main/java/org/apache/commons/validator/routines/ShortValidator.java",
+      "expected_test_path": "src/test/java/org/apache/commons/validator/routines/ShortValidatorTest.java"
+    },
+    {
+      "id": "commons-validator-urlvalidator",
+      "java_file": "src/main/java/org/apache/commons/validator/routines/UrlValidator.java",
+      "expected_test_path": "src/test/java/org/apache/commons/validator/routines/UrlValidatorTest.java"
+    },
+    {
+      "id": "commons-validator-abanumbercheckdigit",
+      "java_file": "src/main/java/org/apache/commons/validator/routines/checkdigit/ABANumberCheckDigit.java",
+      "expected_test_path": "src/test/java/org/apache/commons/validator/routines/checkdigit/ABANumberCheckDigitTest.java"
+    },
+    {
+      "id": "commons-validator-casnumbercheckdigit",
+      "java_file": "src/main/java/org/apache/commons/validator/routines/checkdigit/CASNumberCheckDigit.java",
+      "expected_test_path": "src/test/java/org/apache/commons/validator/routines/checkdigit/CASNumberCheckDigitTest.java"
+    },
+    {
+      "id": "commons-validator-cusipcheckdigit",
+      "java_file": "src/main/java/org/apache/commons/validator/routines/checkdigit/CUSIPCheckDigit.java",
+      "expected_test_path": "src/test/java/org/apache/commons/validator/routines/checkdigit/CUSIPCheckDigitTest.java"
+    },
+    {
+      "id": "commons-validator-ecnumbercheckdigit",
+      "java_file": "src/main/java/org/apache/commons/validator/routines/checkdigit/ECNumberCheckDigit.java",
+      "expected_test_path": "src/test/java/org/apache/commons/validator/routines/checkdigit/ECNumberCheckDigitTest.java"
+    },
+    {
+      "id": "commons-validator-ibancheckdigit",
+      "java_file": "src/main/java/org/apache/commons/validator/routines/checkdigit/IBANCheckDigit.java",
+      "expected_test_path": "src/test/java/org/apache/commons/validator/routines/checkdigit/IBANCheckDigitTest.java"
+    },
+    {
+      "id": "commons-validator-isbn10checkdigit",
+      "java_file": "src/main/java/org/apache/commons/validator/routines/checkdigit/ISBN10CheckDigit.java",
+      "expected_test_path": "src/test/java/org/apache/commons/validator/routines/checkdigit/ISBN10CheckDigitTest.java"
+    },
+    {
+      "id": "commons-validator-isbncheckdigit",
+      "java_file": "src/main/java/org/apache/commons/validator/routines/checkdigit/ISBNCheckDigit.java",
+      "expected_test_path": "src/test/java/org/apache/commons/validator/routines/checkdigit/ISBNCheckDigitTest.java"
+    },
+    {
+      "id": "commons-validator-isincheckdigit",
+      "java_file": "src/main/java/org/apache/commons/validator/routines/checkdigit/ISINCheckDigit.java",
+      "expected_test_path": "src/test/java/org/apache/commons/validator/routines/checkdigit/ISINCheckDigitTest.java"
+    },
+    {
+      "id": "commons-validator-issncheckdigit",
+      "java_file": "src/main/java/org/apache/commons/validator/routines/checkdigit/ISSNCheckDigit.java",
+      "expected_test_path": "src/test/java/org/apache/commons/validator/routines/checkdigit/ISSNCheckDigitTest.java"
+    },
+    {
+      "id": "commons-validator-luhncheckdigit",
+      "java_file": "src/main/java/org/apache/commons/validator/routines/checkdigit/LuhnCheckDigit.java",
+      "expected_test_path": "src/test/java/org/apache/commons/validator/routines/checkdigit/LuhnCheckDigitTest.java"
+    },
+    {
+      "id": "commons-validator-moduluscheckdigit",
+      "java_file": "src/main/java/org/apache/commons/validator/routines/checkdigit/ModulusCheckDigit.java",
+      "expected_test_path": "src/test/java/org/apache/commons/validator/routines/checkdigit/ModulusCheckDigitTest.java"
+    },
+    {
+      "id": "commons-validator-modulustencheckdigit",
+      "java_file": "src/main/java/org/apache/commons/validator/routines/checkdigit/ModulusTenCheckDigit.java",
+      "expected_test_path": "src/test/java/org/apache/commons/validator/routines/checkdigit/ModulusTenCheckDigitTest.java"
+    },
+    {
+      "id": "commons-validator-sedolcheckdigit",
+      "java_file": "src/main/java/org/apache/commons/validator/routines/checkdigit/SedolCheckDigit.java",
+      "expected_test_path": "src/test/java/org/apache/commons/validator/routines/checkdigit/SedolCheckDigitTest.java"
+    },
+    {
+      "id": "commons-validator-verhoeffcheckdigit",
+      "java_file": "src/main/java/org/apache/commons/validator/routines/checkdigit/VerhoeffCheckDigit.java",
+      "expected_test_path": "src/test/java/org/apache/commons/validator/routines/checkdigit/VerhoeffCheckDigitTest.java"
+    },
+    {
+      "id": "commons-validator-flags",
+      "java_file": "src/main/java/org/apache/commons/validator/util/Flags.java",
+      "expected_test_path": "src/test/java/org/apache/commons/validator/util/FlagsTest.java"
+    },
+    {
+      "id": "commons-validator-validatorutils",
+      "java_file": "src/main/java/org/apache/commons/validator/util/ValidatorUtils.java",
+      "expected_test_path": "src/test/java/org/apache/commons/validator/util/ValidatorUtilsTest.java"
+    }
+  ],
+  "matrix": {
+    "providers": [
+      {
+        "name": "nvidia",
+        "model": "meta/llama-3.1-405b-instruct"
+      }
+    ]
+  },
+  "run": {
+    "trials": 1,
+    "seed": 42,
+    "max_dependencies": 5,
+    "timeout_seconds": 300,
+    "retry_count": 1,
+    "concurrency": 1
+  },
+  "evaluation": {
+    "compile_cmd": "mvn test-compile -q -Drat.skip=true",
+    "test_cmd": "mvn test -q -Drat.skip=true -Dtest=ABANumberCheckDigitTest,AbstractCalendarValidatorTest,AbstractFormatValidatorTest,AbstractNumberValidatorTest,ArgTest,BigDecimalValidatorTest,ByteValidatorTest,CASNumberCheckDigitTest,CUSIPCheckDigitTest,CalendarValidatorTest,CodeValidatorTest,CreditCardValidatorTest,CurrencyValidatorTest,DateValidatorTest,DomainValidatorTest,DoubleValidatorTest,ECNumberCheckDigitTest,EmailValidatorTest,FieldTest,FlagsTest,FloatValidatorTest,FormSetFactoryTest,FormSetTest,FormTest,GenericTypeValidatorTest,GenericValidatorTest,IBANCheckDigitTest,IBANValidatorTest,ISBN10CheckDigitTest,ISBNCheckDigitTest,ISBNValidatorTest,ISINCheckDigitTest,ISINValidatorTest,ISSNCheckDigitTest,ISSNValidatorTest,InetAddressValidatorTest,IntegerValidatorTest,LongValidatorTest,LuhnCheckDigitTest,ModulusCheckDigitTest,ModulusTenCheckDigitTest,MsgTest,PercentValidatorTest,RegexValidatorTest,SedolCheckDigitTest,ShortValidatorTest,UrlValidatorTest,ValidateBeanTest,ValidateExampleTest,ValidatorActionTest,ValidatorResourcesTest,ValidatorResultTest,ValidatorResultsTest,ValidatorTest,ValidatorUtilsTest,VarTest,VerhoeffCheckDigitTest",
+    "run_pit": false
+  },
+  "scoring": {
+    "weights": {
+      "success": 0.5,
+      "coverage": 0.3,
+      "latency": 0.2
+    }
+  }
+}
