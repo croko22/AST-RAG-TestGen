@@ -85,34 +85,34 @@ def evaluate_run(
             run_path,
         )
         if not compile_result.success:
+            stderr_text = compile_result.stderr or ""
             return EvalMetrics(
                 compile_pass=False,
                 test_pass=False,
                 failure_type="compile_failed",
-                failure_message=(
-                    compile_result.stderr[:500] if compile_result.stderr else "Compilation failed"
-                ),
+                failure_message=stderr_text[:500] if stderr_text else "Compilation failed",
                 assertion_count=quality.assertion_count,
                 test_count=quality.test_count,
                 trivial_flag=quality.trivial_flag,
                 timings=timings,
                 generation_time_ms=generation_time_ms,
+                compile_errors=[line for line in stderr_text.split("\n") if line.strip()],
             )
 
         test_result = _execute_command(eval_config.test_cmd, temp_path, run_path)
         if not test_result.success:
+            stderr_text = test_result.stderr or ""
             return EvalMetrics(
                 compile_pass=True,
                 test_pass=False,
                 failure_type="test_failed",
-                failure_message=(
-                    test_result.stderr[:500] if test_result.stderr else "Tests failed"
-                ),
+                failure_message=stderr_text[:500] if stderr_text else "Tests failed",
                 assertion_count=quality.assertion_count,
                 test_count=quality.test_count,
                 trivial_flag=quality.trivial_flag,
                 timings=timings,
                 generation_time_ms=generation_time_ms,
+                compile_errors=[line for line in stderr_text.split("\n") if line.strip()],
             )
 
         coverage_pct: float | None = None
@@ -163,6 +163,7 @@ def evaluate_run(
             trivial_flag=quality.trivial_flag,
             timings=timings,
             generation_time_ms=generation_time_ms,
+            compile_errors=[],
         )
     finally:
         if temp_test_dir is not None:

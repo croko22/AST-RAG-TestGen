@@ -1,0 +1,44 @@
+{
+  "manifest_version": 1,
+  "project_root": "datasets/reftest-12/commons-cli",
+  "dataset": [
+    {
+      "id": "commons-cli-helpformatter",
+      "java_file": "src/main/java/org/apache/commons/cli/HelpFormatter.java",
+      "expected_test_path": "src/test/java/org/apache/commons/cli/HelpFormatterTest.java"
+    },
+    {
+      "id": "commons-cli-options",
+      "java_file": "src/main/java/org/apache/commons/cli/Options.java",
+      "expected_test_path": "src/test/java/org/apache/commons/cli/OptionsTest.java"
+    }
+  ],
+  "matrix": {
+    "providers": [
+      {
+        "name": "gemini",
+        "model": "gemini-2.0-flash"
+      }
+    ]
+  },
+  "run": {
+    "trials": 1,
+    "seed": 42,
+    "max_dependencies": 5,
+    "timeout_seconds": 180,
+    "retry_count": 1,
+    "concurrency": 1
+  },
+  "evaluation": {
+    "compile_cmd": "mvn test-compile -q -Drat.skip=true -Dmaven.compiler.source=1.8 -Dmaven.compiler.target=1.8",
+    "test_cmd": "mvn test -q -Drat.skip=true -Dmaven.compiler.source=1.8 -Dmaven.compiler.target=1.8 -Dtest=HelpFormatterTest,OptionsTest",
+    "run_pit": false
+  },
+  "scoring": {
+    "weights": {
+      "success": 0.5,
+      "coverage": 0.3,
+      "latency": 0.2
+    }
+  }
+}
