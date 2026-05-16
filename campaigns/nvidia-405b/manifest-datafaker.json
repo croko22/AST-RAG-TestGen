@@ -322,7 +322,7 @@
     "providers": [
       {
         "name": "nvidia",
-        "model": "meta/llama-3.1-405b-instruct"
+        "model": "meta/llama-3.3-70b-instruct"
       }
     ]
   },
