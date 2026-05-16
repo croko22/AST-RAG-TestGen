@@ -67,7 +67,10 @@ class OpenRouterAdapter(BaseLLMAdapter):
             top_p=self.config.top_p,
         )
 
-        return response.choices[0].message.content
+        content = response.choices[0].message.content
+        if content is None:
+            return ""
+        return content
 
     def build_system_prompt(self) -> str:
         """Build the system prompt for the LLM.

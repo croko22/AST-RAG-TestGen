@@ -58,7 +58,8 @@ class AnthropicAdapter(BaseLLMAdapter):
             ],
         )
 
-        return message.content[0].text
+        content = message.content[0].text if message.content else ""
+        return content
 
     def build_system_prompt(self) -> str:
         """Build the system prompt for the LLM.

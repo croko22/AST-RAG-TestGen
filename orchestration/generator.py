@@ -122,6 +122,9 @@ def generate_test_for_file(
         )
         timings[f"llm_attempt_{attempt}_ms"] = int((time.perf_counter() - t0) * 1000)
 
+        if test_code is None:
+            test_code = ""
+            output.print_warning("LLM returned None, using empty string")
         cleaned_code = test_code.strip()
         if cleaned_code.startswith("```java"):
             cleaned_code = cleaned_code[7:]
