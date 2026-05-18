@@ -18,6 +18,7 @@ except ImportError:
 
 from core.parsing.models import (
     FieldDeclaration,
+    JavaDependency,
     MethodSignature,
     ParsedJavaClass,
 )
@@ -37,19 +38,7 @@ class JavaParser:
             """
             (program
                 (package_declaration
-                    (scoped_identifier_name) @package_name)
-                )?
-                (import_declaration
-                    (scoped_identifier_name) @import_name)
-                )*
-                (class_declaration
-                    name: (identifier) @class_name
-                    body: (class_body
-                        (field_declaration) @field
-                        (method_declaration) @method
-                    )*
-                )
-            )
+                    (scoped_identifier_name) @package_name)?)
             """
         )
 
@@ -264,6 +253,7 @@ class JavaParser:
                 parameters=parameters,
                 is_static=is_static,
                 is_abstract=is_abstract,
+                is_private=(visibility == "private"),
                 effective_loc=effective_loc,
             )
         except Exception:
