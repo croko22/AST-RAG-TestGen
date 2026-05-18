@@ -2,13 +2,12 @@
 
 from __future__ import annotations
 
-import re
-import shutil
-import subprocess
 import tempfile
 import xml.etree.ElementTree as ET
 from dataclasses import dataclass, field
 from pathlib import Path
+
+from postproc._runner import classify_output, parse_test_totals, run_command, stage_test_file
 
 _DEFAULT_TIMEOUT = 600
 
@@ -59,13 +58,13 @@ def validate_compilation(
     try:
         temp_dir = tempfile.TemporaryDirectory(prefix="compile_")
         temp_path = Path(temp_dir.name)
-        _stage_test_file(test_file, temp_path)
+        stage_test_file(test_file, temp_path)
 
-        result = _run_shell_command(compile_cmd, temp_path, timeout)
+        result = run_command(compile_cmd, temp_path, timeout)
 
-        errors, warnings = _classify_output(result.stderr or result.stdout)
+        errors, warnings = classify_output(result.stderr)
         return CompileResult(
-            success=result.returncode == 0,
+            success=result.success,
             errors=errors,
             warnings=warnings,
             returncode=result.returncode,
@@ -96,15 +95,15 @@ def run_tests(
     try:
         temp_dir = tempfile.TemporaryDirectory(prefix="runtest_")
         temp_path = Path(temp_dir.name)
-        _stage_test_file(test_file, temp_path)
+        stage_test_file(test_file, temp_path)
 
-        result = _run_shell_command(test_cmd, temp_path, timeout)
+        result = run_command(test_cmd, temp_path, timeout)
         combined_output = (result.stdout or "") + "\n" + (result.stderr or "")
-        passed, failed, errors = _parse_test_totals(combined_output)
+        passed, failed, errors = parse_test_totals(combined_output)
         test_count = passed + failed + errors
 
         return TestRunResult(
-            success=result.returncode == 0,
+            success=result.success,
             passed=passed,
             failed=failed,
             errors=errors,
@@ -142,95 +141,6 @@ def parse_coverage(jacoco_xml: Path) -> CoverageResult:
         covered_lines=covered_lines,
         covered_branches=covered_branches,
     )
-
-
-def _stage_test_file(test_file: Path, target_base: Path) -> Path:
-    content = test_file.read_text(encoding="utf-8")
-    package_match = re.search(r"package\s+([\w.]+);", content)
-
-    if package_match:
-        package_path = package_match.group(1).replace(".", "/")
-        target_dir = target_base / "src" / "test" / "java" / package_path
-    else:
-        target_dir = target_base / "src" / "test" / "java"
-
-    target_dir.mkdir(parents=True, exist_ok=True)
-    target = target_dir / test_file.name
-    shutil.copy2(test_file, target)
-    return target
-
-
-def _run_shell_command(
-    cmd: str,
-    cwd: Path,
-    timeout: int,
-) -> subprocess.CompletedProcess:
-    shell_ops = ["|", ">", "<", "&&", "||", ";", "$", "`", "(", ")"]
-    use_shell = any(op in cmd for op in shell_ops)
-
-    if use_shell:
-        return subprocess.run(
-            cmd,
-            shell=True,
-            cwd=str(cwd),
-            capture_output=True,
-            text=True,
-            timeout=timeout,
-        )
-    else:
-        return subprocess.run(
-            cmd.split(),
-            cwd=str(cwd),
-            capture_output=True,
-            text=True,
-            timeout=timeout,
-        )
-
-
-def _classify_output(output: str) -> tuple[list[str], list[str]]:
-    errors: list[str] = []
-    warnings: list[str] = []
-    if not output:
-        return errors, warnings
-
-    for line in output.splitlines():
-        line_stripped = line.strip()
-        if not line_stripped:
-            continue
-        lower = line_stripped.lower()
-        if "error" in lower and "warning" not in lower:
-            errors.append(line_stripped)
-        elif "warning" in lower:
-            warnings.append(line_stripped)
-
-    return errors, warnings
-
-
-def _parse_test_totals(output: str) -> tuple[int, int, int]:
-    passed = failed = errors = 0
-
-    surefire_match = re.search(
-        r"Tests run:\s*(\d+),\s*Failures:\s*(\d+),\s*Errors:\s*(\d+)",
-        output,
-    )
-    if surefire_match:
-        total = int(surefire_match.group(1))
-        failed = int(surefire_match.group(2))
-        errors = int(surefire_match.group(3))
-        passed = total - failed - errors
-        return passed, failed, errors
-
-    gradle_match = re.search(
-        r"(\d+)\s+tests\s+(?:completed|found).*?(\d+)\s+failures?",
-        output,
-        re.IGNORECASE,
-    )
-    if gradle_match:
-        passed = int(gradle_match.group(1))
-        failed = int(gradle_match.group(2))
-        return passed, failed, errors
-
-    return passed, failed, errors
 
 
 def _extract_counter(root: ET.Element, counter_type: str) -> tuple[float | None, int, int]:

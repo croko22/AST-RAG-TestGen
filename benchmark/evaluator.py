@@ -4,13 +4,13 @@ from __future__ import annotations
 
 import re
 import shutil
-import subprocess
 import tempfile
 from pathlib import Path
 from typing import TYPE_CHECKING
 
 from benchmark.schemas import EvaluationConfig
 from benchmark.types import EvalMetrics, PipelineTimings, RunResult
+from postproc._runner import CommandResult, run_command
 from postproc.pit_parser import parse_pit_report
 from postproc.quality import assess_test_quality
 from postproc.validator import parse_coverage
@@ -186,90 +186,13 @@ def _extract_timings(generation_result: GenerationResult | None) -> PipelineTimi
     )
 
 
-class CommandResult:
-    """Result of a subprocess command execution."""
+def _execute_command(cmd: str, cwd: Path, _run_dir: Path) -> CommandResult:
+    """Execute a command in the given working directory.
 
-    def __init__(
-        self,
-        success: bool,
-        stdout: str,
-        stderr: str,
-        returncode: int,
-    ) -> None:
-        self.success = success
-        self.stdout = stdout
-        self.stderr = stderr
-        self.returncode = returncode
-
-
-def _execute_command(
-    cmd: str,
-    project_root: Path,
-    run_dir: Path,
-) -> CommandResult:
-    shell_operators = ["|", ">", "<", "&&", "||", ";", "$", "`", "(", ")"]
-    needs_shell = any(op in cmd for op in shell_operators)
-
-    if needs_shell:
-        try:
-            result = subprocess.run(
-                cmd,
-                shell=True,
-                cwd=str(project_root),
-                capture_output=True,
-                text=True,
-                timeout=600,
-            )
-            return CommandResult(
-                success=result.returncode == 0,
-                stdout=result.stdout,
-                stderr=result.stderr,
-                returncode=result.returncode,
-            )
-        except subprocess.TimeoutExpired:
-            return CommandResult(
-                success=False,
-                stdout="",
-                stderr="Command timed out after 600 seconds",
-                returncode=-1,
-            )
-        except Exception as e:
-            return CommandResult(
-                success=False,
-                stdout="",
-                stderr=str(e),
-                returncode=-1,
-            )
-    else:
-        args = cmd.split()
-        try:
-            result = subprocess.run(
-                args,
-                cwd=str(project_root),
-                capture_output=True,
-                text=True,
-                timeout=600,
-            )
-            return CommandResult(
-                success=result.returncode == 0,
-                stdout=result.stdout,
-                stderr=result.stderr,
-                returncode=result.returncode,
-            )
-        except subprocess.TimeoutExpired:
-            return CommandResult(
-                success=False,
-                stdout="",
-                stderr="Command timed out after 600 seconds",
-                returncode=-1,
-            )
-        except Exception as e:
-            return CommandResult(
-                success=False,
-                stdout="",
-                stderr=str(e),
-                returncode=-1,
-            )
+    Thin wrapper around postproc._runner.run_command for backward compatibility
+    with existing callers that pass (cmd, cwd, run_dir).
+    """
+    return run_command(cmd, cwd, timeout=600)
 
 
 def _extract_coverage(

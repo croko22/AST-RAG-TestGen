@@ -5,12 +5,11 @@ from __future__ import annotations
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
+from postproc._runner import classify_output, parse_test_totals
 from postproc.validator import (
     CompileResult,
     CoverageResult,
     TestRunResult,
-    _classify_output,
-    _parse_test_totals,
     parse_coverage,
     run_tests,
     validate_compilation,
@@ -206,41 +205,45 @@ class TestParseCoverage:
 
 class TestClassifyOutput:
     def test_empty(self):
-        errors, warnings = _classify_output("")
+        errors, warnings = classify_output("")
         assert errors == []
         assert warnings == []
 
-    def test_errors_only(self):
-        errors, warnings = _classify_output("error: cannot find symbol\nerror: class not found")
+    def test_classify_output_errors(self):
+        """Error lines should be detected."""
+        errors, warnings = classify_output("error: cannot find symbol\nerror: class not found")
         assert len(errors) == 2
         assert len(warnings) == 0
 
     def test_warnings_only(self):
-        errors, warnings = _classify_output("warning: unchecked cast\nwarning: deprecated API")
+        errors, warnings = classify_output("warning: unchecked cast\nwarning: deprecated API")
         assert len(errors) == 0
         assert len(warnings) == 2
 
     def test_mixed(self):
         output = "error: bad code\nwarning: minor issue\n[INFO] Building project"
-        errors, warnings = _classify_output(output)
+        errors, warnings = classify_output(output)
         assert len(errors) == 1
         assert len(warnings) == 1
 
 
 class TestParseTestTotals:
     def test_maven_surefire_format(self):
-        passed, failed, errors = _parse_test_totals("Tests run: 10, Failures: 2, Errors: 1")
+        passed, failed, errors = parse_test_totals("Tests run: 10, Failures: 2, Errors: 1")
         assert passed == 7
         assert failed == 2
         assert errors == 1
 
-    def test_all_passing(self):
-        passed, failed, errors = _parse_test_totals("Tests run: 5, Failures: 0, Errors: 0")
+    def test_parse_test_totals_all_pass(self):
+        """All passing tests."""
+        passed, failed, errors = parse_test_totals("Tests run: 5, Failures: 0, Errors: 0")
         assert passed == 5
         assert failed == 0
+        assert errors == 0
 
-    def test_no_match(self):
-        passed, failed, errors = _parse_test_totals("Build success")
+    def test_parse_test_totals_no_match(self):
+        """No test totals in output."""
+        passed, failed, errors = parse_test_totals("Build success")
         assert passed == 0
         assert failed == 0
         assert errors == 0
