@@ -109,7 +109,7 @@ class JavaParser:
         dependencies = []
         imported_names = set()
         for imp in imports:
-            if not imp.startswith("java.") and not imp.startswith("javax."):
+            if not imp.startswith("java.") and not imp.startswith("javax.") and not imp.startswith("org.springframework"):
                 parts = imp.split(".")
                 if len(parts) > 1 and not imp.endswith("*") and not imp.endswith(".*"):
                     class_name = parts[-1]

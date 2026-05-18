@@ -34,10 +34,8 @@ class TestJavaParser:
 
         assert len(result.fields) >= 1
         field = result.fields[0]
-        assert "type" in field
-        assert "name" in field
-        assert field["type"] == "Repository"
-        assert field["name"] == "repo"
+        assert field.type == "Repository"
+        assert field.name == "repo"
 
     def test_parse_nonexistent_file(self):
         """Test that non-existent files raise FileNotFoundError."""

@@ -5,6 +5,7 @@ _parser = None
 _retriever = None
 _prompt_builder = None
 _metainfo = None
+_extraction = None
 
 _METAINFO_EXPORTS = {
     "BuildResult",
@@ -27,9 +28,9 @@ def get_parser():
     """Lazy import for parser module."""
     global _parser
     if _parser is None:
-        from . import parser
+        from core.parsing import parser as _parsing_mod
 
-        _parser = parser
+        _parser = _parsing_mod
     return _parser
 
 
@@ -53,6 +54,16 @@ def get_prompt_builder():
     return _prompt_builder
 
 
+def get_extraction():
+    """Lazy import for extraction module."""
+    global _extraction
+    if _extraction is None:
+        from core.extraction import extractor
+
+        _extraction = extractor
+    return _extraction
+
+
 def get_metainfo():
     """Lazy import for metainfo module."""
     global _metainfo
@@ -74,7 +85,7 @@ def __getattr__(name):
     elif name == "MethodSignature":
         return get_parser().MethodSignature
     elif name == "extract_dependencies_from_file":
-        return get_parser().extract_dependencies_from_file
+        return get_extraction().extract_dependencies_from_file
     elif name == "JavaFileRetriever":
         return get_retriever().JavaFileRetriever
     elif name == "DependencyResolver":

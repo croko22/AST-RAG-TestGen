@@ -3,7 +3,7 @@
 import pytest
 
 from core.extractor import BundleExtractor
-from core.parser import MethodSignature, ParsedJavaClass
+from core.parsing.models import MethodSignature, ParsedJavaClass
 
 
 class TestBundleExtractor:
@@ -34,14 +34,13 @@ class TestBundleExtractor:
     def test_is_test_method(self, extractor):
         """Test the heuristic for identifying test methods."""
         # Methods starting with test (case-insensitive) are tests
-        assert extractor._is_test_method(MethodSignature("public", "void", "testCalculate", []))
-        assert extractor._is_test_method(MethodSignature("public", "void", "test_calculate", []))
-        assert extractor._is_test_method(MethodSignature("public", "void", "TEST_CALCULATE", []))
+        assert extractor._is_test_method(MethodSignature(name="testCalculate", visibility="public", return_type="void", parameters=[]))
+        assert extractor._is_test_method(MethodSignature(name="test_calculate", visibility="public", return_type="void", parameters=[]))
+        assert extractor._is_test_method(MethodSignature(name="TEST_CALCULATE", visibility="public", return_type="void", parameters=[]))
 
-        # Methods not starting with test are not tests
-        assert not extractor._is_test_method(MethodSignature("public", "void", "calculate", []))
-        assert not extractor._is_test_method(MethodSignature("public", "void", "setUp", []))
-        assert not extractor._is_test_method(MethodSignature("public", "void", "tearDown", []))
+        assert not extractor._is_test_method(MethodSignature(name="calculate", visibility="public", return_type="void", parameters=[]))
+        assert not extractor._is_test_method(MethodSignature(name="setUp", visibility="public", return_type="void", parameters=[]))
+        assert not extractor._is_test_method(MethodSignature(name="tearDown", visibility="public", return_type="void", parameters=[]))
 
     def test_extract_from_parsed_class(self, extractor):
         """Test extraction of TestBundles from a ParsedJavaClass."""
@@ -54,10 +53,10 @@ class TestBundleExtractor:
             file_path="CalculatorTest.java",
             content="...",
             methods=[
-                MethodSignature("public", "void", "testAdd", []),
-                MethodSignature("public", "void", "setUp", []),
-                MethodSignature("public", "void", "test_subtract", []),
-                MethodSignature("public", "void", "testMultiply", []),
+                MethodSignature(name="testAdd", visibility="public", return_type="void", parameters=[]),
+                MethodSignature(name="setUp", visibility="public", return_type="void", parameters=[]),
+                MethodSignature(name="test_subtract", visibility="public", return_type="void", parameters=[]),
+                MethodSignature(name="testMultiply", visibility="public", return_type="void", parameters=[]),
             ],
         )
 
@@ -87,7 +86,7 @@ class TestBundleExtractor:
             fields=[],
             file_path="CalculatorTest.java",
             content="...",
-            methods=[MethodSignature("public", "void", "testAdd", [])],
+            methods=[MethodSignature(name="testAdd", visibility="public", return_type="void", parameters=[])],
         )
 
         bundles = extractor.extract_from_parsed_class(parsed_class)
