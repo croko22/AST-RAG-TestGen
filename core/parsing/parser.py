@@ -9,7 +9,8 @@ from __future__ import annotations
 from typing import Any
 
 try:
-    import tree_sitter
+    from tree_sitter import Language, Parser
+
     import tree_sitter_java
 
     TREE_SITTER_AVAILABLE = True
@@ -32,42 +33,38 @@ class JavaParser:
         if not TREE_SITTER_AVAILABLE:
             raise ImportError("tree-sitter or tree-sitter-languages is not installed")
 
-        self.parser = tree_sitter.Parser()
-        self.parser.set_language(tree_sitter_java)
-        self.query = tree_sitter.Query(
-            """
-            (program
-                (package_declaration
-                    (scoped_identifier_name) @package_name)?)
-            """
-        )
+        self.parser = Parser()
+        self.parser.language = Language(tree_sitter_java.language())
+
+    @staticmethod
+    def _children_by_type(node: Any, child_type: str) -> list[Any]:
+        """Find child nodes by type using compatible tree-sitter API."""
+        return [c for c in node.children if c.type == child_type]
+
+    @staticmethod
+    def _child_text(node: Any, child_type: str) -> str | None:
+        """Get text of first child matching a type."""
+        for c in node.children:
+            if c.type == child_type:
+                return JavaParser._node_text(c)
+        return None
+
+    @staticmethod
+    def _node_text(node: Any) -> str:
+        """Get text from a tree-sitter node."""
+        raw = node.text if hasattr(node, "text") else b""
+        if isinstance(raw, bytes):
+            return raw.decode("utf-8")
+        return str(raw) if raw else ""
 
     def parse_file(self, file_path: str) -> ParsedJavaClass:
-        """
-        Parse a Java file and extract its structure.
-
-        Args:
-            file_path: Path to the Java file.
-
-        Returns:
-            ParsedJavaClass with extracted information.
-        """
+        """Parse a Java file and extract its structure."""
         with open(file_path, encoding="utf-8") as f:
             content = f.read()
-
         return self.parse_content(content, file_path)
 
     def parse_content(self, content: str, file_path: str = "") -> ParsedJavaClass:
-        """
-        Parse Java content and extract its structure.
-
-        Args:
-            content: Java source code content.
-            file_path: Optional file path for reference.
-
-        Returns:
-            ParsedJavaClass with extracted information.
-        """
+        """Parse Java content and extract its structure."""
         tree = self.parser.parse(bytes(content, "utf8"))
 
         package_name = None
@@ -79,64 +76,78 @@ class JavaParser:
         is_abstract = False
 
         # Extract package name
-        package_nodes = tree.root_node.children_by_type_name("package_declaration")
-        if package_nodes:
-            package_node = package_nodes[0]
-            package_name_nodes = package_node.children_by_type_name("scoped_identifier_name")
-            if package_name_nodes:
-                package_name = package_name_nodes[0].text
+        for child in tree.root_node.children:
+            if child.type == "package_declaration":
+                pkg_text = self._child_text(child, "scoped_identifier")
+                if pkg_text:
+                    package_name = pkg_text
+                break
 
         # Extract imports
-        import_nodes = tree.root_node.children_by_type_name("import_declaration")
-        for import_node in import_nodes:
-            import_name_nodes = import_node.children_by_type_name("scoped_identifier_name")
-            if import_name_nodes:
-                imports.append(import_name_nodes[0].text)
+        for child in tree.root_node.children:
+            if child.type == "import_declaration":
+                imp_text = self._child_text(child, "scoped_identifier")
+                if imp_text:
+                    imports.append(imp_text)
 
-        # Extract class/interface information
-        class_nodes = tree.root_node.children_by_type_name("class_declaration")
-        if class_nodes:
-            class_node = class_nodes[0]
-            class_name_nodes = class_node.children_by_type_name("identifier")
-            if class_name_nodes:
-                class_name = class_name_nodes[0].text
+        # Build dependencies from imports (filter stdlib)
+        dependencies = []
+        imported_names = set()
+        for imp in imports:
+            if not imp.startswith("java.") and not imp.startswith("javax."):
+                parts = imp.split(".")
+                if len(parts) > 1 and not imp.endswith("*") and not imp.endswith(".*"):
+                    class_name = parts[-1]
+                    package = ".".join(parts[:-1])
+                    dependencies.append(JavaDependency(name=class_name, type="class", package=package))
+                    imported_names.add(class_name)
+                elif imp.endswith(".*"):
+                    package = imp[:-2]
+                    dependencies.append(JavaDependency(name=package, type="package"))
 
-            # Check if interface
-            interface_nodes = class_node.children_by_type_name("interface")
-            is_interface = len(interface_nodes) > 0
+        # Extract class/interface info
+        for child in tree.root_node.children:
+            if child.type in ("class_declaration", "interface_declaration"):
+                class_node = child
+                is_interface = child.type == "interface_declaration"
 
-            # Check if abstract
-            modifiers = class_node.children_by_type_name("modifiers")
-            if modifiers:
-                modifier_nodes = modifiers[0].children_by_type_name("modifier")
-                for modifier in modifier_nodes:
-                    if modifier.text == "abstract":
-                        is_abstract = True
-                        break
+                # Get class name
+                class_name = self._child_text(class_node, "identifier")
 
-            # Extract fields and methods
-            class_body_nodes = class_node.children_by_type_name("class_body")
-            if class_body_nodes:
-                class_body = class_body_nodes[0]
+                # Check modifiers for abstract
+                for grandchild in class_node.children:
+                    if grandchild.type == "modifiers":
+                        for mod in grandchild.named_children:
+                            if mod.type == "abstract":
+                                is_abstract = True
+                            # Also check text
+                            mod_text = self._node_text(mod)
+                            if mod_text == "abstract":
+                                is_abstract = True
 
-                # Extract fields
-                field_nodes = class_body.children_by_type_name("field_declaration")
-                for field_node in field_nodes:
-                    field = self._extract_field(field_node)
-                    if field:
-                        fields.append(field)
+                # Extract fields and methods from class/interface body
+                for grandchild in class_node.children:
+                    if grandchild.type in ("class_body", "interface_body"):
+                        for item in grandchild.children:
+                            if item.type == "field_declaration":
+                                field = self._extract_field(item)
+                                if field:
+                                    fields.append(field)
+                            elif item.type == "method_declaration":
+                                method = self._extract_method(item)
+                                if method:
+                                    methods.append(method)
 
-                # Extract methods
-                method_nodes = class_body.children_by_type_name("method_declaration")
-                for method_node in method_nodes:
-                    method = self._extract_method(method_node)
-                    if method:
-                        methods.append(method)
+        # Add dependencies from field types (same-package refs)
+        for field in fields:
+            if field.type and field.type not in imported_names:
+                dependencies.append(JavaDependency(name=field.type, type="class"))
 
         return ParsedJavaClass(
             name=class_name or "Unknown",
             package=package_name,
             imports=imports,
+            dependencies=dependencies,
             fields=fields,
             methods=methods,
             content=content,
@@ -146,42 +157,30 @@ class JavaParser:
         )
 
     def _extract_field(self, field_node: Any) -> FieldDeclaration | None:
-        """Extract field information from a field node.
-
-        Args:
-            field_node: Tree-sitter field node.
-
-        Returns:
-            FieldDeclaration or None if extraction fails.
-        """
+        """Extract field information from a field node."""
         try:
-            # Extract type
-            type_nodes = field_node.children_by_type_name("type_identifier")
-            if not type_nodes:
+            field_type = self._child_text(field_node, "type_identifier")
+            if not field_type:
                 return None
-            field_type = type_nodes[0].text
 
-            # Extract name
-            declarator_nodes = field_node.children_by_type_name("variable_declarator")
-            if not declarator_nodes:
+            field_name = self._child_text(field_node, "variable_declarator")
+            if not field_name:
                 return None
-            field_name = declarator_nodes[0].text
 
-            # Extract modifiers
-            modifiers = field_node.children_by_type_name("modifiers")
             visibility = "package-private"
             is_static = False
             is_final = False
 
-            if modifiers:
-                modifier_nodes = modifiers[0].children_by_type_name("modifier")
-                for modifier in modifier_nodes:
-                    if modifier.text in ("public", "private", "protected"):
-                        visibility = modifier.text
-                    elif modifier.text == "static":
-                        is_static = True
-                    elif modifier.text == "final":
-                        is_final = True
+            for child in field_node.children:
+                if child.type == "modifiers":
+                    for mod in child.children:
+                        mod_text = self._node_text(mod)
+                        if mod_text in ("public", "private", "protected"):
+                            visibility = mod_text
+                        elif mod_text == "static":
+                            is_static = True
+                        elif mod_text == "final":
+                            is_final = True
 
             return FieldDeclaration(
                 name=field_name,
@@ -194,54 +193,50 @@ class JavaParser:
             return None
 
     def _extract_method(self, method_node: Any) -> MethodSignature | None:
-        """Extract method information from a method node.
-
-        Args:
-            method_node: Tree-sitter method node.
-
-        Returns:
-            MethodSignature or None if extraction fails.
-        """
+        """Extract method information from a method node."""
         try:
-            # Extract name
-            name_nodes = method_node.children_by_type_name("identifier")
-            if not name_nodes:
+            method_name = self._child_text(method_node, "identifier")
+            if not method_name:
                 return None
-            method_name = name_nodes[0].text
 
-            # Extract return type
-            type_nodes = method_node.children_by_type_name("type_identifier")
-            if not type_nodes:
+            # Extract return type (handle simple type, void, and generics)
+            return_type = self._child_text(method_node, "type_identifier")
+            if not return_type:
+                return_type = self._child_text(method_node, "void_type")
+            if not return_type:
+                # Check for generic_type (e.g., Optional<Usuario>)
+                for c in method_node.children:
+                    if c.type == "generic_type":
+                        return_type = self._node_text(c)
+                        break
+            if not return_type:
                 return None
-            return_type = type_nodes[0].text
 
             # Extract parameters
             parameters = []
-            param_nodes = method_node.children_by_type_name("formal_parameters")
-            if param_nodes:
-                param_list_nodes = param_nodes[0].children_by_type_name("formal_parameter_list")
-                if param_list_nodes:
-                    param_nodes = param_list_nodes[0].children_by_type_name("formal_parameter")
-                    for param_node in param_nodes:
-                        param = self._extract_parameter(param_node)
-                        if param:
-                            parameters.append(param)
+            for child in method_node.children:
+                if child.type == "formal_parameters":
+                    for param_item in child.children:
+                        if param_item.type == "formal_parameter":
+                            param = self._extract_parameter(param_item)
+                            if param:
+                                parameters.append(param)
 
             # Extract modifiers
-            modifiers = method_node.children_by_type_name("modifiers")
             visibility = "package-private"
             is_static = False
             is_abstract = False
 
-            if modifiers:
-                modifier_nodes = modifiers[0].children_by_type_name("modifier")
-                for modifier in modifier_nodes:
-                    if modifier.text in ("public", "private", "protected"):
-                        visibility = modifier.text
-                    elif modifier.text == "static":
-                        is_static = True
-                    elif modifier.text == "abstract":
-                        is_abstract = True
+            for child in method_node.children:
+                if child.type == "modifiers":
+                    for mod in child.children:
+                        mod_text = self._node_text(mod)
+                        if mod_text in ("public", "private", "protected"):
+                            visibility = mod_text
+                        elif mod_text == "static":
+                            is_static = True
+                        elif mod_text == "abstract":
+                            is_abstract = True
 
             # Calculate effective LOC
             effective_loc = self._calculate_effective_loc(method_node)
@@ -260,58 +255,30 @@ class JavaParser:
             return None
 
     def _extract_parameter(self, param_node: Any) -> tuple[str, str] | None:
-        """Extract parameter information from a parameter node.
-
-        Args:
-            param_node: Tree-sitter parameter node.
-
-        Returns:
-            Tuple of (type, name) or None if extraction fails.
-        """
+        """Extract parameter (type, name) from a parameter node."""
         try:
-            # Extract type
-            type_nodes = param_node.children_by_type_name("type_identifier")
-            if not type_nodes:
+            param_type = self._child_text(param_node, "type_identifier")
+            if not param_type:
                 return None
-            param_type = type_nodes[0].text
-
-            # Extract name
-            name_nodes = param_node.children_by_type_name("identifier")
-            if not name_nodes:
+            param_name = self._child_text(param_node, "identifier")
+            if not param_name:
                 return None
-            param_name = name_nodes[0].text
-
             return (param_type, param_name)
         except Exception:
             return None
 
     def _calculate_effective_loc(self, method_node: Any) -> int:
-        """Calculate effective lines of code for a method.
-
-        Args:
-            method_node: Tree-sitter method node.
-
-        Returns:
-            Effective LOC count.
-        """
+        """Calculate effective lines of code for a method."""
         try:
-            # Get the method body
-            body_nodes = method_node.children_by_type_name("block")
-            if not body_nodes:
-                return 0
-
-            body_node = body_nodes[0]
-
-            # Get the content lines
-            content_lines = body_node.text.split("\n")
-
-            # Count non-empty, non-comment lines
-            effective_loc = 0
-            for line in content_lines:
-                stripped = line.strip()
-                if stripped and not stripped.startswith("//") and not stripped.startswith("/*"):
-                    effective_loc += 1
-
-            return effective_loc
+            for child in method_node.children:
+                if child.type == "block":
+                    content_lines = self._node_text(child).split("\n")
+                    effective_loc = 0
+                    for line in content_lines:
+                        stripped = line.strip()
+                        if stripped and not stripped.startswith("//") and not stripped.startswith("/*"):
+                            effective_loc += 1
+                    return effective_loc
+            return 0
         except Exception:
             return 0

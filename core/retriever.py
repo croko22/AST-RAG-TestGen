@@ -6,7 +6,14 @@ Handles file discovery and class location.
 import logging
 from pathlib import Path
 
-from .parser import ParsedJavaClass, extract_dependencies_from_file
+from core.parsing.models import ParsedJavaClass
+
+try:
+    from core.parsing.parser import JavaParser
+
+    _parser = JavaParser()
+except ImportError:
+    _parser = None
 
 logger = logging.getLogger(__name__)
 
@@ -49,7 +56,7 @@ class JavaFileRetriever:
             self._parse_errors = 0
             for java_file in self._scan_java_files():
                 try:
-                    parsed = extract_dependencies_from_file(str(java_file))
+                    parsed = _parser.parse_file(str(java_file)) if _parser else None
                     if parsed and parsed.name and parsed.name != "Unknown":
                         # Primary key: FQCN (fully qualified class name)
                         if parsed.package:
@@ -117,7 +124,7 @@ class JavaFileRetriever:
             ParsedJavaClass or None if parsing fails
         """
         try:
-            return extract_dependencies_from_file(file_path)
+            return _parser.parse_file(file_path) if _parser else None
         except Exception as e:
             logger.warning(f"Failed to parse {file_path}: {e}")
             return None
@@ -213,7 +220,7 @@ class DependencyResolver:
         lines.append(f"public {class_type} {parsed.name} {{")
 
         for method in parsed.methods:
-            params = ", ".join(method.parameters)
+            params = ", ".join(f"{t} {n}" for t, n in method.parameters)
             visibility = method.visibility
             static = "static " if method.is_static else ""
             lines.append(f" {visibility} {static}{method.return_type} {method.name}({params});")
@@ -246,7 +253,7 @@ if __name__ == "__main__":
             print(f"Package: {parsed.package}")
             print(f"Methods: {len(parsed.methods)}")
             for method in parsed.methods:
-                params = ", ".join(method.parameters)
+                params = ", ".join(f"{t} {n}" for t, n in method.parameters)
                 print(f"  - {method.return_type} {method.name}({params})")
     else:
         print(f"Class '{class_name}' not found in project")

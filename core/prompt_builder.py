@@ -3,8 +3,8 @@ Prompt builder module for assembling the master prompt
 with code under test and extracted context.
 """
 
-from .parser import MethodSignature, ParsedJavaClass
-from .retriever import DependencyResolver, JavaFileRetriever
+from core.parsing.models import MethodSignature, ParsedJavaClass
+from core.retriever import DependencyResolver, JavaFileRetriever
 
 
 class PromptBuilder:
@@ -134,10 +134,9 @@ class PromptBuilder:
 
         # Also add field type dependencies
         for field in parsed_class.fields:
-            field_type = field.get("type", "")
-            if field_type and field_type not in dependency_names:
-                signature = self.dependency_resolver.get_method_signatures(field_type)
-                if not signature.startswith(f"// Class {field_type} not found"):
+            if field.type and field.type not in dependency_names:
+                signature = self.dependency_resolver.get_method_signatures(field.type)
+                if not signature.startswith(f"// Class {field.type} not found"):
                     lines.append(signature)
 
         return "\n".join(lines)
@@ -165,7 +164,7 @@ class PromptBuilder:
         public_methods = [m for m in parsed_class.methods if m.visibility == "public"]
 
         for method in public_methods:
-            params = ", ".join(method.parameters)
+            params = ", ".join(f"{t} {n}" for t, n in method.parameters)
             static = "static " if method.is_static else ""
             lines.append(f"    public {static}{method.return_type} {method.name}({params});")
 
@@ -187,7 +186,7 @@ class PromptBuilder:
         lines.append("")
 
         for method in methods:
-            params = ", ".join(method.parameters)
+            params = ", ".join(f"{t} {n}" for t, n in method.parameters)
             visibility = method.visibility
             static = "static " if method.is_static else ""
             lines.append(f"    {visibility} {static}{method.return_type} {method.name}({params});")
