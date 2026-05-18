@@ -9,7 +9,8 @@ import re
 from pathlib import Path
 
 from core.metainfo.schemas import TestBundle
-from core.parser import JavaParser, MethodSignature, ParsedJavaClass
+from core.parsing.models import MethodSignature, ParsedJavaClass
+from core.parsing.parser import JavaParser
 
 
 class BundleExtractor:

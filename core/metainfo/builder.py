@@ -12,7 +12,7 @@ from .database import MetainfoDatabase
 from .schemas import ClassInfo, FieldInfo, MethodInfo, PackageInfo
 
 if TYPE_CHECKING:
-    from core.parser import ParsedJavaClass
+    from core.parsing.models import ParsedJavaClass
 
 
 @dataclass
@@ -42,9 +42,9 @@ class MetainfoBuilder:
 
     @staticmethod
     def _default_parser(file_path: str) -> "ParsedJavaClass":
-        from core.parser import extract_dependencies_from_file
+        from core.parsing.parser import JavaParser
 
-        return extract_dependencies_from_file(file_path)
+        return JavaParser().parse_file(file_path)
 
     def build(self, include_tests: bool = False) -> BuildResult:
         """Parse the project and persist all discovered entities."""

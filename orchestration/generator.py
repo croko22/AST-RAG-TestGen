@@ -264,7 +264,7 @@ def _parse_java_file(java_file_path: str):
     Returns:
         Parsed Java class.
     """
-    from core.parser import JavaParser
+    from core.parsing.parser import JavaParser
 
     parser = JavaParser()
     return parser.parse_file(java_file_path)

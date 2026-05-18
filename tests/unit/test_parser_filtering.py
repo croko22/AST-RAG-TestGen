@@ -4,19 +4,15 @@ Covers: is_private, effective_loc, is_in_inner_class fields,
 the filter_reftest_methods function, and the reftest_eligible_methods property.
 """
 
-from core.parser import (
-    MethodSignature,
-    ParsedJavaClass,
-    extract_dependencies_from_file,
-    filter_reftest_methods,
-)
+from core.parsing.models import MethodSignature, ParsedJavaClass, _filter_reftest_methods as filter_reftest_methods
+from core.parsing.parser import JavaParser
 
 
 def _parse(java_code: str, tmp_path) -> ParsedJavaClass:
     """Helper: write Java code to a temp file and parse it."""
     file = tmp_path / "Subject.java"
     file.write_text(java_code)
-    return extract_dependencies_from_file(str(file))
+    return JavaParser().parse_file(str(file))
 
 
 def _method_by_name(parsed: ParsedJavaClass, name: str) -> MethodSignature:

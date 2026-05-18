@@ -27,7 +27,8 @@ from pathlib import Path
 _PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(_PROJECT_ROOT))
 
-from core.parser import JavaParser, filter_reftest_methods  # noqa: E402
+from core.parsing.models import _filter_reftest_methods as filter_reftest_methods
+from core.parsing.parser import JavaParser  # noqa: E402
 from core.retriever import JavaFileRetriever  # noqa: E402
 
 # ---------------------------------------------------------------------------
