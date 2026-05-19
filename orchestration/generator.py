@@ -46,13 +46,18 @@ def generate_test_for_file(
     rag_config: dict[str, Any] | None = None,
     retrieval_strategy: Literal["ast", "rag", "hybrid"] = "ast",
     feedback_config: Any = None,
+    # Injectable seams (for testing / DI)
+    parser: Any = None,
+    retriever: Any = None,
+    resolver: Any = None,
+    llm_client: Any = None,
 ) -> GenerationResult:
     output = get_output()
     timings: dict[str, int] = {}
 
     t0 = time.perf_counter()
     output.print_info("[1/4] 📄 Parsing Java file...")
-    parsed_class = _parse_java_file(java_file_path)
+    parsed_class = _parse_java_file(java_file_path, parser=parser)
     timings["parse_ms"] = int((time.perf_counter() - t0) * 1000)
 
     t0 = time.perf_counter()
@@ -61,6 +66,8 @@ def generate_test_for_file(
         parsed_class=parsed_class,
         project_path=Path(java_project_path),
         max_depth=max_dependencies,
+        retriever=retriever,
+        resolver=resolver,
     )
     timings["retrieval_ms"] = int((time.perf_counter() - t0) * 1000)
 
@@ -119,6 +126,7 @@ def generate_test_for_file(
             dependency_context=dependency_signatures,
             provider=llm_provider,
             model=llm_model,
+            client=llm_client,
         )
         timings[f"llm_attempt_{attempt}_ms"] = int((time.perf_counter() - t0) * 1000)
 
@@ -255,40 +263,51 @@ def _run_rag_retrieval(
     return rag_context or None, context_sources
 
 
-def _parse_java_file(java_file_path: str):
+def _parse_java_file(java_file_path: str, parser: Any = None):
     """Parse a Java file and extract its structure.
 
     Args:
         java_file_path: Path to the Java file.
+        parser: Optional pre-configured parser instance.
 
     Returns:
         Parsed Java class.
     """
+    if parser is not None:
+        return parser.parse_file(java_file_path)
     from core.parsing.parser import JavaParser
 
-    parser = JavaParser()
-    return parser.parse_file(java_file_path)
+    return JavaParser().parse_file(java_file_path)
 
 
-def _resolve_dependencies(parsed_class, project_path: Path, max_depth: int):
+def _resolve_dependencies(parsed_class, project_path: Path, max_depth: int,
+                          retriever: Any = None, resolver: Any = None):
     """Resolve dependencies for a parsed Java class.
 
     Args:
         parsed_class: Parsed Java class.
         project_path: Root path of the Java project.
         max_depth: Maximum dependency resolution depth.
+        retriever: Optional pre-configured retriever.
+        resolver: Optional pre-configured resolver.
 
     Returns:
         List of resolved dependencies.
     """
+    if resolver is not None:
+        deps = []
+        for dep in parsed_class.imports:
+            deps.extend(resolver.resolve_dependencies(dep, max_depth=max_depth))
+        return deps
+
     from core.retriever import DependencyResolver, JavaFileRetriever
 
-    retriever = JavaFileRetriever(project_path)
-    resolver = DependencyResolver(retriever)
+    r = JavaFileRetriever(project_path) if retriever is None else retriever
+    s = DependencyResolver(r) if resolver is None else resolver
 
     dependencies = []
     for dep in parsed_class.imports:
-        resolved = resolver.resolve_dependencies(dep, max_depth=max_depth)
+        resolved = s.resolve_dependencies(dep, max_depth=max_depth)
         dependencies.extend(resolved)
 
     return dependencies
@@ -318,6 +337,7 @@ def _generate_test_with_llm(
     dependency_context: str,
     provider: str,
     model: str,
+    client: Any = None,
 ) -> str:
     """Generate test code using LLM.
 
@@ -326,10 +346,14 @@ def _generate_test_with_llm(
         dependency_context: Dependency context.
         provider: LLM provider.
         model: LLM model.
+        client: Optional pre-configured LLM client.
 
     Returns:
         Generated test code.
     """
+    if client is not None:
+        return client.generate_test(code_under_test, dependency_context)
+
     from llm.client_new import LLMClient, LLMConfig
 
     llm_config = LLMConfig(
@@ -338,7 +362,5 @@ def _generate_test_with_llm(
         temperature=0.3,
         max_tokens=4096,
     )
-    llm_client = LLMClient(llm_config)
-    test_code = llm_client.generate_test(code_under_test, dependency_context)
-
-    return test_code
+    c = LLMClient(llm_config)
+    return c.generate_test(code_under_test, dependency_context)
