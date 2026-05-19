@@ -88,7 +88,7 @@ def _execute_generation(
 ) -> tuple[str, int, Any]:
     from pathlib import Path
 
-    from main import generate_test_for_file
+    from orchestration.generator import generate_test_for_file
 
     java_file = plan.java_file
     project_path = plan.project_root
