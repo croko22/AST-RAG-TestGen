@@ -512,7 +512,7 @@
     "providers": [
       {
         "name": "nvidia",
-        "model": "deepseek/deepseek-v4-pro"
+        "model": "meta/llama-3.3-70b-instruct"
       }
     ]
   },
