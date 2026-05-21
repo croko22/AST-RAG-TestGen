@@ -1,0 +1,85 @@
+{
+  "manifest_version": 1,
+  "project_root": "datasets/reftest-12",
+  "dataset": [
+    {
+      "id": "commons-cli-helpformatter",
+      "java_file": "commons-cli/src/main/java/org/apache/commons/cli/HelpFormatter.java"
+    },
+    {
+      "id": "commons-cli-options",
+      "java_file": "commons-cli/src/main/java/org/apache/commons/cli/Options.java"
+    },
+    {
+      "id": "commons-collections4-collectionutils",
+      "java_file": "commons-collections4/src/main/java/org/apache/commons/collections4/CollectionUtils.java"
+    },
+    {
+      "id": "commons-dbutils-beanprocessor",
+      "java_file": "commons-dbutils/src/main/java/org/apache/commons/dbutils/BeanProcessor.java"
+    },
+    {
+      "id": "commons-dbutils-dbutils",
+      "java_file": "commons-dbutils/src/main/java/org/apache/commons/dbutils/DbUtils.java"
+    },
+    {
+      "id": "commons-validator-genericvalidator",
+      "java_file": "commons-validator/src/main/java/org/apache/commons/validator/GenericValidator.java"
+    },
+    {
+      "id": "commons-validator-urlvalidator",
+      "java_file": "commons-validator/src/main/java/org/apache/commons/validator/routines/UrlValidator.java"
+    },
+    {
+      "id": "datafaker-faker",
+      "java_file": "datafaker/src/main/java/net/datafaker/Faker.java"
+    },
+    {
+      "id": "jsoup-jsoup",
+      "java_file": "jsoup/src/main/java/org/jsoup/Jsoup.java"
+    },
+    {
+      "id": "jsoup-document",
+      "java_file": "jsoup/src/main/java/org/jsoup/nodes/Document.java"
+    },
+    {
+      "id": "ice4j-agent",
+      "java_file": "ice4j/src/main/java/org/ice4j/ice/Agent.java"
+    },
+    {
+      "id": "openapi-diff-changed",
+      "java_file": "openapi-diff/core/src/main/java/org/openapitools/openapidiff/core/compare/OpenApiDiff.java"
+    }
+  ],
+  "matrix": {
+    "providers": [
+      {
+        "name": "nvidia",
+        "model": "meta/llama-3.3-70b-instruct"
+      },
+      {
+        "name": "openrouter",
+        "model": "google/gemini-2.0-flash-001"
+      }
+    ]
+  },
+  "run": {
+    "trials": 1,
+    "seed": 42,
+    "max_dependencies": 5,
+    "timeout_seconds": 300,
+    "retry_count": 1,
+    "concurrency": 1
+  },
+  "evaluation": {
+    "compile_cmd": "echo skip",
+    "test_cmd": "echo skip"
+  },
+  "scoring": {
+    "weights": {
+      "success": 0.5,
+      "coverage": 0.3,
+      "latency": 0.2
+    }
+  }
+}
