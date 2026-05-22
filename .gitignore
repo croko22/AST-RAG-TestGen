@@ -86,3 +86,6 @@ mock-java-project/
 
 # pip
 pip-cache/
+campaigns/all-models/results/
+benchmark_run.log
+.pi-lens/
