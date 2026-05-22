@@ -1,2 +1,0 @@
-model,success_rate,avg_latency_sec,coverage_pct,branch_coverage_pct,mutation_score_pct,quality_score,trivial_pct,avg_assertion_count,avg_generation_time_ms,score
-nvidia/meta/llama-3.3-70b-instruct,0.0000,60.72,0.00,0.00,0.00,0.5692,0.0,37.0,121076,0.1595
