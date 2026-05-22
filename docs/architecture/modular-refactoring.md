@@ -10,7 +10,7 @@ The original codebase had 1,690 lines of monolithic code across 3 files:
 
 - `main.py`: 671 lines doing CLI + orchestration + output + benchmark + compatibility
 - `llm/client.py`: 498 lines with all providers in one file
-- `core/parser.py`: 521 lines mixing parsing + filtering + extraction
+- `core/parsing/parser.py`: 521 lines mixing parsing + filtering + extraction
 
 ## After Refactoring
 
@@ -26,9 +26,6 @@ The new architecture consists of 26 focused modules:
 #### Core Parsing Layer (`core/parsing/`)
 - **`models.py`**: Data models (ParsedJavaClass, JavaDependency, MethodSignature)
 - **`parser.py`**: Tree-sitter AST parser
-
-#### Core Filtering Layer (`core/filtering/`)
-- **`filters.py`**: Method filtering logic (public, testable, etc.)
 
 #### Core Extraction Layer (`core/extraction/`)
 - **`extractor.py`**: Dependency resolution and indexing
@@ -84,7 +81,7 @@ Changes are localized to specific modules:
 New features can be added without modifying existing code:
 - New LLM providers: Add adapter + update client
 - New CLI commands: Add to modern.py
-- New filtering rules: Add to filters.py
+- New filtering rules: Add to core/parsing/models.py
 
 ### 5. Backward Compatibility
 The refactoring maintains full backward compatibility:
@@ -141,7 +138,7 @@ When adding new features:
 
 1. **New LLM Provider**: Create adapter in `llm/adapters/`
 2. **New CLI Command**: Add to `cli/modern.py`
-3. **New Filtering Rule**: Add to `core/filtering/filters.py`
+3. **New Filtering Rule**: `_filter_reftest_methods` in `core/parsing/models.py`
 4. **New Orchestration**: Add to `orchestration/`
 
 ### For Tests

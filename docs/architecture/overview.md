@@ -91,7 +91,6 @@ Generated Test Code → tests_generados/{ClassName}Test.java
 |--------|------|----------------|
 | **CLI Layer** | `cli/` | Command-line interfaces (modern Typer + legacy argparse) |
 | **Parsing Layer** | `core/parsing/` | AST parsing with Tree-sitter: package, imports, class name, methods, fields |
-| **Filtering Layer** | `core/filtering/` | Method filtering logic (public, testable, etc.) |
 | **Extraction Layer** | `core/extraction/` | Dependency resolution and indexing |
 | **Prompt Builder** | `core/prompt_builder.py` | Assemble prompt: full code under test + extracted method signatures |
 | **LLM Adapters** | `llm/adapters/` | Provider-specific adapters (Anthropic, OpenAI, GLM, Gemini, NVIDIA, OpenRouter) |
@@ -115,8 +114,6 @@ core/                   # Core parsing and retrieval
 ├── parsing/            # AST parsing layer
 │   ├── models.py       # Data models
 │   └── parser.py       # Tree-sitter parser
-├── filtering/          # Method filtering
-│   └── filters.py      # Filtering logic
 └── extraction/         # Dependency extraction
     └── extractor.py    # Dependency resolver
 

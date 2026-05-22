@@ -6,7 +6,7 @@ Parse Java files using Tree-sitter to extract structured information without com
 
 ## Implementation
 
-`core/parser.py` uses `tree-sitter` and `tree-sitter-java` packages.
+`core/parsing/parser.py` uses `tree-sitter` and `tree-sitter-java` packages.
 
 ### Key Classes
 
@@ -63,11 +63,11 @@ class MethodSignature:
 ## Usage
 
 ```python
-from core import extract_dependencies_from_file
+from core.parsing.parser import JavaParser
+from pathlib import Path
 
-parsed = extract_dependencies_from_file("MyService.java")
-print(f"Class: {parsed.name}")
-print(f"Methods: {len(parsed.methods)}")
+parser = JavaParser()
+parsed = parser.parse_file(Path("MyService.java"))
 ```
 
 ## Gotchas

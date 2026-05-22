@@ -47,12 +47,7 @@ AST-RAG TestGen is a 4-step pipeline for generating Java unit tests using AST-ba
    - `DependencyResolver`: Recursively resolves dependencies with depth limit
    - Builds class name to file path index
 
-3. **Filtering Layer** (`core/filtering/`): Filters methods for test generation
-   - Public methods
-   - Testable methods
-   - Custom filtering rules
-
-4. **LLM Generation** (`llm/client_new.py`): Multi-provider LLM interface using adapter pattern
+3. **LLM Generation** (`llm/client_new.py`): Multi-provider LLM interface using adapter pattern
    - Supports: anthropic, openai, glm, gemini, nvidia, openrouter
    - Each provider has dedicated adapter in `llm/adapters/`
    - Prompt is built in the adapter's `build_user_prompt()` method
@@ -163,8 +158,6 @@ core/                   # Core parsing and retrieval
 ├── parsing/            # AST parsing layer
 │   ├── models.py       # Data models
 │   └── parser.py       # Tree-sitter parser
-├── filtering/          # Method filtering
-│   └── filters.py      # Filtering logic
 ├── extraction/         # Dependency extraction
 │   └── extractor.py    # Dependency resolver
 └── prompt_builder.py   # Dynamic prompt assembly

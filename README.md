@@ -229,11 +229,8 @@ AST-RAG-TestGen/
 │   ├── parsing/             # AST parsing layer
 │   │   ├── models.py        # Data models (ParsedJavaClass, etc.)
 │   │   └── parser.py        # Tree-sitter parser
-│   ├── filtering/           # Method filtering
-│   │   └── filters.py       # Filtering logic
 │   ├── extraction/          # Dependency extraction
 │   │   └── extractor.py     # Dependency resolver
-│   ├── parser.py            # Legacy parser (deprecated)
 │   ├── retriever.py         # Legacy retriever (deprecated)
 │   └── prompt_builder.py    # Dynamic prompt assembly
 ├── llm/                     # LLM provider adapters
