@@ -266,8 +266,75 @@ Usar la plantilla existente en `slides/Presentacion.tex` (beamer, tema elegant).
 | 6 | 4 | Actualizar Cap5 con resultados + tablas | 3h |
 | 7 | 4-5 | Compilar PDF + arreglar errores | 2h |
 | 8 | 5 | Slides de defensa + ensayo | 3h |
+| 9+ | 🎲 Bonus RL | Encontrar notebook + configurar Colab + entrenar | 6h |
 
-**Total**: ~23h de trabajo efectivo, ~8 días calendario.
+**Total base**: ~23h de trabajo efectivo, ~8 días calendario.  
+**Total con RL**: ~29h, ~10 días calendario.
+
+---
+
+## 8. Bonus — RL Fine-Tuning con Jupyter + Cloud (Opcional)
+
+### 8.1 Motivación
+
+El enfoque original de la tesis (antes del pivot a AST-RAG) incluía un componente de Reinforcement Learning (OPSG/RL) que fine-tuneaba un modelo para mejorar la calidad de las pruebas generadas. Ese notebook existe en algún lado y podría reutilizarse como **capa de refinamiento** sobre el pipeline AST-RAG.
+
+La idea no es reemplazar el pipeline actual, sino agregar un paso opcional:
+
+```
+[AST-RAG Pipeline] → Tests generados → [RL Refinement] → Tests mejorados
+```
+
+### 8.2 Arquitectura Propuesta
+
+```yaml
+Entorno: Google Colab / Kaggle / Lambda Labs (GPU gratis o de bajo costo)
+Framework: Jupyter Notebook con Python
+Modelo base: Llama 3.3 70B (o un modelo más chico tipo Llama 3.2 8B para fine-tuning viable en cloud)
+Técnica: QLoRA (4-bit quantized LoRA) — igual que el enfoque original
+Dataset de entrenamiento: Pares (test_generado, test_esperado) extraídos de RefTest-12
+Recompensa: Multi-objetivo (compilación + cobertura + aserciones)
+```
+
+### 8.3 Lo Que Ya Tenemos
+
+Del código anterior (viejo `core/parser.py`, scripts RL):
+- Lógica de extracción de features para recompensa
+- Esquema de entrenamiento con OPSG/GSPO
+- Adaptadores LoRA/QLoRA
+
+### 8.4 Implementación (si aplica)
+
+| Paso | Descripción | Tiempo |
+|------|-------------|--------|
+| 1 | Encontrar el notebook RL original en el historial | 15 min |
+| 2 | Adaptar para que tome output del pipeline AST-RAG como input | 2h |
+| 3 | Configurar entorno cloud (Colab Pro + GPU A100) | 1h |
+| 4 | Entrenamiento rápido (100-200 steps, ~2h en Colab) | 2h |
+| 5 | Evaluar: comparar tests antes/después de RL | 1h |
+| 6 | Escribir sección en la tesis (Cap4 o Cap5) | 2h |
+
+### 8.5 Impacto en la Tesis
+
+Si metemos RL, la tesis gana:
+
+1. **Dos contribuciones**: AST-RAG (extracción de contexto) + RL (refinamiento)
+2. **Conexión con el enfoque anterior**: no tiramos el trabajo del año pasado
+3. **Diferenciación**: no es solo "pipeline con LLM", es "pipeline + fine-tuning con RL"
+4. **Mayor profundidad técnica**: el jurado valora ver dos técnicas combinadas
+
+### 8.6 Riesgo
+
+| Riesgo | Probabilidad | Mitigación |
+|--------|-------------|------------|
+| Colab no tiene suficiente memoria | Media | Usar modelo 8B en vez de 70B |
+| El notebook RL original no se encuentra | Alta | Reimplementar desde cero la lógica de reward + QLoRA (~4h) |
+| RL no mejora los resultados | Media | Reportar como "resultado negativo" — también es válido en tesis |
+| Toma más tiempo del planeado | Alta | Dejar como trabajo futuro si no alcanza el tiempo |
+
+### 8.7 Decisión
+
+> **⚠️ Esta fase es OPCIONAL.** Si el tiempo alcanza y el notebook RL aparece, metemos RL como cherry on top. Si no, la tesis se sostiene perfectamente solo con AST-RAG + comparación literaria. La decisión se toma al final del Día 5 (después de tener todos los resultados de NVIDIA).
 
 ---
 
