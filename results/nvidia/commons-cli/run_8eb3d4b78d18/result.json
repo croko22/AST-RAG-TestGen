@@ -1,0 +1,48 @@
+{
+  "run_id": "run_8eb3d4b78d18",
+  "status": "failed",
+  "latency_ms": 39061,
+  "metrics": {
+    "compile_pass": false,
+    "test_pass": false,
+    "coverage_pct": null,
+    "branch_coverage_pct": null,
+    "coverage_source": null,
+    "coverage_reason": null,
+    "failure_type": "compile_failed",
+    "failure_message": "Compilation failed",
+    "generation_time_ms": 78037,
+    "assertion_count": 7,
+    "trivial_flag": false,
+    "test_count": 7,
+    "quality_score": 0.6,
+    "mutation_score_pct": null,
+    "killed_mutations": null,
+    "total_mutations": null,
+    "timings": {
+      "parse_ms": 0,
+      "retrieval_ms": 17,
+      "prompt_ms": 0,
+      "llm_ms": 39010,
+      "postproc_ms": 0
+    }
+  },
+  "output_path": "results/nvidia/commons-cli/run_8eb3d4b78d18/GnuParserTest.java",
+  "provider": "nvidia",
+  "model": "meta/llama-3.3-70b-instruct",
+  "dataset_id": "commons-cli-gnuparser",
+  "trial": 1,
+  "config_snapshot": {
+    "run_id": "run_8eb3d4b78d18",
+    "dataset_id": "commons-cli-gnuparser",
+    "java_file": "src/main/java/org/apache/commons/cli/GnuParser.java",
+    "provider": "nvidia",
+    "model": "meta/llama-3.3-70b-instruct",
+    "trial": 1,
+    "seed": 42,
+    "max_dependencies": 5,
+    "timeout_seconds": 300,
+    "retry_count": 1,
+    "project_root": "datasets/reftest-12/commons-cli"
+  }
+}

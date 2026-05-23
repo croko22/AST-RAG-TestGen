@@ -1,0 +1,48 @@
+{
+  "run_id": "run_7c47b0d19efc",
+  "status": "failed",
+  "latency_ms": 28593,
+  "metrics": {
+    "compile_pass": false,
+    "test_pass": false,
+    "coverage_pct": null,
+    "branch_coverage_pct": null,
+    "coverage_source": null,
+    "coverage_reason": null,
+    "failure_type": "compile_failed",
+    "failure_message": "Compilation failed",
+    "generation_time_ms": 57151,
+    "assertion_count": 32,
+    "trivial_flag": false,
+    "test_count": 21,
+    "quality_score": 0.9142857142857141,
+    "mutation_score_pct": null,
+    "killed_mutations": null,
+    "total_mutations": null,
+    "timings": {
+      "parse_ms": 4,
+      "retrieval_ms": 13,
+      "prompt_ms": 14,
+      "llm_ms": 28560,
+      "postproc_ms": 0
+    }
+  },
+  "output_path": "results/nvidia/commons-cli/run_7c47b0d19efc/CommandLineTest.java",
+  "provider": "nvidia",
+  "model": "meta/llama-3.3-70b-instruct",
+  "dataset_id": "commons-cli-commandline",
+  "trial": 1,
+  "config_snapshot": {
+    "run_id": "run_7c47b0d19efc",
+    "dataset_id": "commons-cli-commandline",
+    "java_file": "src/main/java/org/apache/commons/cli/CommandLine.java",
+    "provider": "nvidia",
+    "model": "meta/llama-3.3-70b-instruct",
+    "trial": 1,
+    "seed": 42,
+    "max_dependencies": 5,
+    "timeout_seconds": 300,
+    "retry_count": 1,
+    "project_root": "datasets/reftest-12/commons-cli"
+  }
+}

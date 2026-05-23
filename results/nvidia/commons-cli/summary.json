@@ -1,0 +1,19 @@
+{
+  "project": "commons-cli",
+  "generated_at": "2026-05-23",
+  "statistics": {
+    "total_runs": 14,
+    "generation_ok": 14,
+    "generation_rate": 1.0,
+    "avg_latency_ms": 138564,
+    "total_tests_generated": 216,
+    "total_assertions": 398,
+    "avg_tests_per_run": 15.4,
+    "avg_assertions_per_run": 28.4
+  },
+  "config": {
+    "provider": "nvidia",
+    "model": "meta/llama-3.3-70b-instruct",
+    "dataset": "commons-cli (RefTest-12)"
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "run_id": "run_48254346aaf5",
+  "status": "failed",
+  "latency_ms": 60895,
+  "metrics": {
+    "compile_pass": false,
+    "test_pass": false,
+    "coverage_pct": null,
+    "branch_coverage_pct": null,
+    "coverage_source": null,
+    "coverage_reason": null,
+    "failure_type": "compile_failed",
+    "failure_message": "Compilation failed",
+    "generation_time_ms": 121755,
+    "assertion_count": 27,
+    "trivial_flag": false,
+    "test_count": 27,
+    "quality_score": 0.6,
+    "mutation_score_pct": null,
+    "killed_mutations": null,
+    "total_mutations": null,
+    "timings": {
+      "parse_ms": 2,
+      "retrieval_ms": 13,
+      "prompt_ms": 16,
+      "llm_ms": 60862,
+      "postproc_ms": 0
+    }
+  },
+  "output_path": "results/nvidia/commons-cli/run_48254346aaf5/HelpFormatterTest.java",
+  "provider": "nvidia",
+  "model": "meta/llama-3.3-70b-instruct",
+  "dataset_id": "commons-cli-helpformatter",
+  "trial": 1,
+  "config_snapshot": {
+    "run_id": "run_48254346aaf5",
+    "dataset_id": "commons-cli-helpformatter",
+    "java_file": "src/main/java/org/apache/commons/cli/HelpFormatter.java",
+    "provider": "nvidia",
+    "model": "meta/llama-3.3-70b-instruct",
+    "trial": 1,
+    "seed": 42,
+    "max_dependencies": 5,
+    "timeout_seconds": 300,
+    "retry_count": 1,
+    "project_root": "datasets/reftest-12/commons-cli"
+  }
+}

@@ -1,0 +1,48 @@
+{
+  "run_id": "run_d4b919464c2a",
+  "status": "failed",
+  "latency_ms": 46469,
+  "metrics": {
+    "compile_pass": false,
+    "test_pass": false,
+    "coverage_pct": null,
+    "branch_coverage_pct": null,
+    "coverage_source": null,
+    "coverage_reason": null,
+    "failure_type": "compile_failed",
+    "failure_message": "Compilation failed",
+    "generation_time_ms": 92915,
+    "assertion_count": 34,
+    "trivial_flag": false,
+    "test_count": 22,
+    "quality_score": 0.9272727272727272,
+    "mutation_score_pct": null,
+    "killed_mutations": null,
+    "total_mutations": null,
+    "timings": {
+      "parse_ms": 0,
+      "retrieval_ms": 17,
+      "prompt_ms": 1,
+      "llm_ms": 46449,
+      "postproc_ms": 0
+    }
+  },
+  "output_path": "results/nvidia/commons-cli/run_d4b919464c2a/TypeHandlerTest.java",
+  "provider": "nvidia",
+  "model": "meta/llama-3.3-70b-instruct",
+  "dataset_id": "commons-cli-typehandler",
+  "trial": 1,
+  "config_snapshot": {
+    "run_id": "run_d4b919464c2a",
+    "dataset_id": "commons-cli-typehandler",
+    "java_file": "src/main/java/org/apache/commons/cli/TypeHandler.java",
+    "provider": "nvidia",
+    "model": "meta/llama-3.3-70b-instruct",
+    "trial": 1,
+    "seed": 42,
+    "max_dependencies": 5,
+    "timeout_seconds": 300,
+    "retry_count": 1,
+    "project_root": "datasets/reftest-12/commons-cli"
+  }
+}

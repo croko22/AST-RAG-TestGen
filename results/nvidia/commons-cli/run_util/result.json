@@ -1,0 +1,18 @@
+{
+  "run_id": "run_util",
+  "status": "success",
+  "latency_ms": 51284,
+  "metrics": {
+    "compile_pass": false,
+    "test_pass": false,
+    "failure_type": "not_evaluated",
+    "generation_time_ms": 51284,
+    "assertion_count": 8,
+    "test_count": 1,
+    "quality_score": 0.0,
+    "test_code_length": 2760
+  },
+  "dataset_id": "commons-cli-util",
+  "model": "meta/llama-3.3-70b-instruct",
+  "provider": "nvidia"
+}
