@@ -216,3 +216,24 @@ python main.py mock-java-project/src/main/java/com/example/demo/service/UsuarioS
 ```
 
 > **Note:** The previous NVIDIA default `meta/llama-3.1-405b-instruct` is deprecated and slow. The current default is `meta/llama-3.3-70b-instruct`.
+
+## Thesis Project Management
+
+The thesis project is tracked in Notion with a Kanban board. Update this when working on tasks.
+
+| Resource | Link |
+|----------|------|
+| **Main Page** | https://app.notion.com/p/37378daff26781b9b583fc2304a113b8 |
+| **Kanban Board** | https://app.notion.com/p/1364d97946c94aa4a0899665f89a7d33 |
+| **GitHub Repo** | https://github.com/croko22/AST-RAG-TestGen |
+
+**Kanban columns:** To Do → In Progress → In Review → Done  
+**Categories:** Benchmark, Visualization, Infrastructure, Analysis, Writing  
+**Priorities:** Critical, High, Medium, Low
+
+### Important rules
+- **Always check the Notion Kanban before starting work** — know what's next
+- **Update task status after completing anything** — keep the board current
+- **Use `/sdd-new` for substantial changes** — spec-driven development workflow
+- **Commit real work only** — no fake commits, no empty commits
+- **Push to GitHub after each session** — keep remote in sync
