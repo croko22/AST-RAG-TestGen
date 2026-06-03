@@ -11,9 +11,7 @@ jobs:
       - name: Run tests
         shell: bash -el {0}
         run: python -m pytest tests/ -v --tb=short
-      - name: Lint
+      - name: Run pre-commit
         shell: bash -el {0}
-        run: ruff check . || true
-      - name: Type check
-        shell: bash -el {0}
-        run: mypy core/ llm/ orchestration/ || true
+        run: |
+          pre-commit run --all-files --show-diff-on-failure

@@ -13,10 +13,10 @@ from postproc.validator import (
 __all__ = [
     "CompileResult",
     "CoverageResult",
-    "TestRunResult",
     "QualityReport",
-    "validate_compilation",
-    "run_tests",
-    "parse_coverage",
+    "TestRunResult",
     "assess_test_quality",
+    "parse_coverage",
+    "run_tests",
+    "validate_compilation",
 ]

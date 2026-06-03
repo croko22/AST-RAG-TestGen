@@ -8,8 +8,8 @@ from core.extraction.extractor import (
 )
 
 __all__ = [
-    "extract_dependencies_from_file",
     "extract_dependencies_from_content",
+    "extract_dependencies_from_file",
     "extract_test_methods",
     "map_test_to_focal_method",
 ]

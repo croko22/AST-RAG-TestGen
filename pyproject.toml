@@ -90,10 +90,18 @@ select = [
     "B",   # flake8-bugbear
     "C4",  # flake8-comprehensions
     "UP",  # pyupgrade
+    "N",   # pep8-naming
+    "RUF", # ruff-specific rules
 ]
 ignore = [
     "E501",  # line too long (handled by formatter)
 ]
+
+[tool.ruff.lint.per-file-ignores]
+"archive/**" = ["E", "F", "N", "B", "RUF", "C4", "UP", "C4"]
+"scripts/**" = ["E402", "F841", "RUF005"]
+"tests/**" = ["E402", "F841", "N806", "RUF015", "C401", "C408", "B007"]
+"benchmark/**" = ["RUF001"]
 
 [tool.ruff.format]
 quote-style = "double"

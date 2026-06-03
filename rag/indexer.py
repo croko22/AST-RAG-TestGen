@@ -25,7 +25,9 @@ def _collection_name_for(path: str) -> str:
 
 
 class ChromaIndexer:
-    def __init__(self, persist_dir: str = ".chroma_db", embedder=None, collection_name: str | None = None):
+    def __init__(
+        self, persist_dir: str = ".chroma_db", embedder=None, collection_name: str | None = None
+    ):
         self._persist_dir = persist_dir
         self._embedder = embedder
         self._client = None

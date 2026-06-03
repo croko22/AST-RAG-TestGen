@@ -8,7 +8,11 @@ Usage:
     python scripts/run_batch.py [project_name] [--model MODEL]
 """
 
-import json, os, sys, time, subprocess, argparse
+import argparse
+import json
+import subprocess
+import sys
+import time
 from pathlib import Path
 
 MODEL = "meta/llama-3.3-70b-instruct"
@@ -68,12 +72,21 @@ def generate_test(java_file: Path, project_name: str, run_id: str) -> dict:
     t0 = time.time()
     try:
         result = subprocess.run(
-            ["python", "main.py", "generate",
-             str(java_file), str(project_path),
-             "--provider", PROVIDER,
-             "--model", MODEL,
-             "--output", str(output_dir)],
-            capture_output=True, text=True,
+            [
+                "python",
+                "main.py",
+                "generate",
+                str(java_file),
+                str(project_path),
+                "--provider",
+                PROVIDER,
+                "--model",
+                MODEL,
+                "--output",
+                str(output_dir),
+            ],
+            capture_output=True,
+            text=True,
             timeout=TIMEOUT_PER_FILE,
         )
         elapsed = int((time.time() - t0) * 1000)
@@ -97,13 +110,26 @@ def generate_test(java_file: Path, project_name: str, run_id: str) -> dict:
             "success": bool(gen_files),
         }
     except subprocess.TimeoutExpired:
-        return {"run_id": run_id, "status": "timeout", "latency_ms": TIMEOUT_PER_FILE * 1000,
-                "test_count": 0, "assertion_count": 0, "file": str(java_file.relative_to(project_path)),
-                "success": False}
+        return {
+            "run_id": run_id,
+            "status": "timeout",
+            "latency_ms": TIMEOUT_PER_FILE * 1000,
+            "test_count": 0,
+            "assertion_count": 0,
+            "file": str(java_file.relative_to(project_path)),
+            "success": False,
+        }
     except Exception as e:
-        return {"run_id": run_id, "status": "error", "latency_ms": int((time.time()-t0)*1000),
-                "test_count": 0, "assertion_count": 0, "error": str(e),
-                "file": str(java_file.relative_to(project_path)), "success": False}
+        return {
+            "run_id": run_id,
+            "status": "error",
+            "latency_ms": int((time.time() - t0) * 1000),
+            "test_count": 0,
+            "assertion_count": 0,
+            "error": str(e),
+            "file": str(java_file.relative_to(project_path)),
+            "success": False,
+        }
 
 
 def main():
@@ -123,9 +149,9 @@ def main():
 
     for project_name, _ in projects:
         java_files = find_java_files(project_name)
-        print(f"\n{'='*60}")
+        print(f"\n{'=' * 60}")
         print(f"📁 {project_name} — {len(java_files)} source files")
-        print(f"{'='*60}")
+        print(f"{'=' * 60}")
 
         if not java_files:
             print(f"  ⚠️  No Java source files found in {project_name}")
@@ -146,7 +172,9 @@ def main():
             result_path.write_text(json.dumps(r, indent=2))
 
             status_icon = "✅" if r["success"] else "❌"
-            print(f"{status_icon} ({r['latency_ms']/1000:.1f}s, {r['test_count']} tests, {r['assertion_count']} assertions)")
+            print(
+                f"{status_icon} ({r['latency_ms'] / 1000:.1f}s, {r['test_count']} tests, {r['assertion_count']} assertions)"
+            )
 
         # Generate summary
         success_count = sum(1 for r in results if r["success"])
@@ -166,7 +194,9 @@ def main():
                 "total_tests_generated": total_tests,
                 "total_assertions": total_assertions,
                 "avg_tests_per_file": round(total_tests / len(java_files), 1) if java_files else 0,
-                "avg_assertions_per_file": round(total_assertions / len(java_files), 1) if java_files else 0,
+                "avg_assertions_per_file": round(total_assertions / len(java_files), 1)
+                if java_files
+                else 0,
             },
         }
 
@@ -175,7 +205,7 @@ def main():
 
         print(f"\n  📊 {project_name}: {success_count}/{len(java_files)} success")
         print(f"     {total_tests} tests, {total_assertions} assertions")
-        print(f"     Avg latency: {avg_latency/1000:.1f}s")
+        print(f"     Avg latency: {avg_latency / 1000:.1f}s")
 
         # Small delay between projects to avoid rate limits
         time.sleep(5)

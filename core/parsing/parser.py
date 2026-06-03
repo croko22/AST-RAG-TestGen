@@ -9,9 +9,8 @@ from __future__ import annotations
 from typing import Any
 
 try:
-    from tree_sitter import Language, Parser
-
     import tree_sitter_java
+    from tree_sitter import Language, Parser
 
     TREE_SITTER_AVAILABLE = True
 except ImportError:
@@ -60,9 +59,15 @@ class JavaParser:
     @staticmethod
     def _find_type_name(node: Any) -> str | None:
         """Find a type name from a node, handling all Java type forms."""
-        _TYPE_KINDS = ("type_identifier", "void_type", "primitive_type",
-                       "integral_type", "floating_point_type", "boolean_type")
-        for kind in _TYPE_KINDS:
+        _type_kinds = (
+            "type_identifier",
+            "void_type",
+            "primitive_type",
+            "integral_type",
+            "floating_point_type",
+            "boolean_type",
+        )
+        for kind in _type_kinds:
             name = JavaParser._child_text(node, kind)
             if name:
                 return name
@@ -109,12 +114,18 @@ class JavaParser:
         dependencies = []
         imported_names = set()
         for imp in imports:
-            if not imp.startswith("java.") and not imp.startswith("javax.") and not imp.startswith("org.springframework"):
+            if (
+                not imp.startswith("java.")
+                and not imp.startswith("javax.")
+                and not imp.startswith("org.springframework")
+            ):
                 parts = imp.split(".")
                 if len(parts) > 1 and not imp.endswith("*") and not imp.endswith(".*"):
                     class_name = parts[-1]
                     package = ".".join(parts[:-1])
-                    dependencies.append(JavaDependency(name=class_name, type="class", package=package))
+                    dependencies.append(
+                        JavaDependency(name=class_name, type="class", package=package)
+                    )
                     imported_names.add(class_name)
                 elif imp.endswith(".*"):
                     package = imp[:-2]
@@ -154,7 +165,9 @@ class JavaParser:
                                     methods.append(method)
                             elif item.type == "class_declaration":
                                 # Recursively extract inner class methods
-                                inner_methods, inner_fields = JavaParser._extract_class_body(item, is_inner=True)
+                                inner_methods, inner_fields = JavaParser._extract_class_body(
+                                    item, is_inner=True
+                                )
                                 methods.extend(inner_methods)
 
         # Add dependencies from field types (same-package refs)
@@ -176,7 +189,9 @@ class JavaParser:
         )
 
     @staticmethod
-    def _extract_class_body(class_node: Any, is_inner: bool = False) -> tuple[list[MethodSignature], list[FieldDeclaration]]:
+    def _extract_class_body(
+        class_node: Any, is_inner: bool = False
+    ) -> tuple[list[MethodSignature], list[FieldDeclaration]]:
         """Extract methods and fields from a class/interface node."""
         inner_methods: list[MethodSignature] = []
         inner_fields: list[FieldDeclaration] = []
@@ -286,63 +301,6 @@ class JavaParser:
         except Exception:
             return None
 
-            # Extract return type (handle simple type, void, primitives, generics)
-            return_type = self._child_text(method_node, "type_identifier")
-            if not return_type:
-                return_type = self._child_text(method_node, "void_type")
-            if not return_type:
-                return_type = self._child_text(method_node, "primitive_type")
-            if not return_type:
-                # Check for generic_type (e.g., Optional<Usuario>)
-                for c in method_node.children:
-                    if c.type == "generic_type":
-                        return_type = self._node_text(c)
-                        break
-            if not return_type:
-                return None
-
-            # Extract parameters
-            parameters = []
-            for child in method_node.children:
-                if child.type == "formal_parameters":
-                    for param_item in child.children:
-                        if param_item.type == "formal_parameter":
-                            param = self._extract_parameter(param_item)
-                            if param:
-                                parameters.append(param)
-
-            # Extract modifiers
-            visibility = "package-private"
-            is_static = False
-            is_abstract = False
-
-            for child in method_node.children:
-                if child.type == "modifiers":
-                    for mod in child.children:
-                        mod_text = self._node_text(mod)
-                        if mod_text in ("public", "private", "protected"):
-                            visibility = mod_text
-                        elif mod_text == "static":
-                            is_static = True
-                        elif mod_text == "abstract":
-                            is_abstract = True
-
-            # Calculate effective LOC
-            effective_loc = self._calculate_effective_loc(method_node)
-
-            return MethodSignature(
-                name=method_name,
-                visibility=visibility,
-                return_type=return_type,
-                parameters=parameters,
-                is_static=is_static,
-                is_abstract=is_abstract,
-                is_private=(visibility == "private"),
-                effective_loc=effective_loc,
-            )
-        except Exception:
-            return None
-
     @staticmethod
     def _extract_parameter(param_node: Any) -> tuple[str, str] | None:
         """Extract parameter (type, name) from a parameter node."""
@@ -370,7 +328,12 @@ class JavaParser:
                     effective_loc = 0
                     for line in content_lines:
                         stripped = line.strip()
-                        if stripped and not stripped.startswith("//") and not stripped.startswith("/*") and stripped not in ("{", "}", "{}"):
+                        if (
+                            stripped
+                            and not stripped.startswith("//")
+                            and not stripped.startswith("/*")
+                            and stripped not in ("{", "}", "{}")
+                        ):
                             effective_loc += 1
                     return effective_loc
             return 0

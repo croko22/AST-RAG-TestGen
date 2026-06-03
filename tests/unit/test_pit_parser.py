@@ -6,7 +6,6 @@ import pytest
 
 from postproc.pit_parser import parse_pit_report
 
-
 SAMPLE_MUTATIONS_XML = """<?xml version="1.0" encoding="UTF-8"?>
 <mutations>
   <mutation detected="true">

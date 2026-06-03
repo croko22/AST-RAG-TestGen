@@ -210,12 +210,16 @@ def test_evaluate_run_cleans_up_temp_directory(tmp_path, monkeypatch):
     monkeypatch.setattr("benchmark.evaluator._execute_command", fake_execute_command)
 
     # List temp directories before
-    temp_dirs_before = set(d for d in tmp_path.iterdir() if d.is_dir() and d.name.startswith("eval_tests_"))
+    temp_dirs_before = set(
+        d for d in tmp_path.iterdir() if d.is_dir() and d.name.startswith("eval_tests_")
+    )
 
     metrics = evaluate_run(run_dir, _eval_config(), project_root)
 
     # List temp directories after
-    temp_dirs_after = set(d for d in tmp_path.iterdir() if d.is_dir() and d.name.startswith("eval_tests_"))
+    temp_dirs_after = set(
+        d for d in tmp_path.iterdir() if d.is_dir() and d.name.startswith("eval_tests_")
+    )
 
     # Temp directory should be cleaned up
     assert not temp_dirs_after, f"Temp directories not cleaned up: {temp_dirs_after}"

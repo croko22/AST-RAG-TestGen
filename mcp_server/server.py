@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import time
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any
 
 
 def _import_fastmcp():
@@ -28,8 +28,8 @@ def _import_fastmcp():
 class MCPServer:
     def __init__(self, config=None):
         self._config = config
-        FastMCP = _import_fastmcp()
-        self._mcp = FastMCP(
+        mcp_class = _import_fastmcp()
+        self._mcp = mcp_class(
             name="ast-rag-testgen",
             instructions="Java unit test generation using AST-based RAG pipeline",
         )
@@ -273,9 +273,7 @@ def _handle_coverage_suggestions(
     suggestions: list[str] = []
 
     if quality.trivial_flag:
-        suggestions.append(
-            "Generated tests are below quality threshold — consider re-generating"
-        )
+        suggestions.append("Generated tests are below quality threshold — consider re-generating")
 
     if quality.assertion_count == 0:
         suggestions.append("No assertions found — add meaningful assertions")
@@ -285,9 +283,7 @@ def _handle_coverage_suggestions(
     if quality.test_count == 0:
         suggestions.append("No @Test methods found — verify test class structure")
     elif quality.test_count < 3:
-        suggestions.append(
-            f"Only {quality.test_count} test(s) — consider adding more test cases"
-        )
+        suggestions.append(f"Only {quality.test_count} test(s) — consider adding more test cases")
 
     for issue in quality.issues:
         suggestions.append(issue)

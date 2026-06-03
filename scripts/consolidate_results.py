@@ -6,8 +6,8 @@ Scans results/nvidia/<project>/ for summary.json (preferred) or aggregates
 individual run_*/result.json files when no summary exists.
 """
 
-import json
 import csv
+import json
 import sys
 from pathlib import Path
 
@@ -100,24 +100,22 @@ def aggregate_from_runs(project_dir: Path) -> dict | None:
         return None
 
     total_runs = len(runs)
-    generation_ok = sum(
-        1 for r in runs if r.get("status", "").lower() == "success"
-    )
+    generation_ok = sum(1 for r in runs if r.get("status", "").lower() == "success")
     total_tests = sum(
-        _safe_int(_get_nested(r, "test_count", default=0) or
-                   _get_nested(r, "metrics", "test_count", default=0))
+        _safe_int(
+            _get_nested(r, "test_count", default=0)
+            or _get_nested(r, "metrics", "test_count", default=0)
+        )
         for r in runs
     )
     total_assertions = sum(
-        _safe_int(_get_nested(r, "assertion_count", default=0) or
-                   _get_nested(r, "metrics", "assertion_count", default=0))
+        _safe_int(
+            _get_nested(r, "assertion_count", default=0)
+            or _get_nested(r, "metrics", "assertion_count", default=0)
+        )
         for r in runs
     )
-    latencies = [
-        _safe_float(r.get("latency_ms"))
-        for r in runs
-        if r.get("latency_ms") is not None
-    ]
+    latencies = [_safe_float(r.get("latency_ms")) for r in runs if r.get("latency_ms") is not None]
     avg_latency = sum(latencies) / len(latencies) if latencies else 0.0
 
     return {
@@ -196,19 +194,27 @@ def main():
     print()
     print(f"Total projects:              {len(rows)}")
     print(f"Total runs:                  {total_runs}")
-    print(f"Successful generations:      {total_ok} ({total_ok/total_runs*100:.1f}%)" if total_runs else "N/A")
+    print(
+        f"Successful generations:      {total_ok} ({total_ok / total_runs * 100:.1f}%)"
+        if total_runs
+        else "N/A"
+    )
     print(f"Total tests generated:       {total_tests}")
     print(f"Total assertions:            {total_assertions}")
     print(f"Average latency (all):       {avg_lat:.0f} ms")
     print()
     print("Per-project breakdown:")
-    print(f"  {'Project':22s} {'Runs':>5s} {'OK':>5s} {'Rate':>6s} {'Tests':>6s} {'Assert':>6s} {'Lat(ms)':>8s} {'Src':>12s}")
-    print(f"  {'-'*22} {'-'*5} {'-'*5} {'-'*6} {'-'*6} {'-'*6} {'-'*8} {'-'*12}")
+    print(
+        f"  {'Project':22s} {'Runs':>5s} {'OK':>5s} {'Rate':>6s} {'Tests':>6s} {'Assert':>6s} {'Lat(ms)':>8s} {'Src':>12s}"
+    )
+    print(f"  {'-' * 22} {'-' * 5} {'-' * 5} {'-' * 6} {'-' * 6} {'-' * 6} {'-' * 8} {'-' * 12}")
     for r in rows:
         src = r.get("_source", "")
-        print(f"  {r['project']:22s} {r['total_runs']:5d} {r['generation_ok']:5d} "
-              f"{r['generation_rate']:5.0%} {r['total_tests_generated']:6d} "
-              f"{r['total_assertions']:6d} {r['avg_latency_ms']:>8.0f} {src:>12s}")
+        print(
+            f"  {r['project']:22s} {r['total_runs']:5d} {r['generation_ok']:5d} "
+            f"{r['generation_rate']:5.0%} {r['total_tests_generated']:6d} "
+            f"{r['total_assertions']:6d} {r['avg_latency_ms']:>8.0f} {src:>12s}"
+        )
 
 
 if __name__ == "__main__":

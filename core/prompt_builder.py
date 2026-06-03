@@ -65,7 +65,7 @@ class PromptBuilder:
             char_budget = max_context_tokens * 4
             remaining = char_budget - len(dependency_context)
             if remaining < len(rag_section):
-                rag_section = rag_section[:max(0, remaining)]
+                rag_section = rag_section[: max(0, remaining)]
             dependency_context = dependency_context + "\n" + rag_section
 
         if feedback_context:

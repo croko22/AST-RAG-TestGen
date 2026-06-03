@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Literal, Optional
+from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
@@ -53,12 +53,12 @@ class EvaluationConfig(StrictModel):
     coverage_cmd: str | None = None
     jacoco_path: str | None = Field(
         default="target/site/jacoco/jacoco.xml",
-        description="Path to JaCoCo XML report relative to project root"
+        description="Path to JaCoCo XML report relative to project root",
     )
-    pit_cmd: Optional[str] = None
-    pit_path: Optional[str] = Field(
+    pit_cmd: str | None = None
+    pit_path: str | None = Field(
         default="target/pit-reports",
-        description="Path to PIT mutation report directory relative to project root"
+        description="Path to PIT mutation report directory relative to project root",
     )
     run_pit: bool = False
 

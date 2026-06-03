@@ -15,7 +15,8 @@ from typing import Any, Literal
 from output import get_output
 
 try:
-    from postproc.validator import validate_compilation
+    import postproc.validator  # noqa: F401
+
     _VALIDATOR_AVAILABLE = True
 except ImportError:
     _VALIDATOR_AVAILABLE = False
@@ -104,11 +105,13 @@ def generate_test_for_file(
     # Default feedback config - disabled by default (mvn compile is slow)
     # Users can enable via FeedbackLoopConfig in main.py CLI
     if feedback_config is None:
+
         class DefaultFeedback:
             max_retries = 1
             retry_on_compile_fail = False
+
         feedback_config = DefaultFeedback()
-    
+
     max_retries = getattr(feedback_config, "max_retries", 1)
     retry_on_compile_fail = getattr(feedback_config, "retry_on_compile_fail", False)
 
@@ -157,7 +160,9 @@ def generate_test_for_file(
                 max_context_tokens=max_ctx_tokens,
                 feedback_context=feedback,
             )
-            timings[f"prompt_rebuild_attempt_{attempt}_ms"] = int((time.perf_counter() - t_prompt) * 1000)
+            timings[f"prompt_rebuild_attempt_{attempt}_ms"] = int(
+                (time.perf_counter() - t_prompt) * 1000
+            )
             attempt += 1
         else:
             final_status = "success"
@@ -208,6 +213,7 @@ def _run_rag_retrieval(
     chunker = ASTChunker()
 
     import hashlib
+
     collection_name = f"project_{hashlib.md5(str(project_path).encode()).hexdigest()[:12]}"
 
     chunks = chunker.chunk(parsed_class)
@@ -225,7 +231,6 @@ def _run_rag_retrieval(
 
     ast_deps: set[str] = set()
     if strategy in ("ast", "hybrid"):
-        retriever = JavaFileRetriever(str(project_path))
         for dep in parsed_class.dependencies:
             if dep.type in ("class", "interface", "import", "field"):
                 ast_deps.add(dep.name)
@@ -280,8 +285,9 @@ def _parse_java_file(java_file_path: str, parser: Any = None):
     return JavaParser().parse_file(java_file_path)
 
 
-def _resolve_dependencies(parsed_class, project_path: Path, max_depth: int,
-                          retriever: Any = None, resolver: Any = None):
+def _resolve_dependencies(
+    parsed_class, project_path: Path, max_depth: int, retriever: Any = None, resolver: Any = None
+):
     """Resolve dependencies for a parsed Java class.
 
     Args:
@@ -313,8 +319,15 @@ def _resolve_dependencies(parsed_class, project_path: Path, max_depth: int,
     return dependencies
 
 
-def _build_prompt(parsed_class, project_path, dependency_context, max_dependencies,
-                  rag_context=None, max_context_tokens=4000, feedback_context=None):
+def _build_prompt(
+    parsed_class,
+    project_path,
+    dependency_context,
+    max_dependencies,
+    rag_context=None,
+    max_context_tokens=4000,
+    feedback_context=None,
+):
     from core.prompt_builder import PromptBuilder
     from core.retriever import DependencyResolver, JavaFileRetriever
 

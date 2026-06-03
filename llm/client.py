@@ -7,7 +7,7 @@ from __future__ import annotations
 
 import os
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, ClassVar
 
 from dotenv import load_dotenv
 
@@ -98,7 +98,7 @@ class LLMClient:
     """Client for interacting with multiple LLM APIs."""
 
     # Default models for each provider
-    DEFAULT_MODELS = {
+    DEFAULT_MODELS: ClassVar = {
         "anthropic": "claude-3-5-sonnet-20241022",
         "openai": "gpt-4-turbo",
         "glm": "glm-5-turbo",
@@ -110,7 +110,7 @@ class LLMClient:
     }
 
     # Available GLM models from Zhipu AI
-    GLM_MODELS = [
+    GLM_MODELS: ClassVar = [
         "glm-4-plus",
         "glm-4.6",
         "glm-4.6v-flashx",
@@ -129,7 +129,7 @@ class LLMClient:
     ]
 
     # Available Gemini models
-    GEMINI_MODELS = [
+    GEMINI_MODELS: ClassVar = [
         "gemini-2.5-pro",
         "gemini-2.5-flash",
         "gemini-2.0-pro",

@@ -6,18 +6,17 @@ Outputs PDF (vector) + PNG (300 DPI) to figures_thesis_v3/.
 
 import argparse
 import os
-import sys
 from pathlib import Path
 
+import matplotlib
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import matplotlib.pyplot as plt
-import matplotlib.ticker as mticker
-from matplotlib.patches import FancyBboxPatch
-import matplotlib
+
 matplotlib.use("Agg")
-import seaborn as sns
 from math import pi
+
+import seaborn as sns
 
 # ---------------------------------------------------------------------------
 # Style
@@ -28,16 +27,18 @@ sns.set_theme(
     palette="colorblind",
     font="serif",
 )
-plt.rcParams.update({
-    "figure.dpi": 300,
-    "savefig.dpi": 300,
-    "savefig.bbox": "tight",
-    "font.size": 12,
-    "axes.titlesize": 14,
-    "axes.labelsize": 12,
-    "pdf.fonttype": 42,
-    "ps.fonttype": 42,
-})
+plt.rcParams.update(
+    {
+        "figure.dpi": 300,
+        "savefig.dpi": 300,
+        "savefig.bbox": "tight",
+        "font.size": 12,
+        "axes.titlesize": 14,
+        "axes.labelsize": 12,
+        "pdf.fonttype": 42,
+        "ps.fonttype": 42,
+    }
+)
 
 THESIS_COLORS = {
     "green": "#2ecc71",
@@ -80,9 +81,7 @@ def load_thesis_metrics():
         print(f"  [WARN] Thesis metrics not found: {path}")
         return None
     df = pd.read_csv(path)
-    df["model_short"] = df["model"].apply(
-        lambda x: x.split("/")[-1] if "/" in x else x
-    )
+    df["model_short"] = df["model"].apply(lambda x: x.split("/")[-1] if "/" in x else x)
     return df
 
 
@@ -92,9 +91,17 @@ def load_detailed_runs():
         print(f"  [WARN] Detailed runs not found: {path}")
         return None
     df = pd.read_csv(path, low_memory=False)
-    for col in ["parse_ms", "retrieval_ms", "llm_ms", "postproc_ms",
-                "quality_score", "latency_ms", "assertion_count",
-                "test_count", "generation_time_ms"]:
+    for col in [
+        "parse_ms",
+        "retrieval_ms",
+        "llm_ms",
+        "postproc_ms",
+        "quality_score",
+        "latency_ms",
+        "assertion_count",
+        "test_count",
+        "generation_time_ms",
+    ]:
         if col in df.columns:
             df[col] = pd.to_numeric(df[col], errors="coerce")
     return df
@@ -139,19 +146,34 @@ def fig01_success_rate(nv_df, output_dir):
     fig, ax = plt.subplots(figsize=(8, 5))
     y_pos = range(len(df))
 
-    bars_success = ax.barh(y_pos, df["generation_rate"].values * 100,
-                           height=0.6, color=THESIS_COLORS["green"],
-                           label="Success")
-    bars_fail = ax.barh(y_pos, df["fail_rate"].values * 100,
-                        left=df["generation_rate"].values * 100,
-                        height=0.6, color=THESIS_COLORS["red"],
-                        label="Failure")
+    bars_success = ax.barh(
+        y_pos,
+        df["generation_rate"].values * 100,
+        height=0.6,
+        color=THESIS_COLORS["green"],
+        label="Success",
+    )
+    bars_fail = ax.barh(
+        y_pos,
+        df["fail_rate"].values * 100,
+        left=df["generation_rate"].values * 100,
+        height=0.6,
+        color=THESIS_COLORS["red"],
+        label="Failure",
+    )
 
     for i, (_, row) in enumerate(df.iterrows()):
         pct = row["generation_rate"] * 100
-        ax.text(pct / 2, i, f"{pct:.0f}%",
-                va="center", ha="center", fontsize=10,
-                fontweight="bold", color="white")
+        ax.text(
+            pct / 2,
+            i,
+            f"{pct:.0f}%",
+            va="center",
+            ha="center",
+            fontsize=10,
+            fontweight="bold",
+            color="white",
+        )
 
     ax.set_yticks(list(y_pos))
     ax.set_yticklabels(df["project"].values)
@@ -190,20 +212,37 @@ def fig02_avg_latency(nv_df, runs_df, output_dir):
     colors = [palette[i] for i in range(n_colors)]
 
     fig, ax = plt.subplots(figsize=(8, 5))
-    bars = ax.bar(range(len(df)), df["latency_sec"].values,
-                  color=colors, width=0.6, edgecolor="0.2", linewidth=0.5)
+    bars = ax.bar(
+        range(len(df)),
+        df["latency_sec"].values,
+        color=colors,
+        width=0.6,
+        edgecolor="0.2",
+        linewidth=0.5,
+    )
 
     has_std = df["latency_std_sec"].sum() > 0
     if has_std:
-        ax.errorbar(range(len(df)), df["latency_sec"].values,
-                    yerr=df["latency_std_sec"].values,
-                    fmt="none", capsize=4, capthick=1.5,
-                    ecolor="0.15", elinewidth=1.5)
+        ax.errorbar(
+            range(len(df)),
+            df["latency_sec"].values,
+            yerr=df["latency_std_sec"].values,
+            fmt="none",
+            capsize=4,
+            capthick=1.5,
+            ecolor="0.15",
+            elinewidth=1.5,
+        )
 
     for i, (_, row) in enumerate(df.iterrows()):
-        ax.text(i, row["latency_sec"] + (row.get("latency_std_sec", 0) if has_std else 1),
-                f"{row['latency_sec']:.1f}s",
-                ha="center", va="bottom", fontsize=9)
+        ax.text(
+            i,
+            row["latency_sec"] + (row.get("latency_std_sec", 0) if has_std else 1),
+            f"{row['latency_sec']:.1f}s",
+            ha="center",
+            va="bottom",
+            fontsize=9,
+        )
 
     ax.set_xticks(range(len(df)))
     ax.set_xticklabels(df["project"].values, rotation=30, ha="right")
@@ -227,19 +266,43 @@ def fig03_tests_vs_assertions(nv_df, output_dir):
     width = 0.35
 
     fig, ax = plt.subplots(figsize=(9, 5))
-    bars1 = ax.bar([i - width / 2 for i in x], df["avg_tests_per_run"].values,
-                    width, label="Tests Generated", color=THESIS_COLORS["blue"],
-                    edgecolor="0.2", linewidth=0.5)
-    bars2 = ax.bar([i + width / 2 for i in x], df["avg_assertions_per_run"].values,
-                    width, label="Assertions", color=THESIS_COLORS["orange"],
-                    edgecolor="0.2", linewidth=0.5)
+    bars1 = ax.bar(
+        [i - width / 2 for i in x],
+        df["avg_tests_per_run"].values,
+        width,
+        label="Tests Generated",
+        color=THESIS_COLORS["blue"],
+        edgecolor="0.2",
+        linewidth=0.5,
+    )
+    bars2 = ax.bar(
+        [i + width / 2 for i in x],
+        df["avg_assertions_per_run"].values,
+        width,
+        label="Assertions",
+        color=THESIS_COLORS["orange"],
+        edgecolor="0.2",
+        linewidth=0.5,
+    )
 
     for bar in bars1:
-        ax.text(bar.get_x() + bar.get_width() / 2, bar.get_height() + 0.3,
-                f"{bar.get_height():.0f}", ha="center", va="bottom", fontsize=8)
+        ax.text(
+            bar.get_x() + bar.get_width() / 2,
+            bar.get_height() + 0.3,
+            f"{bar.get_height():.0f}",
+            ha="center",
+            va="bottom",
+            fontsize=8,
+        )
     for bar in bars2:
-        ax.text(bar.get_x() + bar.get_width() / 2, bar.get_height() + 0.3,
-                f"{bar.get_height():.0f}", ha="center", va="bottom", fontsize=8)
+        ax.text(
+            bar.get_x() + bar.get_width() / 2,
+            bar.get_height() + 0.3,
+            f"{bar.get_height():.0f}",
+            ha="center",
+            va="bottom",
+            fontsize=8,
+        )
 
     ax.set_xticks(list(x))
     ax.set_xticklabels(df["project"].values, rotation=30, ha="right")
@@ -260,8 +323,13 @@ def fig04_model_radar(metrics_df, output_dir):
         return
 
     # Prep axis values
-    categories = ["Success\nRate", "Quality\nScore",
-                   "Assertion\nCount", "Generation\nSpeed", "Coverage"]
+    categories = [
+        "Success\nRate",
+        "Quality\nScore",
+        "Assertion\nCount",
+        "Generation\nSpeed",
+        "Coverage",
+    ]
     n_axes = len(categories)
 
     nv = metrics_df[metrics_df["model"].str.contains("nvidia", case=False)]
@@ -314,12 +382,24 @@ def fig04_model_radar(metrics_df, output_dir):
     ax.set_yticklabels(["0.2", "0.4", "0.6", "0.8", "1.0"], fontsize=8)
     ax.set_ylim(0, 1)
 
-    ax.plot(angles, values_nv_closed, "o-", linewidth=2,
-            color=THESIS_COLORS["blue"], label="NVIDIA Llama-3.3-70B")
+    ax.plot(
+        angles,
+        values_nv_closed,
+        "o-",
+        linewidth=2,
+        color=THESIS_COLORS["blue"],
+        label="NVIDIA Llama-3.3-70B",
+    )
     ax.fill(angles, values_nv_closed, alpha=0.15, color=THESIS_COLORS["blue"])
 
-    ax.plot(angles, values_gm_closed, "o-", linewidth=2,
-            color=THESIS_COLORS["orange"], label="Gemini 2.0 Flash")
+    ax.plot(
+        angles,
+        values_gm_closed,
+        "o-",
+        linewidth=2,
+        color=THESIS_COLORS["orange"],
+        label="Gemini 2.0 Flash",
+    )
     ax.fill(angles, values_gm_closed, alpha=0.15, color=THESIS_COLORS["orange"])
 
     ax.set_title("Model Comparison: NVIDIA vs Gemini", pad=25, fontsize=13)
@@ -342,8 +422,9 @@ def fig05_latency_vs_quality(nv_df, runs_df, output_dir):
         if not nv_runs.empty and "quality_score" in nv_runs.columns:
             nv_runs["project"] = nv_runs["dataset_id"].apply(map_dataset_to_project)
             qual = nv_runs.groupby("project")["quality_score"].mean()
-            df = nv_df.merge(qual.rename("avg_quality"), left_on="project",
-                             right_index=True, how="inner")
+            df = nv_df.merge(
+                qual.rename("avg_quality"), left_on="project", right_index=True, how="inner"
+            )
         else:
             print("    SKIP — no quality data in runs")
             return
@@ -356,17 +437,25 @@ def fig05_latency_vs_quality(nv_df, runs_df, output_dir):
         return
 
     fig, ax = plt.subplots(figsize=(8, 5))
-    sns.regplot(data=df, x="latency_sec", y="avg_quality",
-                ax=ax, ci=95, scatter_kws={"s": 80, "zorder": 5,
-                                           "color": THESIS_COLORS["blue"],
-                                           "edgecolor": "0.2"},
-                line_kws={"color": THESIS_COLORS["red"], "lw": 1.5})
+    sns.regplot(
+        data=df,
+        x="latency_sec",
+        y="avg_quality",
+        ax=ax,
+        ci=95,
+        scatter_kws={"s": 80, "zorder": 5, "color": THESIS_COLORS["blue"], "edgecolor": "0.2"},
+        line_kws={"color": THESIS_COLORS["red"], "lw": 1.5},
+    )
 
     for _, row in df.iterrows():
-        ax.annotate(row["project"],
-                     (row["latency_sec"], row["avg_quality"]),
-                     textcoords="offset points", xytext=(8, 6),
-                     fontsize=8, alpha=0.85)
+        ax.annotate(
+            row["project"],
+            (row["latency_sec"], row["avg_quality"]),
+            textcoords="offset points",
+            xytext=(8, 6),
+            fontsize=8,
+            alpha=0.85,
+        )
 
     ax.set_xlabel("Avg Latency (seconds)")
     ax.set_ylabel("Quality Score")
@@ -399,8 +488,13 @@ def fig06_timing_breakdown(runs_df, output_dir):
 
     nv_runs["project"] = nv_runs["dataset_id"].apply(map_dataset_to_project)
     # Filter to the 5 main projects
-    main_projects = ["commons-cli", "commons-dbutils", "commons-validator",
-                     "cucumber-expressions", "datafaker"]
+    main_projects = [
+        "commons-cli",
+        "commons-dbutils",
+        "commons-validator",
+        "cucumber-expressions",
+        "datafaker",
+    ]
     proj_data = nv_runs[nv_runs["project"].isin(main_projects)].copy()
     if proj_data.empty:
         print("    SKIP — no matching projects in timing data; using all available")
@@ -434,16 +528,21 @@ def fig06_timing_breakdown(runs_df, output_dir):
 
     for col in plot_cols:
         vals = grouped[col].values
-        ax.barh(y_pos, vals, left=left, height=0.6,
-                label=labels.get(col, col),
-                color=color_map.get(col, "gray"),
-                edgecolor="0.2", linewidth=0.3)
+        ax.barh(
+            y_pos,
+            vals,
+            left=left,
+            height=0.6,
+            label=labels.get(col, col),
+            color=color_map.get(col, "gray"),
+            edgecolor="0.2",
+            linewidth=0.3,
+        )
         left += vals
 
     # Annotate total on each bar
     for i, total in enumerate(left):
-        ax.text(total + 0.2, i, f"{total:.1f}s",
-                va="center", fontsize=8, alpha=0.8)
+        ax.text(total + 0.2, i, f"{total:.1f}s", va="center", fontsize=8, alpha=0.8)
 
     ax.set_yticks(list(y_pos))
     ax.set_yticklabels(grouped.index.tolist())
@@ -464,8 +563,7 @@ def fig07_metrics_heatmap(nv_df, output_dir):
         return
 
     df = nv_df.set_index("project")
-    cols = ["generation_rate", "latency_sec", "avg_tests_per_run",
-            "avg_assertions_per_run"]
+    cols = ["generation_rate", "latency_sec", "avg_tests_per_run", "avg_assertions_per_run"]
     labels_map = {
         "generation_rate": "Success Rate",
         "latency_sec": "Avg Latency (s)",
@@ -487,10 +585,17 @@ def fig07_metrics_heatmap(nv_df, output_dir):
     norm = (heat_data - heat_data.min()) / (heat_data.max() - heat_data.min() + 1e-10)
 
     fig, ax = plt.subplots(figsize=(8, 4 + len(heat_data) * 0.5))
-    sns.heatmap(norm, annot=heat_data, fmt=".2f", cmap="YlOrRd",
-                linewidths=0.5, linecolor="0.9",
-                cbar_kws={"label": "Normalized Score", "shrink": 0.8},
-                ax=ax, annot_kws={"fontsize": 9})
+    sns.heatmap(
+        norm,
+        annot=heat_data,
+        fmt=".2f",
+        cmap="YlOrRd",
+        linewidths=0.5,
+        linecolor="0.9",
+        cbar_kws={"label": "Normalized Score", "shrink": 0.8},
+        ax=ax,
+        annot_kws={"fontsize": 9},
+    )
     ax.set_title("Benchmark Metrics Overview")
     ax.set_ylabel("")
     ax.set_xticklabels(ax.get_xticklabels(), rotation=30, ha="right")
@@ -501,11 +606,12 @@ def fig07_metrics_heatmap(nv_df, output_dir):
 # Main
 # ---------------------------------------------------------------------------
 def main():
-    parser = argparse.ArgumentParser(
-        description="Generate thesis figures from benchmark data."
+    parser = argparse.ArgumentParser(description="Generate thesis figures from benchmark data.")
+    parser.add_argument(
+        "--output-dir",
+        default="figures_thesis_v3",
+        help="Output directory for figures (default: figures_thesis_v3)",
     )
-    parser.add_argument("--output-dir", default="figures_thesis_v3",
-                        help="Output directory for figures (default: figures_thesis_v3)")
     args = parser.parse_args()
 
     output_dir = os.path.join(REPO_ROOT, args.output_dir)
@@ -568,7 +674,9 @@ def main():
     for p in generated_pngs:
         size = os.path.getsize(p) / 1024
         print(f"    {os.path.basename(p):40s} {size:7.1f} KB")
-    print(f"\n  {'All 14 files generated successfully!' if len(figures) == 7 else f'{len(figures)}/7 figures generated'}")
+    print(
+        f"\n  {'All 14 files generated successfully!' if len(figures) == 7 else f'{len(figures)}/7 figures generated'}"
+    )
 
     # Quick figure description
     if "01_success_rate_by_project" in figures:

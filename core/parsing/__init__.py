@@ -9,9 +9,9 @@ from core.parsing.models import (
 from core.parsing.parser import JavaParser
 
 __all__ = [
-    "JavaParser",
-    "ParsedJavaClass",
-    "MethodSignature",
     "FieldDeclaration",
     "JavaDependency",
+    "JavaParser",
+    "MethodSignature",
+    "ParsedJavaClass",
 ]

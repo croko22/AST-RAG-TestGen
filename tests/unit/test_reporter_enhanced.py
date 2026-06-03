@@ -1,10 +1,5 @@
 from __future__ import annotations
 
-import json
-from pathlib import Path
-
-import pytest
-
 from benchmark.reporter import (
     _build_markdown_report,
     _build_rag_comparison_section,
@@ -35,7 +30,9 @@ def _make_result(
     config_snapshot=None,
     timings=None,
 ) -> RunResult:
-    t = timings or PipelineTimings(parse_ms=100, retrieval_ms=50, prompt_ms=20, llm_ms=1200, postproc_ms=130)
+    t = timings or PipelineTimings(
+        parse_ms=100, retrieval_ms=50, prompt_ms=20, llm_ms=1200, postproc_ms=130
+    )
     metrics = EvalMetrics(
         compile_pass=True,
         test_pass=True,

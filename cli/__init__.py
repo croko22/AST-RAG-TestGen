@@ -5,9 +5,9 @@ from cli.modern import create_modern_cli, run_modern_cli
 from cli.parser import build_arg_parser
 
 __all__ = [
+    "build_arg_parser",
+    "create_modern_cli",
     "legacy_main",
     "run_legacy_cli",
-    "create_modern_cli",
     "run_modern_cli",
-    "build_arg_parser",
 ]

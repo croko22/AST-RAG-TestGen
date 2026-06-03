@@ -99,7 +99,7 @@ def mock_collection(stored):
         for q_emb in query_embeddings:
             scored = []
             for i, s_emb in enumerate(stored["embeddings"]):
-                dot = sum(a * b for a, b in zip(q_emb, s_emb))
+                dot = sum(a * b for a, b in zip(q_emb, s_emb, strict=False))
                 dist = max(0.0, 1.0 - min(max(dot / 384, 0.0), 1.0))
                 scored.append((dist, i))
             scored.sort()
@@ -108,7 +108,12 @@ def mock_collection(stored):
             out_dists.append([d for d, _ in top])
             out_docs.append([stored["documents"][idx] for _, idx in top])
             out_metas.append([stored["metadatas"][idx] for _, idx in top])
-        return {"ids": out_ids, "distances": out_dists, "documents": out_docs, "metadatas": out_metas}
+        return {
+            "ids": out_ids,
+            "distances": out_dists,
+            "documents": out_docs,
+            "metadatas": out_metas,
+        }
 
     collection.count.side_effect = fake_count
     collection.upsert.side_effect = fake_upsert
@@ -245,7 +250,9 @@ class TestHybridRetrievalAlpha:
             )
         ]
 
-        r = HybridRetriever(indexer=mock_indexer, embedder=mock_embedder, alpha=1.0, ast_dependencies={"Repo"})
+        r = HybridRetriever(
+            indexer=mock_indexer, embedder=mock_embedder, alpha=1.0, ast_dependencies={"Repo"}
+        )
         results = r.retrieve("test query")
         assert len(results) >= 1
         assert results[0].source == "vector"
@@ -268,7 +275,9 @@ class TestHybridRetrievalAlpha:
             )
         ]
 
-        r = HybridRetriever(indexer=mock_indexer, embedder=mock_embedder, alpha=0.0, ast_dependencies={"Repo"})
+        r = HybridRetriever(
+            indexer=mock_indexer, embedder=mock_embedder, alpha=0.0, ast_dependencies={"Repo"}
+        )
         results = r.retrieve("test query")
         assert len(results) >= 1
         assert results[0].source == "ast"
@@ -291,7 +300,9 @@ class TestHybridRetrievalAlpha:
             )
         ]
 
-        r = HybridRetriever(indexer=mock_indexer, embedder=mock_embedder, alpha=0.5, ast_dependencies={"Repo"})
+        r = HybridRetriever(
+            indexer=mock_indexer, embedder=mock_embedder, alpha=0.5, ast_dependencies={"Repo"}
+        )
         results = r.retrieve("test query")
         assert len(results) >= 1
         expected = 0.5 * 0.8 + 0.5 * 1.0
@@ -327,7 +338,9 @@ class TestHybridRetrievalAlpha:
             ),
         ]
 
-        r = HybridRetriever(indexer=mock_indexer, embedder=mock_embedder, alpha=0.3, ast_dependencies={"Repo"})
+        r = HybridRetriever(
+            indexer=mock_indexer, embedder=mock_embedder, alpha=0.3, ast_dependencies={"Repo"}
+        )
         results = r.retrieve("test")
         assert results[0].hybrid_score >= results[1].hybrid_score
 
@@ -372,7 +385,10 @@ class TestEndToEndWithRetriever:
         real_indexer.index(chunks, "e2e_project")
 
         retriever = HybridRetriever(
-            indexer=real_indexer, embedder=mock_embedder, alpha=0.5, ast_dependencies={"Repository"},
+            indexer=real_indexer,
+            embedder=mock_embedder,
+            alpha=0.5,
+            ast_dependencies={"Repository"},
             collection_name="e2e_project",
         )
         results = retriever.retrieve("getData method in service", k=5)

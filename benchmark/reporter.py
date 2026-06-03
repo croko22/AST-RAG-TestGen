@@ -535,8 +535,12 @@ def _build_markdown_report(
         f"- **Trivial Rate:** {stats.get('trivial_rate', 0):.1%}",
     ]
     if stats.get("mutation_data_count", 0) > 0:
-        summary_lines.append(f"- **Avg Mutation Score:** {stats.get('avg_mutation_score_pct', 0):.1f}%")
-        summary_lines.append(f"- **Runs with Mutation Data:** {stats.get('mutation_data_count', 0)}")
+        summary_lines.append(
+            f"- **Avg Mutation Score:** {stats.get('avg_mutation_score_pct', 0):.1f}%"
+        )
+        summary_lines.append(
+            f"- **Runs with Mutation Data:** {stats.get('mutation_data_count', 0)}"
+        )
     summary_lines.append("")
     lines.extend(summary_lines)
 

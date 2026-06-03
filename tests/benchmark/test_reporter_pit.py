@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from benchmark.reporter import _build_markdown_report, _serialize_metrics
 from benchmark.schemas import BenchmarkManifest
-from benchmark.types import EvalMetrics, PipelineTimings, RunResult
+from benchmark.types import EvalMetrics, RunResult
 
 
 def _make_result(
@@ -47,9 +47,7 @@ def _minimal_manifest() -> BenchmarkManifest:
 
 class TestReporterMutationColumns:
     def test_reporter_includes_mutation_columns_when_data_present(self):
-        results = [
-            _make_result(mutation_score_pct=75.0, killed_mutations=6, total_mutations=8)
-        ]
+        results = [_make_result(mutation_score_pct=75.0, killed_mutations=6, total_mutations=8)]
         manifest = _minimal_manifest()
         summary = {"statistics": {}, "rankings": []}
 

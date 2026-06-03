@@ -123,6 +123,7 @@ class TestMainCli:
             assert kwargs["enable_metainfo_db"] is True
             assert kwargs["enable_reftest_parity"] is True
             from orchestration.generator import GenerationResult
+
             return GenerationResult(
                 test_code="public class ServiceTest {}",
                 output_path="./tests_generados/serviceTest.java",

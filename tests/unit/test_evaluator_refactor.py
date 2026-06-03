@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from pathlib import Path
 from unittest.mock import MagicMock
 
 import pytest
@@ -13,7 +12,7 @@ from benchmark.evaluator import (
     evaluate_run,
 )
 from benchmark.schemas import EvaluationConfig
-from benchmark.types import EvalMetrics, PipelineTimings
+from benchmark.types import PipelineTimings
 
 
 def _eval_config(**overrides) -> EvaluationConfig:
@@ -68,9 +67,7 @@ class TestExtractCoverageUsesPostproc:
         assert branch_pct is None
 
     def test_stdout_fallback_no_branch(self, tmp_path):
-        line_pct, branch_pct, source, reason = _extract_coverage(
-            tmp_path, "Coverage: 65.3%"
-        )
+        line_pct, branch_pct, source, reason = _extract_coverage(tmp_path, "Coverage: 65.3%")
 
         assert line_pct == pytest.approx(65.3)
         assert branch_pct is None
@@ -239,7 +236,9 @@ class TestEvaluateRunWithGenerationResult:
         }
 
         metrics = evaluate_run(
-            run_dir, _eval_config(), project_root,
+            run_dir,
+            _eval_config(),
+            project_root,
             generation_result=gen_result,
         )
 

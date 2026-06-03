@@ -4,7 +4,8 @@ Covers: is_private, effective_loc, is_in_inner_class fields,
 the filter_reftest_methods function, and the reftest_eligible_methods property.
 """
 
-from core.parsing.models import MethodSignature, ParsedJavaClass, _filter_reftest_methods as filter_reftest_methods
+from core.parsing.models import MethodSignature, ParsedJavaClass
+from core.parsing.models import _filter_reftest_methods as filter_reftest_methods
 from core.parsing.parser import JavaParser
 
 

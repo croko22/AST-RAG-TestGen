@@ -14,6 +14,7 @@ from pathlib import Path
 from typing import Any
 
 import matplotlib
+
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
@@ -74,27 +75,35 @@ def load_springboot_runs() -> pd.DataFrame:
             family = ds.split("-")[0] if "-" in ds else ds
             # Servicios vs entidades/controladores
             is_service = "service" in ds.lower()
-            complexity = "servicio" if is_service else {
-                "gsapp": "simple", "jwt": "medio", "petclinic": "complejo"
-            }.get(family, family)
+            complexity = (
+                "servicio"
+                if is_service
+                else {"gsapp": "simple", "jwt": "medio", "petclinic": "complejo"}.get(
+                    family, family
+                )
+            )
 
-            records.append({
-                "run_id": run.get("run_id", ""),
-                "dataset_id": ds,
-                "family": family,
-                "is_service": is_service,
-                "complexity": complexity,
-                "model": run.get("model", "unknown"),
-                "model_short": run.get("model", "").replace("meta/", "").replace("anthropic/", ""),
-                "provider": run.get("provider", "unknown"),
-                "status": run.get("status", "unknown"),
-                "compile_pass": m.get("compile_pass", False),
-                "test_pass": m.get("test_pass"),
-                "latency_ms": run.get("latency_ms", 0),
-                "latency_sec": run.get("latency_ms", 0) / 1000.0,
-                "failure_type": m.get("failure_type"),
-                "java_file": cfg.get("java_file", ""),
-            })
+            records.append(
+                {
+                    "run_id": run.get("run_id", ""),
+                    "dataset_id": ds,
+                    "family": family,
+                    "is_service": is_service,
+                    "complexity": complexity,
+                    "model": run.get("model", "unknown"),
+                    "model_short": run.get("model", "")
+                    .replace("meta/", "")
+                    .replace("anthropic/", ""),
+                    "provider": run.get("provider", "unknown"),
+                    "status": run.get("status", "unknown"),
+                    "compile_pass": m.get("compile_pass", False),
+                    "test_pass": m.get("test_pass"),
+                    "latency_ms": run.get("latency_ms", 0),
+                    "latency_sec": run.get("latency_ms", 0) / 1000.0,
+                    "failure_type": m.get("failure_type"),
+                    "java_file": cfg.get("java_file", ""),
+                }
+            )
 
     return pd.DataFrame.from_records(records)
 
@@ -107,6 +116,7 @@ def _save(fig: plt.Figure, name: str) -> None:
 
 
 # ── Gráficos ──────────────────────────────────────────────────────────────
+
 
 def plot_compile_by_model(df: pd.DataFrame) -> None:
     """Fig 1: Tasa de compilación por modelo."""
@@ -123,12 +133,18 @@ def plot_compile_by_model(df: pd.DataFrame) -> None:
     ax.set_xlim(0, 105)
     ax.set_xlabel("Tasa de compilación (%)")
     ax.set_title("Tasa de compilación por modelo de lenguaje — Spring Boot v1")
-    for bar, (idx, row) in zip(bars, stats.iterrows()):
-        ax.text(row["rate"] + 2, bar.get_y() + bar.get_height()/2,
-                f"{int(row['compiled'])}/{int(row['total'])}",
-                va="center", fontsize=11, fontweight="bold")
+    for bar, (idx, row) in zip(bars, stats.iterrows(), strict=False):
+        ax.text(
+            row["rate"] + 2,
+            bar.get_y() + bar.get_height() / 2,
+            f"{int(row['compiled'])}/{int(row['total'])}",
+            va="center",
+            fontsize=11,
+            fontweight="bold",
+        )
     # Leyenda manual
     from matplotlib.patches import Patch
+
     legend_elements = [
         Patch(facecolor=LLAMA_COLOR, label="Llama 3.1 405B"),
         Patch(facecolor=CLAUDE_COLOR, label="Claude 3.5 Sonnet"),
@@ -140,10 +156,14 @@ def plot_compile_by_model(df: pd.DataFrame) -> None:
 
 def plot_compile_by_family_model(df: pd.DataFrame) -> None:
     """Fig 2: Compilación por familia y modelo."""
-    pivot = df.groupby(["family", "model_short"]).agg(
-        total=("run_id", "count"),
-        compiled=("compile_pass", "sum"),
-    ).reset_index()
+    pivot = (
+        df.groupby(["family", "model_short"])
+        .agg(
+            total=("run_id", "count"),
+            compiled=("compile_pass", "sum"),
+        )
+        .reset_index()
+    )
     pivot["rate"] = pivot["compiled"] / pivot["total"] * 100
 
     # Ordenar familias por complejidad
@@ -155,11 +175,35 @@ def plot_compile_by_family_model(df: pd.DataFrame) -> None:
     x = np.arange(len(order))
     width = 0.35
 
-    llama = pivot[pivot["model_short"].str.contains("llama")].set_index("family")["rate"].reindex(order, fill_value=0)
-    claude = pivot[pivot["model_short"].str.contains("claude")].set_index("family")["rate"].reindex(order, fill_value=0)
+    llama = (
+        pivot[pivot["model_short"].str.contains("llama")]
+        .set_index("family")["rate"]
+        .reindex(order, fill_value=0)
+    )
+    claude = (
+        pivot[pivot["model_short"].str.contains("claude")]
+        .set_index("family")["rate"]
+        .reindex(order, fill_value=0)
+    )
 
-    bars1 = ax.bar(x - width/2, llama.values, width, label="Llama 3.1 405B", color=LLAMA_COLOR, edgecolor="black", linewidth=0.5)
-    bars2 = ax.bar(x + width/2, claude.values, width, label="Claude 3.5 Sonnet", color=CLAUDE_COLOR, edgecolor="black", linewidth=0.5)
+    bars1 = ax.bar(
+        x - width / 2,
+        llama.values,
+        width,
+        label="Llama 3.1 405B",
+        color=LLAMA_COLOR,
+        edgecolor="black",
+        linewidth=0.5,
+    )
+    bars2 = ax.bar(
+        x + width / 2,
+        claude.values,
+        width,
+        label="Claude 3.5 Sonnet",
+        color=CLAUDE_COLOR,
+        edgecolor="black",
+        linewidth=0.5,
+    )
 
     ax.set_xticks(x)
     ax.set_xticklabels(["gsapp (simple)", "jwt-auth (medio)", "petclinic (complejo)"])
@@ -171,12 +215,24 @@ def plot_compile_by_family_model(df: pd.DataFrame) -> None:
     # Etiquetas
     for bar in bars1:
         if bar.get_height() > 0:
-            ax.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 2,
-                    f"{bar.get_height():.0f}%", ha="center", fontsize=10, fontweight="bold")
+            ax.text(
+                bar.get_x() + bar.get_width() / 2,
+                bar.get_height() + 2,
+                f"{bar.get_height():.0f}%",
+                ha="center",
+                fontsize=10,
+                fontweight="bold",
+            )
     for bar in bars2:
         if bar.get_height() > 0:
-            ax.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 2,
-                    f"{bar.get_height():.0f}%", ha="center", fontsize=10, fontweight="bold")
+            ax.text(
+                bar.get_x() + bar.get_width() / 2,
+                bar.get_height() + 2,
+                f"{bar.get_height():.0f}%",
+                ha="center",
+                fontsize=10,
+                fontweight="bold",
+            )
 
     plt.tight_layout()
     _save(fig, "02_compile_by_family_model")
@@ -193,9 +249,20 @@ def plot_latency_by_family(df: pd.DataFrame) -> None:
     df_l["family"] = pd.Categorical(df_l["family"], categories=order, ordered=True)
 
     fig, ax = plt.subplots(figsize=(10, 5))
-    sns.boxplot(data=df_l, x="family", y="latency_sec", order=order, palette="pastel", width=0.5, ax=ax)
+    sns.boxplot(
+        data=df_l, x="family", y="latency_sec", order=order, palette="pastel", width=0.5, ax=ax
+    )
     # Agregar strip plot para ver cada punto
-    sns.stripplot(data=df_l, x="family", y="latency_sec", order=order, color="black", size=8, jitter=True, ax=ax)
+    sns.stripplot(
+        data=df_l,
+        x="family",
+        y="latency_sec",
+        order=order,
+        color="black",
+        size=8,
+        jitter=True,
+        ax=ax,
+    )
 
     ax.set_xlabel("Familia de proyecto")
     ax.set_ylabel("Latencia (s)")
@@ -206,9 +273,15 @@ def plot_latency_by_family(df: pd.DataFrame) -> None:
     for i, fam in enumerate(order):
         vals = df_l[df_l["family"] == fam]["latency_sec"]
         if len(vals) > 0:
-            ax.annotate(f"mediana: {vals.median():.1f}s\n(n={len(vals)})",
-                        xy=(i, vals.max()), xytext=(10, 5), textcoords="offset points",
-                        fontsize=9, ha="left", bbox=dict(boxstyle="round,pad=0.3", facecolor="yellow", alpha=0.3))
+            ax.annotate(
+                f"mediana: {vals.median():.1f}s\n(n={len(vals)})",
+                xy=(i, vals.max()),
+                xytext=(10, 5),
+                textcoords="offset points",
+                fontsize=9,
+                ha="left",
+                bbox=dict(boxstyle="round,pad=0.3", facecolor="yellow", alpha=0.3),
+            )
 
     plt.tight_layout()
     _save(fig, "03_latency_by_family")
@@ -222,11 +295,22 @@ def plot_latency_by_dataset(df: pd.DataFrame) -> None:
         return
 
     # Ordenar por latencia
-    order = df_l.groupby("dataset_id")["latency_sec"].median().sort_values(ascending=True).index.tolist()
+    order = (
+        df_l.groupby("dataset_id")["latency_sec"]
+        .median()
+        .sort_values(ascending=True)
+        .index.tolist()
+    )
 
     fig, ax = plt.subplots(figsize=(12, 6))
     colors = [LLAMA_COLOR] * len(order)
-    bars = ax.barh(order, [df_l[df_l["dataset_id"] == d]["latency_sec"].values[0] for d in order], color=colors, edgecolor="black", linewidth=0.5)
+    bars = ax.barh(
+        order,
+        [df_l[df_l["dataset_id"] == d]["latency_sec"].values[0] for d in order],
+        color=colors,
+        edgecolor="black",
+        linewidth=0.5,
+    )
     ax.set_xlabel("Latencia (s)")
     ax.set_title("Latencia de inferencia por archivo fuente — Llama 3.1 405B (compilados)")
 
@@ -262,15 +346,22 @@ def plot_entity_vs_service(df: pd.DataFrame) -> None:
 
     fig, ax = plt.subplots(figsize=(8, 5))
     colors = [LLAMA_COLOR, WARN_COLOR]
-    bars = ax.bar(stats.index, stats["rate"], color=colors, edgecolor="black", linewidth=0.5, width=0.5)
+    bars = ax.bar(
+        stats.index, stats["rate"], color=colors, edgecolor="black", linewidth=0.5, width=0.5
+    )
     ax.set_ylabel("Tasa de compilación (%)")
     ax.set_title("Entidades/Controladores vs Servicios — Llama 3.1 405B")
     ax.set_ylim(0, 105)
 
-    for bar, (idx, row) in zip(bars, stats.iterrows()):
-        ax.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 3,
-                f"{int(row['compiled'])}/{int(row['total'])}\n({row['rate']:.0f}%)",
-                ha="center", fontsize=12, fontweight="bold")
+    for bar, (idx, row) in zip(bars, stats.iterrows(), strict=False):
+        ax.text(
+            bar.get_x() + bar.get_width() / 2,
+            bar.get_height() + 3,
+            f"{int(row['compiled'])}/{int(row['total'])}\n({row['rate']:.0f}%)",
+            ha="center",
+            fontsize=12,
+            fontweight="bold",
+        )
 
     plt.tight_layout()
     _save(fig, "05_entity_vs_service")
@@ -293,15 +384,25 @@ def plot_status_heatmap(df: pd.DataFrame) -> None:
     bounds = [-1.5, -0.5, 0.5, 1.5]
     norm = matplotlib.colors.BoundaryNorm(bounds, cmap.N)
 
-    sns.heatmap(pivot, cmap=cmap, norm=norm, cbar=False, linewidths=0.5, linecolor="white",
-                annot=True, fmt=".0f", ax=ax,
-                annot_kws={"color": "white", "fontweight": "bold"})
+    sns.heatmap(
+        pivot,
+        cmap=cmap,
+        norm=norm,
+        cbar=False,
+        linewidths=0.5,
+        linecolor="white",
+        annot=True,
+        fmt=".0f",
+        ax=ax,
+        annot_kws={"color": "white", "fontweight": "bold"},
+    )
     ax.set_title("Compilación exitosa por dataset y modelo")
     ax.set_xlabel("Modelo")
     ax.set_ylabel("Dataset")
 
     # Custom legend
     from matplotlib.patches import Patch
+
     legend_elements = [
         Patch(facecolor=LLAMA_COLOR, label="Compila (1)"),
         Patch(facecolor=FAIL_COLOR, label="Falló (0)"),
@@ -326,20 +427,44 @@ def plot_claude_errors(df: pd.DataFrame) -> None:
     fig, axes = plt.subplots(1, 2, figsize=(14, 4))
 
     # Status
-    axes[0].bar(status_counts.index, status_counts.values, color=CLAUDE_COLOR, edgecolor="black", linewidth=0.5)
+    axes[0].bar(
+        status_counts.index,
+        status_counts.values,
+        color=CLAUDE_COLOR,
+        edgecolor="black",
+        linewidth=0.5,
+    )
     axes[0].set_title("Estado de ejecución — Claude 3.5 Sonnet")
     axes[0].set_ylabel("Cantidad de runs")
     for bar in axes[0].patches:
-        axes[0].text(bar.get_x() + bar.get_width()/2, bar.get_height() + 0.3,
-                     f"{int(bar.get_height())}", ha="center", fontsize=11, fontweight="bold")
+        axes[0].text(
+            bar.get_x() + bar.get_width() / 2,
+            bar.get_height() + 0.3,
+            f"{int(bar.get_height())}",
+            ha="center",
+            fontsize=11,
+            fontweight="bold",
+        )
 
     # Failure type
-    axes[1].barh(failure_counts.index, failure_counts.values, color=WARN_COLOR, edgecolor="black", linewidth=0.5)
+    axes[1].barh(
+        failure_counts.index,
+        failure_counts.values,
+        color=WARN_COLOR,
+        edgecolor="black",
+        linewidth=0.5,
+    )
     axes[1].set_title("Tipo de fallo — Claude 3.5 Sonnet")
     axes[1].set_xlabel("Cantidad de runs")
     for bar in axes[1].patches:
-        axes[1].text(bar.get_width() + 0.3, bar.get_y() + bar.get_height()/2,
-                     f"{int(bar.get_width())}", va="center", fontsize=11, fontweight="bold")
+        axes[1].text(
+            bar.get_width() + 0.3,
+            bar.get_y() + bar.get_height() / 2,
+            f"{int(bar.get_width())}",
+            va="center",
+            fontsize=11,
+            fontweight="bold",
+        )
 
     plt.tight_layout()
     _save(fig, "07_claude_errors")
@@ -358,7 +483,7 @@ def print_summary(df: pd.DataFrame) -> None:
     for model, g in df.groupby("model_short"):
         ok = g["compile_pass"].sum()
         total = len(g)
-        print(f"  {model:30s}: {ok}/{total} compilan ({ok/total:.0%})")
+        print(f"  {model:30s}: {ok}/{total} compilan ({ok / total:.0%})")
         # Por familia
         for fam, fg in g.groupby("family"):
             fok = fg["compile_pass"].sum()

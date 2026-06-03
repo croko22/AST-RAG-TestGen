@@ -34,13 +34,33 @@ class TestBundleExtractor:
     def test_is_test_method(self, extractor):
         """Test the heuristic for identifying test methods."""
         # Methods starting with test (case-insensitive) are tests
-        assert extractor._is_test_method(MethodSignature(name="testCalculate", visibility="public", return_type="void", parameters=[]))
-        assert extractor._is_test_method(MethodSignature(name="test_calculate", visibility="public", return_type="void", parameters=[]))
-        assert extractor._is_test_method(MethodSignature(name="TEST_CALCULATE", visibility="public", return_type="void", parameters=[]))
+        assert extractor._is_test_method(
+            MethodSignature(
+                name="testCalculate", visibility="public", return_type="void", parameters=[]
+            )
+        )
+        assert extractor._is_test_method(
+            MethodSignature(
+                name="test_calculate", visibility="public", return_type="void", parameters=[]
+            )
+        )
+        assert extractor._is_test_method(
+            MethodSignature(
+                name="TEST_CALCULATE", visibility="public", return_type="void", parameters=[]
+            )
+        )
 
-        assert not extractor._is_test_method(MethodSignature(name="calculate", visibility="public", return_type="void", parameters=[]))
-        assert not extractor._is_test_method(MethodSignature(name="setUp", visibility="public", return_type="void", parameters=[]))
-        assert not extractor._is_test_method(MethodSignature(name="tearDown", visibility="public", return_type="void", parameters=[]))
+        assert not extractor._is_test_method(
+            MethodSignature(
+                name="calculate", visibility="public", return_type="void", parameters=[]
+            )
+        )
+        assert not extractor._is_test_method(
+            MethodSignature(name="setUp", visibility="public", return_type="void", parameters=[])
+        )
+        assert not extractor._is_test_method(
+            MethodSignature(name="tearDown", visibility="public", return_type="void", parameters=[])
+        )
 
     def test_extract_from_parsed_class(self, extractor):
         """Test extraction of TestBundles from a ParsedJavaClass."""
@@ -53,10 +73,18 @@ class TestBundleExtractor:
             file_path="CalculatorTest.java",
             content="...",
             methods=[
-                MethodSignature(name="testAdd", visibility="public", return_type="void", parameters=[]),
-                MethodSignature(name="setUp", visibility="public", return_type="void", parameters=[]),
-                MethodSignature(name="test_subtract", visibility="public", return_type="void", parameters=[]),
-                MethodSignature(name="testMultiply", visibility="public", return_type="void", parameters=[]),
+                MethodSignature(
+                    name="testAdd", visibility="public", return_type="void", parameters=[]
+                ),
+                MethodSignature(
+                    name="setUp", visibility="public", return_type="void", parameters=[]
+                ),
+                MethodSignature(
+                    name="test_subtract", visibility="public", return_type="void", parameters=[]
+                ),
+                MethodSignature(
+                    name="testMultiply", visibility="public", return_type="void", parameters=[]
+                ),
             ],
         )
 
@@ -86,7 +114,11 @@ class TestBundleExtractor:
             fields=[],
             file_path="CalculatorTest.java",
             content="...",
-            methods=[MethodSignature(name="testAdd", visibility="public", return_type="void", parameters=[])],
+            methods=[
+                MethodSignature(
+                    name="testAdd", visibility="public", return_type="void", parameters=[]
+                )
+            ],
         )
 
         bundles = extractor.extract_from_parsed_class(parsed_class)

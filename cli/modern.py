@@ -121,7 +121,10 @@ def create_modern_cli():
     @app.command()
     def thesis_report(
         output: str = Opt(
-            "", "--output", "-o", help="Output path for the report (default: docs/thesis/results-package-v1.md)"
+            "",
+            "--output",
+            "-o",
+            help="Output path for the report (default: docs/thesis/results-package-v1.md)",
         ),
         latex: bool = Opt(False, "--latex", help="Also emit LaTeX table fragments"),
     ) -> None:

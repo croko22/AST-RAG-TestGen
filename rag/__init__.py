@@ -3,13 +3,13 @@
 from rag.models import CodeChunk, IndexStats, RetrievalResult
 
 __all__ = [
+    "ASTChunker",
+    "ChromaIndexer",
     "CodeChunk",
+    "EmbeddingService",
+    "HybridRetriever",
     "IndexStats",
     "RetrievalResult",
-    "ASTChunker",
-    "EmbeddingService",
-    "ChromaIndexer",
-    "HybridRetriever",
 ]
 
 

@@ -69,7 +69,9 @@ class HybridRetriever:
             return []
 
         embedding = self._embedder.embed_single(query)
-        vector_results = self._indexer.query(embedding, collection_name=self._collection_name, k=k * 2)
+        vector_results = self._indexer.query(
+            embedding, collection_name=self._collection_name, k=k * 2
+        )
 
         if not vector_results:
             return []

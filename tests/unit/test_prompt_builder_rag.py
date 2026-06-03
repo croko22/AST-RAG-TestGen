@@ -20,7 +20,15 @@ def mock_retriever():
     parsed.dependencies = []
     parsed.imports = []
     parsed.fields = []
-    parsed.methods = [MagicMock(visibility="public", return_type="String", name="getData", parameters=[], is_static=False)]
+    parsed.methods = [
+        MagicMock(
+            visibility="public",
+            return_type="String",
+            name="getData",
+            parameters=[],
+            is_static=False,
+        )
+    ]
     r.parse_file.return_value = parsed
     return r
 
@@ -97,8 +105,10 @@ class TestBuildPromptWithRag:
 
 class TestBuildTestPromptConvenience:
     def test_convenience_passes_rag_context(self):
-        with patch("core.prompt_builder.JavaFileRetriever") as MockRet, \
-             patch("core.prompt_builder.DependencyResolver") as MockRes:
+        with (
+            patch("core.prompt_builder.JavaFileRetriever") as MockRet,
+            patch("core.prompt_builder.DependencyResolver") as MockRes,
+        ):
             mock_retriever = MagicMock()
             mock_resolver = MagicMock()
             MockRet.return_value = mock_retriever

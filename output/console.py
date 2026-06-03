@@ -106,9 +106,9 @@ class OutputManager:
             message: Info message text.
         """
         if self.console:
-            self.console.print(Text(f"ℹ {message}", style="cyan"))
+            self.console.print(Text(f"i {message}", style="cyan"))
         else:
-            print(f"ℹ {message}")
+            print(f"i {message}")
 
     def print_code(self, code: str, language: str = "java") -> None:
         """Print code with syntax highlighting.

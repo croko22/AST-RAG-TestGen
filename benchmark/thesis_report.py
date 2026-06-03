@@ -23,6 +23,7 @@ from typing import Any
 # ── Forward compat: import compile_errors if available ──────────────────────
 try:
     from benchmark.types import EvalMetrics as BMEvalMetrics
+
     _HAS_COMPILE_ERRORS = hasattr(BMEvalMetrics, "compile_errors") and hasattr(
         BMEvalMetrics, "final_status"
     )
@@ -34,9 +35,11 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
 # ── Data structures ──────────────────────────────────────────────────────────
 
+
 @dataclass
 class RunData:
     """Flattened run data extracted from results.json."""
+
     run_id: str
     dataset_id: str
     provider: str
@@ -72,6 +75,7 @@ class FailureCategory:
 
 
 # ── Loader ───────────────────────────────────────────────────────────────────
+
 
 def discover_results_dirs(root: Path) -> list[Path]:
     """Find all benchmark_reftest_*_results/ directories."""
@@ -136,6 +140,7 @@ def load_all_results(results_dirs: list[Path]) -> list[RunData]:
 
 
 # ── Aggregator ───────────────────────────────────────────────────────────────
+
 
 @dataclass
 class AggregatedMetrics:
@@ -245,9 +250,7 @@ def classify_failure(msg: str) -> str:
     return "other"
 
 
-RECOMMENDATIONS: dict[str, str] = {
-    cat: rec for cat, _, rec in FAILURE_PATTERNS
-}
+RECOMMENDATIONS: dict[str, str] = {cat: rec for cat, _, rec in FAILURE_PATTERNS}
 RECOMMENDATIONS["other"] = "Inspect failure message and adjust test logic"
 
 FAILURE_LABELS: dict[str, str] = {
@@ -278,7 +281,8 @@ def _get_failure_text(r: RunData) -> str:
 def analyze_failures(runs: list[RunData]) -> list[FailureCategory]:
     """Analyze all runs that didn't fully pass (compile + test)."""
     failed = [
-        r for r in runs
+        r
+        for r in runs
         if not r.compile_pass
         or r.status in ("error", "timeout")
         or (r.compile_pass and r.test_pass is False)
@@ -298,25 +302,28 @@ def analyze_failures(runs: list[RunData]) -> list[FailureCategory]:
     total_fail = len(failed)
     result = []
     for cat_name, count in cat_counts.most_common():
-        result.append(FailureCategory(
-            name=FAILURE_LABELS.get(cat_name, cat_name),
-            count=count,
-            pct=count / total_fail * 100,
-            examples=examples.get(cat_name, ["(no error details captured in benchmark run)"]),
-            recommendation=RECOMMENDATIONS.get(cat_name, "Review failure"),
-        ))
+        result.append(
+            FailureCategory(
+                name=FAILURE_LABELS.get(cat_name, cat_name),
+                count=count,
+                pct=count / total_fail * 100,
+                examples=examples.get(cat_name, ["(no error details captured in benchmark run)"]),
+                recommendation=RECOMMENDATIONS.get(cat_name, "Review failure"),
+            )
+        )
     return result
 
 
 # ── Quality analysis ─────────────────────────────────────────────────────────
 
+
 @dataclass
 class QualityDistribution:
-    excellent: int = 0   # >= 0.8
-    good: int = 0        # >= 0.5
-    fair: int = 0        # >= 0.3
-    poor: int = 0        # < 0.3, > 0
-    trivial: int = 0     # == 0
+    excellent: int = 0  # >= 0.8
+    good: int = 0  # >= 0.5
+    fair: int = 0  # >= 0.3
+    poor: int = 0  # < 0.3, > 0
+    trivial: int = 0  # == 0
 
 
 def quality_distribution(runs: list[RunData]) -> QualityDistribution:
@@ -337,6 +344,7 @@ def quality_distribution(runs: list[RunData]) -> QualityDistribution:
 
 
 # ── Timing analysis ──────────────────────────────────────────────────────────
+
 
 @dataclass
 class TimingSummary:
@@ -363,6 +371,7 @@ def timing_summary(runs: list[RunData]) -> TimingSummary:
 
 
 # ── Renderer ─────────────────────────────────────────────────────────────────
+
 
 def _fmt_sec(ms: int) -> str:
     return f"{ms / 1000:.1f}"
@@ -419,7 +428,9 @@ def render_report(runs: list[RunData]) -> str:
     _w(f"| Projects evaluated | {agg.total_projects} |")
     _w(f"| Total benchmark runs | {agg.total_runs} |")
     _w(f"| Compilation success | {agg.compile_count} / {agg.total_runs} ({agg.compile_rate:.1%}) |")
-    _w(f"| Test execution success | {agg.test_pass_count} / {agg.total_runs} ({agg.test_pass_rate:.1%}) |")
+    _w(
+        f"| Test execution success | {agg.test_pass_count} / {agg.total_runs} ({agg.test_pass_rate:.1%}) |"
+    )
     _w(f"| Timeouts | {agg.timeout_count} |")
     _w(f"| Average quality score | {agg.avg_quality:.3f} |")
     _w(f"| Average generation time | {agg.avg_gen_time_sec:.1f}s |")
@@ -488,11 +499,15 @@ def render_report(runs: list[RunData]) -> str:
     sorted_by_q = sorted(per_project, key=lambda r: r.quality_score)
     _w("**Highest quality:**")
     for r in sorted_by_q[-3:]:
-        _w(f"- {r.dataset_id}: {r.quality_score:.3f} ({r.assertion_count} assertions, {r.test_count} tests)")
+        _w(
+            f"- {r.dataset_id}: {r.quality_score:.3f} ({r.assertion_count} assertions, {r.test_count} tests)"
+        )
     _w("")
     _w("**Lowest quality:**")
     for r in sorted_by_q[:3]:
-        _w(f"- {r.dataset_id}: {r.quality_score:.3f} ({r.assertion_count} assertions, {r.test_count} tests)")
+        _w(
+            f"- {r.dataset_id}: {r.quality_score:.3f} ({r.assertion_count} assertions, {r.test_count} tests)"
+        )
     _w("")
 
     # ── 5. Timing Breakdown ──
@@ -502,7 +517,13 @@ def render_report(runs: list[RunData]) -> str:
     _w("")
     _w("| Phase | Avg Time (ms) | % of Total |")
     _w("|-------|---------------|------------|")
-    total = timings.parse_avg + timings.retrieval_avg + timings.prompt_avg + timings.llm_avg + timings.postproc_avg
+    total = (
+        timings.parse_avg
+        + timings.retrieval_avg
+        + timings.prompt_avg
+        + timings.llm_avg
+        + timings.postproc_avg
+    )
     phases = [
         ("Parse (AST)", timings.parse_avg),
         ("Retrieval (deps)", timings.retrieval_avg),
@@ -515,7 +536,11 @@ def render_report(runs: list[RunData]) -> str:
         _w(f"| {name} | {avg:.0f} | {pct:.1f}% |")
     _w("")
     _w(f"- **Average total:** {total:.0f}ms ({total / 1000:.1f}s)")
-    _w(f"- **Average LLM time:** {timings.llm_avg:.0f}ms ({timings.llm_avg / total * 100:.1f}% of total)" if total > 0 else "")
+    _w(
+        f"- **Average LLM time:** {timings.llm_avg:.0f}ms ({timings.llm_avg / total * 100:.1f}% of total)"
+        if total > 0
+        else ""
+    )
     _w("")
 
     # Per-project timing table
@@ -533,6 +558,7 @@ def render_report(runs: list[RunData]) -> str:
 
 
 # ── Public API ───────────────────────────────────────────────────────────────
+
 
 def generate_thesis_report(
     output_path: str | Path | None = None,
@@ -575,14 +601,14 @@ def generate_thesis_report(
     agg = aggregate(runs)
     print()
     print("╭──────────────────────────────────────────────╮")
-    print(f"│  📊 Thesis Results Package v1                │")
-    print(f"│                                              │")
+    print("│  📊 Thesis Results Package v1                │")
+    print("│                                              │")
     print(f"│  Projects    : {agg.total_projects:<5}                      │")
     print(f"│  Total runs  : {agg.total_runs:<5}                      │")
     print(f"│  Compile rate: {agg.compile_rate:.1%}                           │")
     print(f"│  Test pass   : {agg.test_pass_rate:.1%}                           │")
     print(f"│  Avg quality : {agg.avg_quality:.3f}                        │")
-    print(f"│                                              │")
+    print("│                                              │")
     print(f"│  Output: {out} │")
     print("╰──────────────────────────────────────────────╯")
     print()

@@ -32,11 +32,15 @@ def mock_parsed():
 
 class TestGenerateTestForFileAstOnly:
     def test_returns_generation_result(self, mock_output, mock_parsed, tmp_path):
-        with patch("orchestration.generator._parse_java_file", return_value=mock_parsed), \
-             patch("orchestration.generator._resolve_dependencies", return_value=[]), \
-             patch("orchestration.generator._build_prompt", return_value=("code", "ctx")), \
-             patch("orchestration.generator._generate_test_with_llm", return_value="public class Test {}"):
-
+        with (
+            patch("orchestration.generator._parse_java_file", return_value=mock_parsed),
+            patch("orchestration.generator._resolve_dependencies", return_value=[]),
+            patch("orchestration.generator._build_prompt", return_value=("code", "ctx")),
+            patch(
+                "orchestration.generator._generate_test_with_llm",
+                return_value="public class Test {}",
+            ),
+        ):
             result = generate_test_for_file(
                 java_file_path="/mock/Service.java",
                 java_project_path=str(tmp_path),
@@ -52,11 +56,12 @@ class TestGenerateTestForFileAstOnly:
         assert "llm_ms" in result.timings
 
     def test_ast_only_no_rag(self, mock_output, mock_parsed, tmp_path):
-        with patch("orchestration.generator._parse_java_file", return_value=mock_parsed), \
-             patch("orchestration.generator._resolve_dependencies", return_value=[]), \
-             patch("orchestration.generator._build_prompt", return_value=("code", "ctx")), \
-             patch("orchestration.generator._generate_test_with_llm", return_value="test code"):
-
+        with (
+            patch("orchestration.generator._parse_java_file", return_value=mock_parsed),
+            patch("orchestration.generator._resolve_dependencies", return_value=[]),
+            patch("orchestration.generator._build_prompt", return_value=("code", "ctx")),
+            patch("orchestration.generator._generate_test_with_llm", return_value="test code"),
+        ):
             result = generate_test_for_file(
                 java_file_path="/mock/Service.java",
                 java_project_path=str(tmp_path),
@@ -68,11 +73,12 @@ class TestGenerateTestForFileAstOnly:
         assert result.retrieval_strategy == "ast"
 
     def test_backward_compatible_default_params(self, mock_output, mock_parsed, tmp_path):
-        with patch("orchestration.generator._parse_java_file", return_value=mock_parsed), \
-             patch("orchestration.generator._resolve_dependencies", return_value=[]), \
-             patch("orchestration.generator._build_prompt", return_value=("code", "ctx")), \
-             patch("orchestration.generator._generate_test_with_llm", return_value="test"):
-
+        with (
+            patch("orchestration.generator._parse_java_file", return_value=mock_parsed),
+            patch("orchestration.generator._resolve_dependencies", return_value=[]),
+            patch("orchestration.generator._build_prompt", return_value=("code", "ctx")),
+            patch("orchestration.generator._generate_test_with_llm", return_value="test"),
+        ):
             result = generate_test_for_file(
                 java_file_path="/mock/Service.java",
                 java_project_path=str(tmp_path),
@@ -84,12 +90,24 @@ class TestGenerateTestForFileAstOnly:
 
 class TestGenerateTestForFileWithRag:
     def test_rag_enabled_calls_rag_retrieval(self, mock_output, mock_parsed, tmp_path):
-        with patch("orchestration.generator._parse_java_file", return_value=mock_parsed), \
-             patch("orchestration.generator._resolve_dependencies", return_value=[]), \
-             patch("orchestration.generator._run_rag_retrieval", return_value=("rag ctx", {"strategy": "hybrid", "chunks_indexed": 10, "results_retrieved": 5, "top_scores": []})), \
-             patch("orchestration.generator._build_prompt", return_value=("code", "full ctx")), \
-             patch("orchestration.generator._generate_test_with_llm", return_value="test"):
-
+        with (
+            patch("orchestration.generator._parse_java_file", return_value=mock_parsed),
+            patch("orchestration.generator._resolve_dependencies", return_value=[]),
+            patch(
+                "orchestration.generator._run_rag_retrieval",
+                return_value=(
+                    "rag ctx",
+                    {
+                        "strategy": "hybrid",
+                        "chunks_indexed": 10,
+                        "results_retrieved": 5,
+                        "top_scores": [],
+                    },
+                ),
+            ),
+            patch("orchestration.generator._build_prompt", return_value=("code", "full ctx")),
+            patch("orchestration.generator._generate_test_with_llm", return_value="test"),
+        ):
             result = generate_test_for_file(
                 java_file_path="/mock/Service.java",
                 java_project_path=str(tmp_path),
@@ -103,12 +121,15 @@ class TestGenerateTestForFileWithRag:
         assert result.context_sources["chunks_indexed"] == 10
 
     def test_rag_context_passed_to_build_prompt(self, mock_output, mock_parsed, tmp_path):
-        with patch("orchestration.generator._parse_java_file", return_value=mock_parsed), \
-             patch("orchestration.generator._resolve_dependencies", return_value=[]), \
-             patch("orchestration.generator._run_rag_retrieval", return_value=("rag data", {})), \
-             patch("orchestration.generator._build_prompt", return_value=("code", "ctx")) as mock_build, \
-             patch("orchestration.generator._generate_test_with_llm", return_value="test"):
-
+        with (
+            patch("orchestration.generator._parse_java_file", return_value=mock_parsed),
+            patch("orchestration.generator._resolve_dependencies", return_value=[]),
+            patch("orchestration.generator._run_rag_retrieval", return_value=("rag data", {})),
+            patch(
+                "orchestration.generator._build_prompt", return_value=("code", "ctx")
+            ) as mock_build,
+            patch("orchestration.generator._generate_test_with_llm", return_value="test"),
+        ):
             generate_test_for_file(
                 java_file_path="/mock/Service.java",
                 java_project_path=str(tmp_path),
@@ -117,15 +138,21 @@ class TestGenerateTestForFileWithRag:
             )
 
         call_kwargs = mock_build.call_args
-        assert call_kwargs.kwargs.get("rag_context") == "rag data" or call_kwargs[1].get("rag_context") == "rag data"
+        assert (
+            call_kwargs.kwargs.get("rag_context") == "rag data"
+            or call_kwargs[1].get("rag_context") == "rag data"
+        )
 
     def test_retrieval_strategy_ast(self, mock_output, mock_parsed, tmp_path):
-        with patch("orchestration.generator._parse_java_file", return_value=mock_parsed), \
-             patch("orchestration.generator._resolve_dependencies", return_value=[]), \
-             patch("orchestration.generator._run_rag_retrieval", return_value=("ctx", {})) as mock_rag, \
-             patch("orchestration.generator._build_prompt", return_value=("code", "ctx")), \
-             patch("orchestration.generator._generate_test_with_llm", return_value="test"):
-
+        with (
+            patch("orchestration.generator._parse_java_file", return_value=mock_parsed),
+            patch("orchestration.generator._resolve_dependencies", return_value=[]),
+            patch(
+                "orchestration.generator._run_rag_retrieval", return_value=("ctx", {})
+            ) as mock_rag,
+            patch("orchestration.generator._build_prompt", return_value=("code", "ctx")),
+            patch("orchestration.generator._generate_test_with_llm", return_value="test"),
+        ):
             generate_test_for_file(
                 java_file_path="/mock/Service.java",
                 java_project_path=str(tmp_path),
@@ -136,15 +163,20 @@ class TestGenerateTestForFileWithRag:
 
         mock_rag.assert_called_once()
         call_args = mock_rag.call_args
-        assert call_args[1].get("strategy") == "ast" or (len(call_args[0]) > 2 and call_args[0][2] == "ast")
+        assert call_args[1].get("strategy") == "ast" or (
+            len(call_args[0]) > 2 and call_args[0][2] == "ast"
+        )
 
     def test_retrieval_strategy_rag(self, mock_output, mock_parsed, tmp_path):
-        with patch("orchestration.generator._parse_java_file", return_value=mock_parsed), \
-             patch("orchestration.generator._resolve_dependencies", return_value=[]), \
-             patch("orchestration.generator._run_rag_retrieval", return_value=("ctx", {})) as mock_rag, \
-             patch("orchestration.generator._build_prompt", return_value=("code", "ctx")), \
-             patch("orchestration.generator._generate_test_with_llm", return_value="test"):
-
+        with (
+            patch("orchestration.generator._parse_java_file", return_value=mock_parsed),
+            patch("orchestration.generator._resolve_dependencies", return_value=[]),
+            patch(
+                "orchestration.generator._run_rag_retrieval", return_value=("ctx", {})
+            ) as mock_rag,
+            patch("orchestration.generator._build_prompt", return_value=("code", "ctx")),
+            patch("orchestration.generator._generate_test_with_llm", return_value="test"),
+        ):
             generate_test_for_file(
                 java_file_path="/mock/Service.java",
                 java_project_path=str(tmp_path),

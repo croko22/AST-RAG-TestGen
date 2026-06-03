@@ -52,9 +52,7 @@ def _filter_reftest_methods(methods: list[MethodSignature]) -> list[MethodSignat
     and methods inside inner/anonymous classes.
     """
     return [
-        m
-        for m in methods
-        if not m.is_private and m.effective_loc > 1 and not m.is_in_inner_class
+        m for m in methods if not m.is_private and m.effective_loc > 1 and not m.is_in_inner_class
     ]
 
 

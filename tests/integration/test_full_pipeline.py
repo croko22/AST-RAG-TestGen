@@ -4,7 +4,7 @@ import pytest
 
 pytestmark = pytest.mark.slow
 
-from unittest.mock import Mock, patch
+from unittest.mock import patch
 
 import pytest
 
@@ -134,7 +134,7 @@ verify(usuarioRepository).save(u);
                     llm_model="test-model",
                 )
 
-        test_code = result.test_code if hasattr(result, 'test_code') else result
+        test_code = result.test_code if hasattr(result, "test_code") else result
         assert "UsuarioServiceTest" in test_code
         assert "import org.junit.jupiter" in test_code
         assert "verify(usuarioRepository)" in test_code

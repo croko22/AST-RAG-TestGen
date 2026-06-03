@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import os
 from dataclasses import dataclass
+from typing import ClassVar
 
 # Import adapters
 from llm.adapters import (
@@ -96,7 +97,7 @@ class LLMClient:
     """Client for interacting with multiple LLM APIs using adapters."""
 
     # Default models for each provider
-    DEFAULT_MODELS = {
+    DEFAULT_MODELS: ClassVar = {
         "anthropic": "claude-3-5-sonnet-20241022",
         "openai": "gpt-4-turbo",
         "glm": "glm-5-turbo",
@@ -108,7 +109,7 @@ class LLMClient:
     }
 
     # Available GLM models from Zhipu AI
-    GLM_MODELS = [
+    GLM_MODELS: ClassVar = [
         "glm-4-plus",
         "glm-4.6",
         "glm-4.6v-flashx",
@@ -127,7 +128,7 @@ class LLMClient:
     ]
 
     # Available Gemini models
-    GEMINI_MODELS = [
+    GEMINI_MODELS: ClassVar = [
         "gemini-2.5-pro",
         "gemini-2.5-flash",
         "gemini-2.0-pro",
@@ -138,7 +139,7 @@ class LLMClient:
     ]
 
     # Provider to adapter mapping
-    _ADAPTER_MAP = {
+    _ADAPTER_MAP: ClassVar = {
         "anthropic": AnthropicAdapter,
         "openai": OpenAIAdapter,
         "glm": GLMAdapter,
