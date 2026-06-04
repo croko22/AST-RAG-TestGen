@@ -1,0 +1,8 @@
+project,total_runs,generation_ok,generation_rate,avg_latency_ms,total_tests_generated,total_assertions,avg_tests_per_run,avg_assertions_per_run
+commons-cli,14,14,1.0,138564.0,216,398,15.4,28.4
+commons-dbutils,49,49,1.0,57836.0,479,883,9.8,18.0
+commons-validator,75,75,1.0,50760.0,961,1332,12.8,17.8
+cucumber-expressions,34,34,1.0,11959.0,237,482,7.0,14.2
+datafaker,22,22,1.0,42681.8,312,466,14.2,21.2
+morel,150,140,0.9333,0.0,1477,3479,10.6,24.9
+rtree,88,86,0.9773,0.0,770,1905,9.0,22.2

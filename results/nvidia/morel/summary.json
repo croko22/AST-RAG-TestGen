@@ -1,0 +1,19 @@
+{
+  "project": "morel",
+  "generated_at": "2026-06-04",
+  "statistics": {
+    "total_runs": 150,
+    "generation_ok": 140,
+    "generation_rate": 0.9333,
+    "avg_latency_ms": 0,
+    "total_tests_generated": 1477,
+    "total_assertions": 3479,
+    "avg_tests_per_run": 10.6,
+    "avg_assertions_per_run": 24.9
+  },
+  "config": {
+    "provider": "nvidia",
+    "model": "meta/llama-3.3-70b-instruct",
+    "dataset": "morel (RefTest-12)"
+  }
+}

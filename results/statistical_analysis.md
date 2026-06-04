@@ -1,8 +1,8 @@
 # RefTest-12 Statistical Analysis Report
 
-*Generated: 2026-06-03 11:12*
+*Generated: 2026-06-04 15:45*
 
-**Data sources:** NVIDIA consolidated (5 projects), Model comparison (2 models), Detailed runs (24 runs)
+**Data sources:** NVIDIA consolidated (7 projects), Model comparison (2 models), Detailed runs (24 runs)
 
 ------------------------------------------------------------
 
@@ -17,33 +17,35 @@
 | commons-validator | 75 | 1.00 | 50760.0 | 12.8 | 17.8 |
 | cucumber-expressions | 34 | 1.00 | 11959.0 | 7.0 | 14.2 |
 | datafaker | 22 | 1.00 | 42681.8 | 14.2 | 21.2 |
+| morel | 150 | 0.93 | 0.0 | 10.6 | 24.9 |
+| rtree | 88 | 0.98 | 0.0 | 9.0 | 22.2 |
 
 
-**Cross-Project Statistics (n = 5 projects):**
+**Cross-Project Statistics (n = 7 projects):**
 
 **Avg Latency** (ms):
-  - Mean = 60360.16, Median = 50760.00
-  - Std = 47089.20
-  - Min = 11959.00, Max = 138564.00
+  - Mean = 43114.40, Median = 42681.80
+  - Std = 48432.70
+  - Min = 0.00, Max = 138564.00
 
 **Tests per Run** ():
-  - Mean = 11.84, Median = 12.80
-  - Std = 3.42
+  - Mean = 11.26, Median = 10.60
+  - Std = 3.00
   - Min = 7.00, Max = 15.40
 
 **Assertions per Run** ():
-  - Mean = 19.92, Median = 18.00
-  - Std = 5.35
+  - Mean = 20.96, Median = 21.20
+  - Std = 4.78
   - Min = 14.20, Max = 28.40
 
 
 ### 1.2 Overall Success Rate
 
-- Trials: **194**, Successful: **194**
+- Trials: **432**, Successful: **420**
 
-- Generation rate: **100.00\%**
+- Generation rate: **97.22\%**
 
-- 95\% Wilson CI: **[98.06\%, 100.00\%]**
+- 95\% Wilson CI: **[95.21\%, 98.40\%]**
 
 
 ### 1.3 Per-Project Latency (Comparison Benchmark, NVIDIA)
@@ -121,9 +123,9 @@ Comparison on the **5 shared projects** where both providers succeeded:
 
 ### 3.1 Total Runs vs. Avg Latency (per project)
 
-- Pearson r = -0.392, p-value = 0.5141
+- Pearson r = -0.632, p-value = 0.1275
 
-- Interpretation: Not significant (p = 0.5141)
+- Interpretation: Not significant (p = 0.1275)
 
 ### 3.2 Avg Latency vs. Quality Score (NVIDIA detailed runs)
 
@@ -133,7 +135,7 @@ Comparison on the **5 shared projects** where both providers succeeded:
 
 ### 3.3 Tests per Run vs. Assertions per Run (per project)
 
-- Pearson r = 0.858, p-value = 0.0627
+- Pearson r = 0.632, p-value = 0.1276
 
 - Interpretation: Not significant
 
@@ -164,12 +166,14 @@ Comparison on the **5 shared projects** where both providers succeeded:
 | commons-validator | 75 | 100.00\% | [95.13\%, 100.00\%] |
 | cucumber-expressions | 34 | 100.00\% | [89.85\%, 100.00\%] |
 | datafaker | 22 | 100.00\% | [85.13\%, 100.00\%] |
+| morel | 150 | 93.33\% | [88.16\%, 96.34\%] |
+| rtree | 88 | 97.73\% | [92.09\%, 99.37\%] |
 
 ### 4.2 Latency CI by Dataset Family (Comparison Benchmark)
 
 | Dataset Family | n | Mean (s) | t-dist 95\% CI | Bootstrap 95\% CI |
 |---------------|---|----------|-----------------|-------------------|
-| commons | 7 | 115.8s | [38.4, 193.2] | [63.1, 175.9] |
+| commons | 7 | 115.8s | [38.4, 193.2] | [61.2, 176.0] |
 | datafaker | 1 | 24.6s | [24.6, 24.6] | [24.6, 24.6] |
 | ice4j | 1 | 50.2s | [50.2, 50.2] | [50.2, 50.2] |
 | jsoup | 2 | 131.9s | [-13.6, 277.3] | [120.4, 143.3] |
@@ -179,7 +183,7 @@ Comparison on the **5 shared projects** where both providers succeeded:
 
 ![Confidence Intervals](/home/croko/CODE/tesis/AST-RAG-TestGen/figures_thesis_v3/08_confidence_intervals.png)
 
-*Figure 8: Per-family mean latency with 95% confidence intervals (t-distribution, df = n−1).*
+*Figure 8: Per-family mean latency with 95% confidence intervals (t-distribution, df = n-1).*
 
 
 ------------------------------------------------------------
@@ -189,15 +193,15 @@ Comparison on the **5 shared projects** where both providers succeeded:
 
 ### Success Rate
 
-- NVIDIA (Llama 3.3 70B): **100.00\%** generation rate over 194 trials — perfect reliability.
+- NVIDIA (Llama 3.3 70B): **97.22\%** generation rate over 432 trials — perfect reliability.
 
 - Gemini 2.0 Flash: **41.67\%** success rate (5/12). All failures were credit-limit errors (HTTP 402), not quality issues.
 
 ### Performance
 
-- NVIDIA average latency: **60360 ms** (range 11959–138564 ms).
+- NVIDIA average latency: **43114 ms** (range 0-138564 ms).
 
-- Gemini average latency (5 shared projects): **27.4s** vs NVIDIA **113.9s** — Gemini is 4.2× faster.
+- Gemini average latency (5 shared projects): **27.4s** vs NVIDIA **113.9s** — Gemini is 4.2x faster.
 
 ### Model Effect Sizes (Cohen's d)
 
@@ -213,14 +217,14 @@ Comparison on the **5 shared projects** where both providers succeeded:
 
 - Latency vs. Quality: r = **-0.302** (not significant) — higher latency does not predict higher quality.
 
-- Total Runs vs. Avg Latency: r = **-0.392** (not significant) — no systematic relationship between number of runs and latency.
+- Total Runs vs. Avg Latency: r = **-0.632** (not significant) — no systematic relationship between number of runs and latency.
 
 ### Takeaway for Thesis
 
 1. **NVIDIA Llama 3.3 70B delivers perfect generation reliability** across all 12 RefTest projects, making it suitable for automated test generation at scale.
 
-2. **Gemini 2.0 Flash is 3–4× faster** but limited by API credit constraints; where it succeeds, quality is comparable (Cohen's d small-to-medium).
+2. **Gemini 2.0 Flash is 3-4x faster** but limited by API credit constraints; where it succeeds, quality is comparable (Cohen's d small-to-medium).
 
-3. **Test count and assertion count are strongly correlated** (r ≈ 0.7–0.9), suggesting consistent code generation behavior rather than erratic output.
+3. **Test count and assertion count are strongly correlated** (r ≈ 0.7-0.9), suggesting consistent code generation behavior rather than erratic output.
 
 4. **Latency does not correlate with quality**, supporting the claim that smaller/faster models can produce comparable test quality given identical context.

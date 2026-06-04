@@ -1,0 +1,19 @@
+{
+  "project": "rtree",
+  "generated_at": "2026-06-04",
+  "statistics": {
+    "total_runs": 88,
+    "generation_ok": 86,
+    "generation_rate": 0.9773,
+    "avg_latency_ms": 0,
+    "total_tests_generated": 770,
+    "total_assertions": 1905,
+    "avg_tests_per_run": 9.0,
+    "avg_assertions_per_run": 22.2
+  },
+  "config": {
+    "provider": "nvidia",
+    "model": "meta/llama-3.3-70b-instruct",
+    "dataset": "rtree (RefTest-12)"
+  }
+}
