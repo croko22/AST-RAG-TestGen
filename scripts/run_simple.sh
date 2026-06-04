@@ -17,9 +17,10 @@ echo "=== Generating tests for $PROJECT ==="
 RESULTS="results/nvidia/$PROJECT"
 mkdir -p "$RESULTS"
 
-find datasets/reftest-12/$PROJECT/java -name "*.java" -not -path "*/test/*" -not -name "module-info.java" -not -name "package-info.java" 2>/dev/null > /tmp/files.txt
-find datasets/reftest-12/$PROJECT/src -name "*.java" -not -path "*/test/*" -not -name "module-info.java" -not -name "package-info.java" 2>/dev/null >> /tmp/files.txt
-TOTAL=$(wc -l < /tmp/files.txt)
+FILELIST="/tmp/files_${PROJECT}.txt"
+find datasets/reftest-12/$PROJECT/java -name "*.java" -not -path "*/test/*" -not -name "module-info.java" -not -name "package-info.java" 2>/dev/null > "$FILELIST"
+find datasets/reftest-12/$PROJECT/src -name "*.java" -not -path "*/test/*" -not -name "module-info.java" -not -name "package-info.java" 2>/dev/null >> "$FILELIST"
+TOTAL=$(wc -l < "$FILELIST")
 COUNT=0
 
 while IFS= read -r f; do
@@ -39,6 +40,6 @@ while IFS= read -r f; do
   timeout 300 python main.py generate "$f" "$PROJ_ROOT" \
     --provider nvidia --model meta/llama-3.3-70b-instruct \
     --output "$RESULTS/$RUN_ID" 2>&1 | tail -1
-done < /tmp/files.txt
+done < "$FILELIST"
 
 echo "=== $PROJECT done: $COUNT files ==="
