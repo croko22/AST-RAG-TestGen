@@ -36,9 +36,9 @@ while IFS= read -r f; do
     PROJ_ROOT=$(dirname "$PROJ_ROOT")
   done
   
-  timeout 120 python main.py generate "$f" "$PROJ_ROOT" \
+  timeout 300 python main.py generate "$f" "$PROJ_ROOT" \
     --provider nvidia --model meta/llama-3.3-70b-instruct \
-    --output "$RESULTS/$RUN_ID" 2>/dev/null | tail -1
+    --output "$RESULTS/$RUN_ID" 2>&1 | tail -1
 done < /tmp/files.txt
 
 echo "=== $PROJECT done: $COUNT files ==="
