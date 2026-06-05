@@ -1,8 +1,8 @@
 # RefTest-12 Statistical Analysis Report
 
-*Generated: 2026-06-04 15:45*
+*Generated: 2026-06-05 17:12*
 
-**Data sources:** NVIDIA consolidated (7 projects), Model comparison (2 models), Detailed runs (24 runs)
+**Data sources:** NVIDIA consolidated (9 projects), Model comparison (2 models), Detailed runs (24 runs)
 
 ------------------------------------------------------------
 
@@ -17,35 +17,37 @@
 | commons-validator | 75 | 1.00 | 50760.0 | 12.8 | 17.8 |
 | cucumber-expressions | 34 | 1.00 | 11959.0 | 7.0 | 14.2 |
 | datafaker | 22 | 1.00 | 42681.8 | 14.2 | 21.2 |
+| ice4j | 174 | 0.98 | 0.0 | 9.2 | 9.8 |
+| jsoup | 85 | 0.96 | 0.0 | 14.1 | 16.0 |
 | morel | 150 | 0.93 | 0.0 | 10.6 | 24.9 |
 | rtree | 88 | 0.98 | 0.0 | 9.0 | 22.2 |
 
 
-**Cross-Project Statistics (n = 7 projects):**
+**Cross-Project Statistics (n = 9 projects):**
 
 **Avg Latency** (ms):
-  - Mean = 43114.40, Median = 42681.80
-  - Std = 48432.70
+  - Mean = 33533.42, Median = 11959.00
+  - Std = 46051.47
   - Min = 0.00, Max = 138564.00
 
 **Tests per Run** ():
-  - Mean = 11.26, Median = 10.60
-  - Std = 3.00
+  - Mean = 11.34, Median = 10.60
+  - Std = 2.88
   - Min = 7.00, Max = 15.40
 
 **Assertions per Run** ():
-  - Mean = 20.96, Median = 21.20
-  - Std = 4.78
-  - Min = 14.20, Max = 28.40
+  - Mean = 19.17, Median = 18.00
+  - Std = 5.67
+  - Min = 9.80, Max = 28.40
 
 
 ### 1.2 Overall Success Rate
 
-- Trials: **432**, Successful: **420**
+- Trials: **691**, Successful: **672**
 
-- Generation rate: **97.22\%**
+- Generation rate: **97.25\%**
 
-- 95\% Wilson CI: **[95.21\%, 98.40\%]**
+- 95\% Wilson CI: **[95.75\%, 98.23\%]**
 
 
 ### 1.3 Per-Project Latency (Comparison Benchmark, NVIDIA)
@@ -123,9 +125,9 @@ Comparison on the **5 shared projects** where both providers succeeded:
 
 ### 3.1 Total Runs vs. Avg Latency (per project)
 
-- Pearson r = -0.632, p-value = 0.1275
+- Pearson r = -0.649, p-value = 0.0586
 
-- Interpretation: Not significant (p = 0.1275)
+- Interpretation: Not significant (p = 0.0586)
 
 ### 3.2 Avg Latency vs. Quality Score (NVIDIA detailed runs)
 
@@ -135,7 +137,7 @@ Comparison on the **5 shared projects** where both providers succeeded:
 
 ### 3.3 Tests per Run vs. Assertions per Run (per project)
 
-- Pearson r = 0.632, p-value = 0.1276
+- Pearson r = 0.495, p-value = 0.1752
 
 - Interpretation: Not significant
 
@@ -166,6 +168,8 @@ Comparison on the **5 shared projects** where both providers succeeded:
 | commons-validator | 75 | 100.00\% | [95.13\%, 100.00\%] |
 | cucumber-expressions | 34 | 100.00\% | [89.85\%, 100.00\%] |
 | datafaker | 22 | 100.00\% | [85.13\%, 100.00\%] |
+| ice4j | 174 | 97.70\% | [94.24\%, 99.10\%] |
+| jsoup | 85 | 96.47\% | [90.13\%, 98.79\%] |
 | morel | 150 | 93.33\% | [88.16\%, 96.34\%] |
 | rtree | 88 | 97.73\% | [92.09\%, 99.37\%] |
 
@@ -173,7 +177,7 @@ Comparison on the **5 shared projects** where both providers succeeded:
 
 | Dataset Family | n | Mean (s) | t-dist 95\% CI | Bootstrap 95\% CI |
 |---------------|---|----------|-----------------|-------------------|
-| commons | 7 | 115.8s | [38.4, 193.2] | [61.2, 176.0] |
+| commons | 7 | 115.8s | [38.4, 193.2] | [63.1, 174.8] |
 | datafaker | 1 | 24.6s | [24.6, 24.6] | [24.6, 24.6] |
 | ice4j | 1 | 50.2s | [50.2, 50.2] | [50.2, 50.2] |
 | jsoup | 2 | 131.9s | [-13.6, 277.3] | [120.4, 143.3] |
@@ -193,13 +197,13 @@ Comparison on the **5 shared projects** where both providers succeeded:
 
 ### Success Rate
 
-- NVIDIA (Llama 3.3 70B): **97.22\%** generation rate over 432 trials — perfect reliability.
+- NVIDIA (Llama 3.3 70B): **97.25\%** generation rate over 691 trials — perfect reliability.
 
 - Gemini 2.0 Flash: **41.67\%** success rate (5/12). All failures were credit-limit errors (HTTP 402), not quality issues.
 
 ### Performance
 
-- NVIDIA average latency: **43114 ms** (range 0-138564 ms).
+- NVIDIA average latency: **33533 ms** (range 0-138564 ms).
 
 - Gemini average latency (5 shared projects): **27.4s** vs NVIDIA **113.9s** — Gemini is 4.2x faster.
 
@@ -217,7 +221,7 @@ Comparison on the **5 shared projects** where both providers succeeded:
 
 - Latency vs. Quality: r = **-0.302** (not significant) — higher latency does not predict higher quality.
 
-- Total Runs vs. Avg Latency: r = **-0.632** (not significant) — no systematic relationship between number of runs and latency.
+- Total Runs vs. Avg Latency: r = **-0.649** (not significant) — no systematic relationship between number of runs and latency.
 
 ### Takeaway for Thesis
 
