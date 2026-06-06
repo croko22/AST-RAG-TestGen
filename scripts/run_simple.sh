@@ -27,6 +27,13 @@ while IFS= read -r f; do
   [ -z "$f" ] && continue
   COUNT=$((COUNT+1))
   RUN_ID=$(printf "run_%04d" "$COUNT")
+  
+  # Skip if result already exists
+  if [ -d "$RESULTS/$RUN_ID" ] && [ "$(ls -A "$RESULTS/$RUN_ID" 2>/dev/null)" ]; then
+    echo "[$COUNT/$TOTAL] SKIP (exists) $RUN_ID"
+    continue
+  fi
+  
   REL=$(echo "$f" | sed 's|datasets/reftest-12/'"$PROJECT"'/||')
   
   echo "[$COUNT/$TOTAL] $REL"

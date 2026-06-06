@@ -1,0 +1,19 @@
+{
+  "project": "commons-collections4",
+  "generated_at": "2026-06-05",
+  "statistics": {
+    "total_runs": 339,
+    "generation_ok": 337,
+    "generation_rate": 0.9941,
+    "avg_latency_ms": 0,
+    "total_tests_generated": 3721,
+    "total_assertions": 4740,
+    "avg_tests_per_run": 11.0,
+    "avg_assertions_per_run": 14.1
+  },
+  "config": {
+    "provider": "nvidia",
+    "model": "meta/llama-3.3-70b-instruct",
+    "dataset": "commons-collections4 (RefTest-12)"
+  }
+}

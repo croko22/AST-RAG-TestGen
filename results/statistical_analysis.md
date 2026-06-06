@@ -1,8 +1,8 @@
 # RefTest-12 Statistical Analysis Report
 
-*Generated: 2026-06-05 17:12*
+*Generated: 2026-06-06 17:18*
 
-**Data sources:** NVIDIA consolidated (9 projects), Model comparison (2 models), Detailed runs (24 runs)
+**Data sources:** NVIDIA consolidated (10 projects), Model comparison (2 models), Detailed runs (24 runs)
 
 ------------------------------------------------------------
 
@@ -13,6 +13,7 @@
 | Project | Runs | Gen. Rate | Latency (ms) | Tests/Run | Assertions/Run |
 |---------|------|-----------|-------------|-----------|----------------|
 | commons-cli | 14 | 1.00 | 138564.0 | 15.4 | 28.4 |
+| commons-collections4 | 339 | 0.99 | 0.0 | 11.0 | 14.1 |
 | commons-dbutils | 49 | 1.00 | 57836.0 | 9.8 | 18.0 |
 | commons-validator | 75 | 1.00 | 50760.0 | 12.8 | 17.8 |
 | cucumber-expressions | 34 | 1.00 | 11959.0 | 7.0 | 14.2 |
@@ -23,31 +24,31 @@
 | rtree | 88 | 0.98 | 0.0 | 9.0 | 22.2 |
 
 
-**Cross-Project Statistics (n = 9 projects):**
+**Cross-Project Statistics (n = 10 projects):**
 
 **Avg Latency** (ms):
-  - Mean = 33533.42, Median = 11959.00
-  - Std = 46051.47
+  - Mean = 30180.08, Median = 5979.50
+  - Std = 44693.95
   - Min = 0.00, Max = 138564.00
 
 **Tests per Run** ():
-  - Mean = 11.34, Median = 10.60
-  - Std = 2.88
+  - Mean = 11.31, Median = 10.80
+  - Std = 2.71
   - Min = 7.00, Max = 15.40
 
 **Assertions per Run** ():
-  - Mean = 19.17, Median = 18.00
-  - Std = 5.67
+  - Mean = 18.66, Median = 17.90
+  - Std = 5.58
   - Min = 9.80, Max = 28.40
 
 
 ### 1.2 Overall Success Rate
 
-- Trials: **691**, Successful: **672**
+- Trials: **1030**, Successful: **1009**
 
-- Generation rate: **97.25\%**
+- Generation rate: **97.96\%**
 
-- 95\% Wilson CI: **[95.75\%, 98.23\%]**
+- 95\% Wilson CI: **[96.90\%, 98.66\%]**
 
 
 ### 1.3 Per-Project Latency (Comparison Benchmark, NVIDIA)
@@ -125,9 +126,9 @@ Comparison on the **5 shared projects** where both providers succeeded:
 
 ### 3.1 Total Runs vs. Avg Latency (per project)
 
-- Pearson r = -0.649, p-value = 0.0586
+- Pearson r = -0.537, p-value = 0.1097
 
-- Interpretation: Not significant (p = 0.0586)
+- Interpretation: Not significant (p = 0.1097)
 
 ### 3.2 Avg Latency vs. Quality Score (NVIDIA detailed runs)
 
@@ -137,7 +138,7 @@ Comparison on the **5 shared projects** where both providers succeeded:
 
 ### 3.3 Tests per Run vs. Assertions per Run (per project)
 
-- Pearson r = 0.495, p-value = 0.1752
+- Pearson r = 0.486, p-value = 0.1549
 
 - Interpretation: Not significant
 
@@ -164,6 +165,7 @@ Comparison on the **5 shared projects** where both providers succeeded:
 | Project | n | Success Rate | 95\% Wilson CI |
 |---------|---|--------------|-----------------|
 | commons-cli | 14 | 100.00\% | [78.47\%, 100.00\%] |
+| commons-collections4 | 339 | 99.41\% | [97.87\%, 99.84\%] |
 | commons-dbutils | 49 | 100.00\% | [92.73\%, 100.00\%] |
 | commons-validator | 75 | 100.00\% | [95.13\%, 100.00\%] |
 | cucumber-expressions | 34 | 100.00\% | [89.85\%, 100.00\%] |
@@ -177,7 +179,7 @@ Comparison on the **5 shared projects** where both providers succeeded:
 
 | Dataset Family | n | Mean (s) | t-dist 95\% CI | Bootstrap 95\% CI |
 |---------------|---|----------|-----------------|-------------------|
-| commons | 7 | 115.8s | [38.4, 193.2] | [63.1, 174.8] |
+| commons | 7 | 115.8s | [38.4, 193.2] | [59.6, 174.2] |
 | datafaker | 1 | 24.6s | [24.6, 24.6] | [24.6, 24.6] |
 | ice4j | 1 | 50.2s | [50.2, 50.2] | [50.2, 50.2] |
 | jsoup | 2 | 131.9s | [-13.6, 277.3] | [120.4, 143.3] |
@@ -197,13 +199,13 @@ Comparison on the **5 shared projects** where both providers succeeded:
 
 ### Success Rate
 
-- NVIDIA (Llama 3.3 70B): **97.25\%** generation rate over 691 trials — perfect reliability.
+- NVIDIA (Llama 3.3 70B): **97.96\%** generation rate over 1030 trials — perfect reliability.
 
 - Gemini 2.0 Flash: **41.67\%** success rate (5/12). All failures were credit-limit errors (HTTP 402), not quality issues.
 
 ### Performance
 
-- NVIDIA average latency: **33533 ms** (range 0-138564 ms).
+- NVIDIA average latency: **30180 ms** (range 0-138564 ms).
 
 - Gemini average latency (5 shared projects): **27.4s** vs NVIDIA **113.9s** — Gemini is 4.2x faster.
 
@@ -221,7 +223,7 @@ Comparison on the **5 shared projects** where both providers succeeded:
 
 - Latency vs. Quality: r = **-0.302** (not significant) — higher latency does not predict higher quality.
 
-- Total Runs vs. Avg Latency: r = **-0.649** (not significant) — no systematic relationship between number of runs and latency.
+- Total Runs vs. Avg Latency: r = **-0.537** (not significant) — no systematic relationship between number of runs and latency.
 
 ### Takeaway for Thesis
 
