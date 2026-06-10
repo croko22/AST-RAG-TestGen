@@ -24,9 +24,8 @@ def build_arg_parser() -> argparse.ArgumentParser:
         Configured ArgumentParser instance.
     """
     try:
-        from llm import client as llm_client_module
+        from llm.client_new import get_available_providers
 
-        get_available_providers = llm_client_module.get_available_providers
         available_providers = get_available_providers()
     except (ModuleNotFoundError, AttributeError):
         available_providers = ["anthropic", "openai", "glm", "gemini", "openrouter", "nvidia"]

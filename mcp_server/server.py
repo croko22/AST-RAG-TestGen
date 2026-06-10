@@ -158,7 +158,7 @@ def _handle_analyze_code(java_file: str, project_path: str) -> dict[str, Any]:
     parser = JavaParser()
     parsed = parser.parse_file(str(file_path))
 
-    from core.retriever import DependencyResolver, JavaFileRetriever
+    from rag.retriever import DependencyResolver, JavaFileRetriever
 
     retriever = JavaFileRetriever(project_path)
     resolver = DependencyResolver(retriever)

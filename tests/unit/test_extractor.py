@@ -2,7 +2,7 @@
 
 import pytest
 
-from core.extractor import BundleExtractor
+from core.extraction.extractor import BundleExtractor
 from core.parsing.models import MethodSignature, ParsedJavaClass
 
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Generate 7 publication-quality thesis figures from benchmark data.
-Outputs PDF (vector) + PNG (300 DPI) to figures_thesis_v3/.
+Outputs PDF (vector) + PNG (300 DPI) to figures/.
 """
 
 import argparse
@@ -609,8 +609,8 @@ def main():
     parser = argparse.ArgumentParser(description="Generate thesis figures from benchmark data.")
     parser.add_argument(
         "--output-dir",
-        default="figures_thesis_v3",
-        help="Output directory for figures (default: figures_thesis_v3)",
+        default="figures",
+        help="Output directory for figures (default: figures)",
     )
     args = parser.parse_args()
 

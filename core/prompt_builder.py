@@ -4,7 +4,7 @@ with code under test and extracted context.
 """
 
 from core.parsing.models import MethodSignature, ParsedJavaClass
-from core.retriever import DependencyResolver, JavaFileRetriever
+from rag.retriever import DependencyResolver, JavaFileRetriever
 
 
 class PromptBuilder:

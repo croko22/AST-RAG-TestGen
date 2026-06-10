@@ -2,7 +2,18 @@
 
 from __future__ import annotations
 
+import logging
+from pathlib import Path
 from rag.models import RetrievalResult
+
+try:
+    from core.parsing.parser import JavaParser
+
+    _parser = JavaParser()
+except ImportError:
+    _parser = None
+
+logger = logging.getLogger(__name__)
 
 
 def _compute_ast_scores(
@@ -117,3 +128,137 @@ class HybridRetriever:
             used += len(section)
 
         return "".join(parts)
+
+
+class JavaFileRetriever:
+    """
+    Retrieves Java source files from a project directory.
+    Can search by class name or package.
+    """
+
+    def __init__(self, project_root: str):
+        self.project_root = Path(project_root)
+        if not self.project_root.exists():
+            raise FileNotFoundError(f"Project root not found: {project_root}")
+
+        self._java_files_cache: list[Path] | None = None
+        self._class_index: dict[str, Path] | None = None
+        self._parse_errors: int = 0
+
+    def _scan_java_files(self) -> list[Path]:
+        if self._java_files_cache is None:
+            self._java_files_cache = []
+            for path in self.project_root.rglob("*.java"):
+                if "test" not in path.parts and "Test.java" not in path.name:
+                    self._java_files_cache.append(path)
+        return self._java_files_cache
+
+    def _build_class_index(self):
+        if self._class_index is None:
+            self._class_index = {}
+            self._parse_errors = 0
+            for java_file in self._scan_java_files():
+                try:
+                    parsed = _parser.parse_file(str(java_file)) if _parser else None
+                    if parsed and parsed.name and parsed.name != "Unknown":
+                        if parsed.package:
+                            fqcn = f"{parsed.package}.{parsed.name}"
+                            self._class_index[fqcn] = java_file
+                        simple_key = parsed.name
+                        if simple_key not in self._class_index:
+                            self._class_index[simple_key] = java_file
+                except Exception as e:
+                    self._parse_errors += 1
+                    logger.warning(f"Failed to parse {java_file}: {e}")
+
+            if self._parse_errors > 0:
+                logger.info(f"Skipped {self._parse_errors} files due to parse errors")
+
+    def find_file_by_class_name(self, class_name: str) -> str | None:
+        self._build_class_index()
+        if self._class_index is None:
+            return None
+        file_path = self._class_index.get(class_name)
+        return str(file_path) if file_path else None
+
+    def find_files_by_pattern(self, pattern: str) -> list[str]:
+        return [str(f) for f in self.project_root.glob(pattern)]
+
+    def get_all_java_files(self) -> list[str]:
+        return [str(f) for f in self._scan_java_files()]
+
+    def parse_file(self, file_path: str) -> ParsedJavaClass | None:
+        try:
+            return _parser.parse_file(file_path) if _parser else None
+        except Exception as e:
+            logger.warning(f"Failed to parse {file_path}: {e}")
+            return None
+
+
+class DependencyResolver:
+    """
+    Resolves dependencies by finding their source files
+    and extracting relevant information.
+    """
+
+    def __init__(self, retriever: JavaFileRetriever):
+        self.retriever = retriever
+
+    def resolve_dependencies(self, class_name: str, max_depth: int = 2) -> list[ParsedJavaClass]:
+        visited = set()
+        result = []
+
+        def _resolve(name: str, depth: int):
+            if depth > max_depth or name in visited:
+                return
+
+            visited.add(name)
+            file_path = self.retriever.find_file_by_class_name(name)
+
+            if file_path:
+                parsed = self.retriever.parse_file(file_path)
+                if parsed:
+                    result.append(parsed)
+
+                    for dep in parsed.dependencies:
+                        if dep.type in ("class", "interface", "import", "field"):
+                            _resolve(dep.name, depth + 1)
+
+        _resolve(class_name, 0)
+        return result
+
+    def _detect_is_interface(self, parsed: ParsedJavaClass) -> bool:
+        if parsed.name.startswith("I") and any(c.isupper() for c in parsed.name[1:]):
+            return True
+        interface_packages = ("java.util", "java.io", "java.sql", "javax.sql")
+        for imp in parsed.imports:
+            if any(imp.startswith(p) for p in interface_packages):
+                return True
+        return False
+
+    def get_method_signatures(self, class_name: str) -> str:
+        file_path = self.retriever.find_file_by_class_name(class_name)
+        if not file_path:
+            return f"// Class {class_name} not found"
+
+        parsed = self.retriever.parse_file(file_path)
+        if not parsed:
+            return f"// Could not parse {class_name}"
+
+        lines = [f"// {class_name}"]
+        if parsed.package:
+            lines.append(f"package {parsed.package};")
+            lines.append("")
+
+        class_type = "interface" if self._detect_is_interface(parsed) else "class"
+        lines.append(f"public {class_type} {parsed.name} {{")
+
+        for method in parsed.methods:
+            params = ", ".join(f"{t} {n}" for t, n in method.parameters)
+            visibility = method.visibility
+            static = "static " if method.is_static else ""
+            lines.append(f" {visibility} {static}{method.return_type} {method.name}({params});")
+
+        lines.append("}")
+        lines.append("")
+        return "\n".join(lines)

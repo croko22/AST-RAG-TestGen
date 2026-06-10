@@ -28,7 +28,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 NVIDIA_CONSOLIDATED = BASE_DIR / "results" / "nvidia" / "consolidated.csv"
 MODEL_COMPARISON = BASE_DIR / "benchmark_reftest_comparison_results" / "thesis_metrics.csv"
 DETAILED_RUNS = BASE_DIR / "archive" / "figures_thesis_v2" / "consolidated_runs.csv"
-FIGURES_DIR = BASE_DIR / "figures_thesis_v3"
+FIGURES_DIR = BASE_DIR / "figures"
 RESULTS_DIR = BASE_DIR / "results"
 
 os.makedirs(FIGURES_DIR, exist_ok=True)

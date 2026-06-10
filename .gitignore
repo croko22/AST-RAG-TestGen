@@ -78,6 +78,13 @@ condaenv.*.requirements.txt
 # Benchmark results (generated, provider-specific)
 benchmark_*/
 
+# Benchmark comparison results (generated output)
+benchmark_reftest_comparison_results/
+
+# LaTeX temp files
+texput.log
+texput.pdf
+
 # Benchmark datasets (cloned external repos)
 datasets/reftest-12/*/
 

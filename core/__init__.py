@@ -38,7 +38,7 @@ def get_retriever():
     """Lazy import for retriever module."""
     global _retriever
     if _retriever is None:
-        from . import retriever
+        from rag import retriever
 
         _retriever = retriever
     return _retriever

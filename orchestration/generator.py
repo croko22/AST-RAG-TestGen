@@ -217,7 +217,7 @@ def _run_rag_retrieval(
     collection_name = f"project_{hashlib.md5(str(project_path).encode()).hexdigest()[:12]}"
 
     chunks = chunker.chunk(parsed_class)
-    from core.retriever import JavaFileRetriever
+    from rag.retriever import JavaFileRetriever
 
     java_files = JavaFileRetriever(str(project_path)).get_all_java_files()
     for f in java_files:
@@ -306,7 +306,7 @@ def _resolve_dependencies(
             deps.extend(resolver.resolve_dependencies(dep, max_depth=max_depth))
         return deps
 
-    from core.retriever import DependencyResolver, JavaFileRetriever
+    from rag.retriever import DependencyResolver, JavaFileRetriever
 
     r = JavaFileRetriever(project_path) if retriever is None else retriever
     s = DependencyResolver(r) if resolver is None else resolver
@@ -329,7 +329,7 @@ def _build_prompt(
     feedback_context=None,
 ):
     from core.prompt_builder import PromptBuilder
-    from core.retriever import DependencyResolver, JavaFileRetriever
+    from rag.retriever import DependencyResolver, JavaFileRetriever
 
     retriever = JavaFileRetriever(project_path)
     dependency_resolver = DependencyResolver(retriever)

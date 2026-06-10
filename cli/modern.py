@@ -100,10 +100,7 @@ def create_modern_cli():
     def providers() -> None:
         """List available LLM providers and their default models."""
         try:
-            from llm import client as llm_client_module
-
-            get_available_providers = llm_client_module.get_available_providers
-            get_default_model = llm_client_module.get_default_model
+            from llm.client_new import get_available_providers, get_default_model
         except (ModuleNotFoundError, AttributeError):
             print("LLM symbols not available")
             return
