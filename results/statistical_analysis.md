@@ -187,7 +187,7 @@ Comparison on the **5 shared projects** where both providers succeeded:
 
 ### 4.3 Visualization
 
-![Confidence Intervals](/home/croko/CODE/tesis/AST-RAG-TestGen/figures_thesis_v3/08_confidence_intervals.png)
+![Confidence Intervals](/home/croko/CODE/tesis/AST-RAG-TestGen/figures/08_confidence_intervals.png)
 
 *Figure 8: Per-family mean latency with 95% confidence intervals (t-distribution, df = n-1).*
 
