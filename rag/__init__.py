@@ -9,6 +9,9 @@ __all__ = [
     "EmbeddingService",
     "HybridRetriever",
     "IndexStats",
+    "RAGConfig",
+    "RAGPipeline",
+    "RAGResult",
     "RetrievalResult",
 ]
 
@@ -30,4 +33,16 @@ def __getattr__(name):
         from rag.retriever import HybridRetriever
 
         return HybridRetriever
+    if name == "RAGConfig":
+        from rag.pipeline import RAGConfig
+
+        return RAGConfig
+    if name == "RAGPipeline":
+        from rag.pipeline import RAGPipeline
+
+        return RAGPipeline
+    if name == "RAGResult":
+        from rag.pipeline import RAGResult
+
+        return RAGResult
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")

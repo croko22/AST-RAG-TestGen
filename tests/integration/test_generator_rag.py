@@ -30,6 +30,13 @@ def mock_parsed():
     return p
 
 
+def _make_rag_mock(context: str, sources: dict | None = None):
+    m = MagicMock()
+    m.context = context
+    m.sources = sources or {}
+    return m
+
+
 def _patch_pipeline(
     mock_parsed, dep_return=None, rag_return=None, prompt_return=None, llm_return=None
 ):
@@ -44,8 +51,9 @@ def _patch_pipeline(
         patch("orchestration.generator._generate_test_with_llm", return_value=llm_return),
     ]
     if rag_return is not None:
+        mock_result = _make_rag_mock(rag_return[0], rag_return[1])
         patches.insert(
-            2, patch("orchestration.generator._run_rag_retrieval", return_value=rag_return)
+            2, patch("rag.pipeline.RAGPipeline.retrieve", return_value=mock_result)
         )
     return patches
 
@@ -70,21 +78,14 @@ class TestGeneratorRagVsAst:
         assert result.context_sources == {}
 
     def test_rag_enabled_uses_rag(self, mock_output, mock_parsed, tmp_path):
+        rag_result = _make_rag_mock(
+            "rag ctx",
+            {"strategy": "hybrid", "chunks_indexed": 10, "results_retrieved": 3, "top_scores": [0.9]},
+        )
         with (
             patch("orchestration.generator._parse_java_file", return_value=mock_parsed),
             patch("orchestration.generator._resolve_dependencies", return_value=[]),
-            patch(
-                "orchestration.generator._run_rag_retrieval",
-                return_value=(
-                    "rag ctx",
-                    {
-                        "strategy": "hybrid",
-                        "chunks_indexed": 10,
-                        "results_retrieved": 3,
-                        "top_scores": [0.9],
-                    },
-                ),
-            ),
+            patch("rag.pipeline.RAGPipeline.retrieve", return_value=rag_result),
             patch("orchestration.generator._build_prompt", return_value=("code", "full ctx")),
             patch("orchestration.generator._generate_test_with_llm", return_value="test code"),
         ):
@@ -103,10 +104,11 @@ class TestGeneratorRagVsAst:
 
 class TestGenerationResultTimings:
     def test_timings_present_with_rag(self, mock_output, mock_parsed, tmp_path):
+        rag_result = _make_rag_mock("rag ctx", {})
         with (
             patch("orchestration.generator._parse_java_file", return_value=mock_parsed),
             patch("orchestration.generator._resolve_dependencies", return_value=[]),
-            patch("orchestration.generator._run_rag_retrieval", return_value=("rag ctx", {})),
+            patch("rag.pipeline.RAGPipeline.retrieve", return_value=rag_result),
             patch("orchestration.generator._build_prompt", return_value=("code", "ctx")),
             patch("orchestration.generator._generate_test_with_llm", return_value="test"),
         ):
@@ -144,10 +146,11 @@ class TestGenerationResultTimings:
 
 class TestPromptBuilderReceivesRagContext:
     def test_rag_context_passed_to_build_prompt(self, mock_output, mock_parsed, tmp_path):
+        rag_result = _make_rag_mock("rag data here", {})
         with (
             patch("orchestration.generator._parse_java_file", return_value=mock_parsed),
             patch("orchestration.generator._resolve_dependencies", return_value=[]),
-            patch("orchestration.generator._run_rag_retrieval", return_value=("rag data here", {})),
+            patch("rag.pipeline.RAGPipeline.retrieve", return_value=rag_result),
             patch(
                 "orchestration.generator._build_prompt", return_value=("code", "ctx")
             ) as mock_build,
@@ -211,12 +214,11 @@ class TestBackwardCompatibility:
 
 class TestRetrievalStrategySelection:
     def test_ast_strategy(self, mock_output, mock_parsed, tmp_path):
+        rag_result = _make_rag_mock("ctx", {})
         with (
             patch("orchestration.generator._parse_java_file", return_value=mock_parsed),
             patch("orchestration.generator._resolve_dependencies", return_value=[]),
-            patch(
-                "orchestration.generator._run_rag_retrieval", return_value=("ctx", {})
-            ) as mock_rag,
+            patch("rag.pipeline.RAGPipeline.retrieve", return_value=rag_result) as mock_rag,
             patch("orchestration.generator._build_prompt", return_value=("code", "ctx")),
             patch("orchestration.generator._generate_test_with_llm", return_value="test"),
         ):
@@ -231,12 +233,11 @@ class TestRetrievalStrategySelection:
         mock_rag.assert_called_once()
 
     def test_rag_strategy(self, mock_output, mock_parsed, tmp_path):
+        rag_result = _make_rag_mock("ctx", {})
         with (
             patch("orchestration.generator._parse_java_file", return_value=mock_parsed),
             patch("orchestration.generator._resolve_dependencies", return_value=[]),
-            patch(
-                "orchestration.generator._run_rag_retrieval", return_value=("ctx", {})
-            ) as mock_rag,
+            patch("rag.pipeline.RAGPipeline.retrieve", return_value=rag_result) as mock_rag,
             patch("orchestration.generator._build_prompt", return_value=("code", "ctx")),
             patch("orchestration.generator._generate_test_with_llm", return_value="test"),
         ):
@@ -255,21 +256,14 @@ class TestRetrievalStrategySelection:
         )
 
     def test_hybrid_strategy(self, mock_output, mock_parsed, tmp_path):
+        rag_result = _make_rag_mock(
+            "ctx",
+            {"strategy": "hybrid", "chunks_indexed": 5, "results_retrieved": 2, "top_scores": [0.8]},
+        )
         with (
             patch("orchestration.generator._parse_java_file", return_value=mock_parsed),
             patch("orchestration.generator._resolve_dependencies", return_value=[]),
-            patch(
-                "orchestration.generator._run_rag_retrieval",
-                return_value=(
-                    "ctx",
-                    {
-                        "strategy": "hybrid",
-                        "chunks_indexed": 5,
-                        "results_retrieved": 2,
-                        "top_scores": [0.8],
-                    },
-                ),
-            ),
+            patch("rag.pipeline.RAGPipeline.retrieve", return_value=rag_result),
             patch("orchestration.generator._build_prompt", return_value=("code", "ctx")),
             patch("orchestration.generator._generate_test_with_llm", return_value="test"),
         ):

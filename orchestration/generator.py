@@ -78,12 +78,23 @@ def generate_test_for_file(
     if rag_enabled:
         t_rag = time.perf_counter()
         output.print_info("    📦 Running RAG retrieval...")
-        rag_context, context_sources = _run_rag_retrieval(
-            parsed_class=parsed_class,
-            project_path=Path(java_project_path),
-            strategy=retrieval_strategy,
-            config=rag_config or {},
+        from rag.pipeline import RAGConfig, RAGPipeline
+
+        rag_pipeline_config = RAGConfig(
+            alpha=(rag_config or {}).get("alpha", 0.5),
+            retrieval_top_k=(rag_config or {}).get("retrieval_top_k", 10),
+            max_context_tokens=(rag_config or {}).get("max_context_tokens", 4000),
+            chroma_persist_dir=(rag_config or {}).get("chroma_persist_dir", ".chroma_db"),
+            embedding_model=(rag_config or {}).get("embedding_model", "all-MiniLM-L6-v2"),
         )
+        pipeline = RAGPipeline(rag_pipeline_config)
+        result = pipeline.retrieve(
+            parsed_class=parsed_class,
+            project_path=java_project_path,
+            strategy=retrieval_strategy,
+        )
+        rag_context = result.context
+        context_sources = result.sources
         rag_ms = int((time.perf_counter() - t_rag) * 1000)
         timings["retrieval_ms"] = timings["retrieval_ms"] + rag_ms
 
@@ -189,83 +200,6 @@ def generate_test_for_file(
         compile_errors=compile_errors,
         final_status=final_status,
     )
-
-
-def _run_rag_retrieval(
-    parsed_class,
-    project_path: Path,
-    strategy: str,
-    config: dict[str, Any],
-) -> tuple[str | None, dict[str, Any]]:
-    from rag.chunker import ASTChunker
-    from rag.embedder import EmbeddingService
-    from rag.indexer import ChromaIndexer
-    from rag.retriever import HybridRetriever
-
-    alpha = config.get("alpha", 0.5)
-    top_k = config.get("retrieval_top_k", 10)
-    max_tokens = config.get("max_context_tokens", 4000)
-    persist_dir = config.get("chroma_persist_dir", ".chroma_db")
-    model_name = config.get("embedding_model", "all-MiniLM-L6-v2")
-
-    embedder = EmbeddingService(model_name=model_name)
-    indexer = ChromaIndexer(persist_dir=persist_dir, embedder=embedder)
-    chunker = ASTChunker()
-
-    import hashlib
-
-    collection_name = f"project_{hashlib.md5(str(project_path).encode()).hexdigest()[:12]}"
-
-    chunks = chunker.chunk(parsed_class)
-    from rag.retriever import JavaFileRetriever
-
-    java_files = JavaFileRetriever(str(project_path)).get_all_java_files()
-    for f in java_files:
-        try:
-            file_chunks = chunker.chunk_file(f)
-            chunks.extend(file_chunks)
-        except Exception:
-            pass
-
-    indexer.index(chunks, collection_name)
-
-    ast_deps: set[str] = set()
-    if strategy in ("ast", "hybrid"):
-        for dep in parsed_class.dependencies:
-            if dep.type in ("class", "interface", "import", "field"):
-                ast_deps.add(dep.name)
-        for imp in parsed_class.imports:
-            parts = imp.split(".")
-            if len(parts) > 1 and not imp.startswith(("java.", "javax.", "org.")):
-                dep_name = parts[-1]
-                if not dep_name.endswith("*"):
-                    ast_deps.add(dep_name)
-
-    effective_alpha = alpha
-    if strategy == "ast":
-        effective_alpha = 0.0
-    elif strategy == "rag":
-        effective_alpha = 1.0
-
-    hybrid = HybridRetriever(
-        indexer=indexer,
-        embedder=embedder,
-        alpha=effective_alpha,
-        ast_dependencies=ast_deps,
-    )
-
-    query = parsed_class.content[:2000]
-    results = hybrid.retrieve(query, k=top_k)
-    rag_context = hybrid.build_context(results, max_tokens=max_tokens)
-
-    context_sources = {
-        "strategy": strategy,
-        "chunks_indexed": len(chunks),
-        "results_retrieved": len(results),
-        "top_scores": [r.hybrid_score for r in results[:5]],
-    }
-
-    return rag_context or None, context_sources
 
 
 def _parse_java_file(java_file_path: str, parser: Any = None):
