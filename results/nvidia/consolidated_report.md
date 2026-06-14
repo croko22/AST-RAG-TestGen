@@ -12,3 +12,6 @@
 |          jsoup |             85 |             82 |           0.96 |            0.0 |           1158 |           1313 |          14.10 |           16.0 |
 |          morel |            150 |            140 |           0.93 |            0.0 |           1477 |           3479 |          10.60 |          24.90 |
 |          rtree |             88 |             86 |           0.98 |            0.0 |            770 |           1905 |            9.0 |          22.20 |
+| **Total** |         **1030** |         **1009** |        **0.98** |              — |        **10890** |        **16656** |              — |              — |
+
+> **Note:** Latency was not collected for commons-collections4, ice4j, jsoup, morel, and rtree (0.0 indicates missing data, not instantaneous generation). The `openapi-diff` project was part of the benchmark configuration but yielded no results.

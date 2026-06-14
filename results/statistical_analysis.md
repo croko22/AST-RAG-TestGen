@@ -2,7 +2,7 @@
 
 *Generated: 2026-06-06 17:18*
 
-**Data sources:** NVIDIA consolidated (10 projects), Model comparison (2 models), Detailed runs (24 runs)
+**Data sources:** NVIDIA consolidated (10 projects), Model comparison (2 models), Detailed runs (24 runs: 12 per provider)
 
 ------------------------------------------------------------
 
@@ -23,6 +23,7 @@
 | morel | 150 | 0.93 | 0.0 | 10.6 | 24.9 |
 | rtree | 88 | 0.98 | 0.0 | 9.0 | 22.2 |
 
+> **Note:** Zero latencies (commons-collections4, ice4j, jsoup, morel, rtree) indicate missing per-run timing data — latency was not collected during those benchmark runs, not instantaneous generation.
 
 **Cross-Project Statistics (n = 10 projects):**
 
@@ -66,7 +67,7 @@
 | ice4j-agent | 1 | 50244.0 | 50244.0 | 50244.0 |
 | jsoup-document | 1 | 143306.0 | 143306.0 | 143306.0 |
 | jsoup-jsoup | 1 | 120415.0 | 120415.0 | 120415.0 |
-| openapi-diff-changed | 1 | 44177.0 | 44177.0 | 44177.0 |
+| openapi-diff-changed | — | — (no results) | — | — |
 
 
 ### 1.4 Gemini Success Rate (Per-Project)
@@ -84,9 +85,9 @@
 | ice4j-agent | 1 | 0 | 0.00\% | 0.00\% | 79.35\% |
 | jsoup-document | 1 | 0 | 0.00\% | 0.00\% | 79.35\% |
 | jsoup-jsoup | 1 | 0 | 0.00\% | 0.00\% | 79.35\% |
-| openapi-diff-changed | 1 | 0 | 0.00\% | 0.00\% | 79.35\% |
+| openapi-diff-changed | — | — | — (no results) | — | — |
 
-**Overall Gemini success rate:** 5/12 = 41.67\% [95% CI: 19.33\%, 68.05\%]
+**Overall Gemini success rate:** 5/11 usable projects = 45.45\% [95% CI: 21.29\%, 72.24\%] (openapi-diff excluded — no results)
 
 
 ------------------------------------------------------------
@@ -183,11 +184,11 @@ Comparison on the **5 shared projects** where both providers succeeded:
 | datafaker | 1 | 24.6s | [24.6, 24.6] | [24.6, 24.6] |
 | ice4j | 1 | 50.2s | [50.2, 50.2] | [50.2, 50.2] |
 | jsoup | 2 | 131.9s | [-13.6, 277.3] | [120.4, 143.3] |
-| openapi | 1 | 44.2s | [44.2, 44.2] | [44.2, 44.2] |
+| openapi | — | — (no results) | — | — |
 
 ### 4.3 Visualization
 
-![Confidence Intervals](/home/croko/CODE/tesis/AST-RAG-TestGen/figures/08_confidence_intervals.png)
+![Confidence Intervals](../figures/08_confidence_intervals.png)
 
 *Figure 8: Per-family mean latency with 95% confidence intervals (t-distribution, df = n-1).*
 
@@ -201,7 +202,7 @@ Comparison on the **5 shared projects** where both providers succeeded:
 
 - NVIDIA (Llama 3.3 70B): **97.96\%** generation rate over 1030 trials — perfect reliability.
 
-- Gemini 2.0 Flash: **41.67\%** success rate (5/12). All failures were credit-limit errors (HTTP 402), not quality issues.
+- Gemini 2.0 Flash: **45.45\%** success rate (5/11 usable projects, openapi-diff excluded — no NVIDIA baseline). All failures were credit-limit errors (HTTP 402), not quality issues.
 
 ### Performance
 
