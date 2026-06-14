@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import logging
 from pathlib import Path
+from core.parsing.scanner import JavaFileScanner
 from rag.models import RetrievalResult
 
 try:
@@ -138,20 +139,13 @@ class JavaFileRetriever:
 
     def __init__(self, project_root: str):
         self.project_root = Path(project_root)
-        if not self.project_root.exists():
-            raise FileNotFoundError(f"Project root not found: {project_root}")
+        self._scanner = JavaFileScanner(project_root)
 
-        self._java_files_cache: list[Path] | None = None
         self._class_index: dict[str, Path] | None = None
         self._parse_errors: int = 0
 
     def _scan_java_files(self) -> list[Path]:
-        if self._java_files_cache is None:
-            self._java_files_cache = []
-            for path in self.project_root.rglob("*.java"):
-                if "test" not in path.parts and "Test.java" not in path.name:
-                    self._java_files_cache.append(path)
-        return self._java_files_cache
+        return self._scanner.scan()
 
     def _build_class_index(self):
         if self._class_index is None:

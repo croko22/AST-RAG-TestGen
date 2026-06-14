@@ -4,12 +4,12 @@ from __future__ import annotations
 
 import csv
 import json
-import subprocess
 from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
 from benchmark.schemas import BenchmarkManifest, ScoringConfig, ScoringWeights
+from postproc._runner import run_git
 from benchmark.types import (
     EvalMetrics,
     PipelineTimings,
@@ -308,40 +308,12 @@ def _resolve_repo_root(path: Path) -> Path | None:
 
 
 def _git_value(repo_root: Path, args: list[str]) -> str | None:
-    try:
-        proc = subprocess.run(
-            ["git", *args],
-            cwd=str(repo_root),
-            capture_output=True,
-            text=True,
-            timeout=5,
-            check=False,
-        )
-    except (OSError, subprocess.TimeoutExpired):
-        return None
-
-    if proc.returncode != 0:
-        return None
-    value = proc.stdout.strip()
-    return value or None
+    return run_git(*args, cwd=str(repo_root), timeout=5) or None
 
 
 def _git_is_dirty(repo_root: Path) -> bool | None:
-    try:
-        proc = subprocess.run(
-            ["git", "status", "--porcelain"],
-            cwd=str(repo_root),
-            capture_output=True,
-            text=True,
-            timeout=5,
-            check=False,
-        )
-    except (OSError, subprocess.TimeoutExpired):
-        return None
-
-    if proc.returncode != 0:
-        return None
-    return bool(proc.stdout.strip())
+    output = run_git("status", "--porcelain", cwd=str(repo_root), timeout=5)
+    return bool(output) if output is not None else None
 
 
 def _compute_statistics(results: list[RunResult]) -> dict[str, Any]:

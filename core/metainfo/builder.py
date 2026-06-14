@@ -8,6 +8,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import TYPE_CHECKING
 
+from core.parsing.scanner import JavaFileScanner
 from .database import MetainfoDatabase
 from .schemas import ClassInfo, FieldInfo, MethodInfo, PackageInfo
 
@@ -61,14 +62,8 @@ class MetainfoBuilder:
         return result
 
     def _iter_java_files(self, include_tests: bool) -> Iterable[Path]:
-        for file_path in sorted(self.project_root.rglob("*.java")):
-            if include_tests or not self._is_test_file(file_path):
-                yield file_path
-
-    @staticmethod
-    def _is_test_file(file_path: Path) -> bool:
-        lowered_parts = {part.lower() for part in file_path.parts}
-        return "test" in lowered_parts or file_path.name.endswith("Test.java")
+        scanner = JavaFileScanner(self.project_root)
+        yield from sorted(scanner.scan(include_tests=include_tests))
 
     def _persist_parsed_file(self, parsed: "ParsedJavaClass", result: BuildResult) -> None:
         class_uri = self._class_uri(parsed)

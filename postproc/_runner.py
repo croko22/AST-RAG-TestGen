@@ -106,6 +106,41 @@ def stage_test_file(test_file: Path, target_base: Path) -> Path:
     return target
 
 
+def run_git(*args: str, **kwargs) -> str:
+    """Run a git command, returning stripped stdout on success or '' on failure.
+
+    Wraps subprocess.run with capture_output=True and text=True by default.
+    The 'git' command is prepended to args automatically.
+    """
+    kwargs.setdefault("capture_output", True)
+    kwargs.setdefault("text", True)
+    cmd = ["git", *args]
+    try:
+        result = subprocess.run(cmd, **kwargs)
+        if result.returncode == 0:
+            return result.stdout.strip()
+        return ""
+    except (OSError, subprocess.TimeoutExpired):
+        return ""
+
+
+def get_toolchain_version(tool: str, flag: str = "-version") -> str:
+    """Get the first line of a tool's version output, or 'unknown' on failure."""
+    try:
+        result = subprocess.run(
+            [tool, flag],
+            capture_output=True,
+            text=True,
+            timeout=5,
+        )
+        output = result.stderr or result.stdout
+        if output:
+            return output.split("\n")[0].strip()
+    except (FileNotFoundError, subprocess.TimeoutExpired):
+        pass
+    return "unknown"
+
+
 def classify_output(output: str) -> tuple[list[str], list[str]]:
     """Classify compilation output into error and warning lines."""
     errors: list[str] = []
