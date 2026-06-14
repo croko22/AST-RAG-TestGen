@@ -72,32 +72,3 @@ class OpenRouterAdapter(BaseLLMAdapter):
             return ""
         return content
 
-    def build_system_prompt(self) -> str:
-        """Build the system prompt for the LLM.
-
-        Returns:
-            System prompt string.
-        """
-        return self._build_common_system_prompt()
-
-    def build_user_prompt(self, code_under_test: str, dependency_context: str) -> str:
-        """Build the user prompt for the LLM.
-
-        Args:
-            code_under_test: The Java code to generate tests for.
-            dependency_context: Context about dependencies.
-
-        Returns:
-            User prompt string.
-        """
-        return f"""Generate comprehensive unit tests for the following Java class:
-
-## Code Under Test
-```java
-{code_under_test}
-```
-
-## Dependency Context
-{dependency_context}
-
-Generate a complete test class with proper imports, setup, and test methods."""
