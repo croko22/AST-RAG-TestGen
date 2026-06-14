@@ -14,6 +14,7 @@ from pydantic import ValidationError
 
 from benchmark.schemas import BenchmarkManifest, ToolchainVersions
 from benchmark.types import PreflightFinding
+from postproc._runner import get_toolchain_version
 
 
 class ManifestValidationError(ValueError):
@@ -83,36 +84,8 @@ def capture_toolchain_versions() -> ToolchainVersions:
     """Capture current toolchain versions for reproducibility."""
     python_version = f"{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}"
 
-    java_version = "unknown"
-    try:
-        result = subprocess.run(
-            ["java", "-version"],
-            capture_output=True,
-            text=True,
-            timeout=5,
-        )
-        if result.stderr:
-            first_line = result.stderr.split("\n")[0]
-            java_version = first_line.strip()
-        elif result.stdout:
-            first_line = result.stdout.split("\n")[0]
-            java_version = first_line.strip()
-    except (FileNotFoundError, subprocess.TimeoutExpired):
-        pass
-
-    maven_version = "unknown"
-    try:
-        result = subprocess.run(
-            ["mvn", "-version"],
-            capture_output=True,
-            text=True,
-            timeout=5,
-        )
-        if result.stdout:
-            first_line = result.stdout.split("\n")[0]
-            maven_version = first_line.strip()
-    except (FileNotFoundError, subprocess.TimeoutExpired):
-        pass
+    java_version = get_toolchain_version("java", "-version")
+    maven_version = get_toolchain_version("mvn", "-version")
 
     return ToolchainVersions(
         python_version=python_version,

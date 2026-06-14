@@ -112,8 +112,8 @@ class TestEvaluateRunQualityMetrics:
             CommandResult(True, "", "", 0),
         )
         monkeypatch.setattr(
-            "benchmark.evaluator._execute_command",
-            lambda *a: next(commands),
+            "benchmark.evaluator.run_command",
+            lambda *a, **kw: next(commands),
         )
 
         metrics = evaluate_run(run_dir, _eval_config(), project_root)
@@ -128,8 +128,8 @@ class TestEvaluateRunQualityMetrics:
         project_root = tmp_path / "project"
 
         monkeypatch.setattr(
-            "benchmark.evaluator._execute_command",
-            lambda *a: CommandResult(False, "", "compilation error", 1),
+            "benchmark.evaluator.run_command",
+            lambda *a, **kw: CommandResult(False, "", "compilation error", 1),
         )
 
         metrics = evaluate_run(run_dir, _eval_config(), project_root)
@@ -148,8 +148,8 @@ class TestEvaluateRunQualityMetrics:
             CommandResult(False, "", "test failed", 1),
         )
         monkeypatch.setattr(
-            "benchmark.evaluator._execute_command",
-            lambda *a: next(commands),
+            "benchmark.evaluator.run_command",
+            lambda *a, **kw: next(commands),
         )
 
         metrics = evaluate_run(run_dir, _eval_config(), project_root)
@@ -162,9 +162,9 @@ class TestEvaluateRunQualityMetrics:
         run_dir = _setup_run_dir(tmp_path)
         project_root = tmp_path / "project"
 
-        def fake_execute(cmd, project_path, run_path):
+        def fake_run(cmd, cwd, **kwargs):
             if "jacoco" in cmd.lower():
-                jacoco_dir = project_path / "target" / "site" / "jacoco"
+                jacoco_dir = cwd / "target" / "site" / "jacoco"
                 jacoco_dir.mkdir(parents=True, exist_ok=True)
                 (jacoco_dir / "jacoco.xml").write_text(
                     '<report><counter type="LINE" missed="20" covered="80"/>'
@@ -173,7 +173,7 @@ class TestEvaluateRunQualityMetrics:
                 )
             return CommandResult(True, "", "", 0)
 
-        monkeypatch.setattr("benchmark.evaluator._execute_command", fake_execute)
+        monkeypatch.setattr("benchmark.evaluator.run_command", fake_run)
 
         metrics = evaluate_run(run_dir, _eval_config(), project_root)
 
@@ -222,8 +222,8 @@ class TestEvaluateRunWithGenerationResult:
         project_root = tmp_path / "project"
 
         monkeypatch.setattr(
-            "benchmark.evaluator._execute_command",
-            lambda *a: CommandResult(True, "", "", 0),
+            "benchmark.evaluator.run_command",
+            lambda *a, **kw: CommandResult(True, "", "", 0),
         )
 
         gen_result = MagicMock()
@@ -251,8 +251,8 @@ class TestEvaluateRunWithGenerationResult:
         project_root = tmp_path / "project"
 
         monkeypatch.setattr(
-            "benchmark.evaluator._execute_command",
-            lambda *a: CommandResult(True, "", "", 0),
+            "benchmark.evaluator.run_command",
+            lambda *a, **kw: CommandResult(True, "", "", 0),
         )
 
         metrics = evaluate_run(run_dir, _eval_config(), project_root)
@@ -279,8 +279,8 @@ class TestEvaluateRunMeaningfulTestCode:
         project_root = tmp_path / "project"
 
         monkeypatch.setattr(
-            "benchmark.evaluator._execute_command",
-            lambda *a: CommandResult(True, "", "", 0),
+            "benchmark.evaluator.run_command",
+            lambda *a, **kw: CommandResult(True, "", "", 0),
         )
 
         metrics = evaluate_run(run_dir, _eval_config(), project_root)

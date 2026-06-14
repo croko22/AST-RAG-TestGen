@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING
 
 from benchmark.schemas import EvaluationConfig
 from benchmark.types import EvalMetrics, PipelineTimings, RunResult
-from postproc._runner import CommandResult, run_command
+from postproc._runner import CommandResult, run_command, stage_test_file
 from postproc.pit_parser import parse_pit_report
 from postproc.quality import assess_test_quality
 from postproc.validator import parse_coverage
@@ -70,21 +70,9 @@ def evaluate_run(
         if (project_root_path / "pom.xml").exists():
             shutil.copytree(project_root_path, temp_path, dirs_exist_ok=True)
 
-        package_match = re.search(r"package\s+([\w.]+);", test_content)
-        if package_match:
-            package_path = package_match.group(1).replace(".", "/")
-            target_dir = temp_path / "src" / "test" / "java" / package_path
-        else:
-            target_dir = temp_path / "src" / "test" / "java"
+        stage_test_file(test_file, temp_path)
 
-        target_dir.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(test_file, target_dir / test_file.name)
-
-        compile_result = _execute_command(
-            eval_config.compile_cmd,
-            temp_path,
-            run_path,
-        )
+        compile_result = run_command(eval_config.compile_cmd, temp_path)
         if not compile_result.success:
             stderr_text = compile_result.stderr or ""
             return EvalMetrics(
@@ -101,7 +89,7 @@ def evaluate_run(
                 compile_errors=[line for line in stderr_text.split("\n") if line.strip()],
             )
 
-        test_result = _execute_command(eval_config.test_cmd, temp_path, run_path)
+        test_result = run_command(eval_config.test_cmd, temp_path)
         if not test_result.success:
             stderr_text = test_result.stderr or ""
             return EvalMetrics(
@@ -124,11 +112,7 @@ def evaluate_run(
         coverage_reason: str | None = None
 
         if eval_config.coverage_cmd:
-            coverage_result = _execute_command(
-                eval_config.coverage_cmd,
-                temp_path,
-                run_path,
-            )
+            coverage_result = run_command(eval_config.coverage_cmd, temp_path)
             coverage_pct, branch_coverage_pct, coverage_source, coverage_reason = _extract_coverage(
                 project_path=temp_path,
                 coverage_stdout=coverage_result.stdout,
@@ -143,7 +127,7 @@ def evaluate_run(
 
         if eval_config.run_pit or eval_config.pit_cmd:
             if eval_config.pit_cmd:
-                _execute_command(eval_config.pit_cmd, temp_path, run_path)
+                run_command(eval_config.pit_cmd, temp_path)
             pit_report_dir = temp_path / (eval_config.pit_path or "target/pit-reports")
             pit_data = parse_pit_report(str(pit_report_dir))
             if pit_data is not None:
@@ -188,15 +172,6 @@ def _extract_timings(generation_result: GenerationResult | None) -> PipelineTimi
         llm_ms=t.get("llm_ms", 0),
         postproc_ms=t.get("postproc_ms", 0),
     )
-
-
-def _execute_command(cmd: str, cwd: Path, _run_dir: Path) -> CommandResult:
-    """Execute a command in the given working directory.
-
-    Thin wrapper around postproc._runner.run_command for backward compatibility
-    with existing callers that pass (cmd, cwd, run_dir).
-    """
-    return run_command(cmd, cwd, timeout=600)
 
 
 def _extract_coverage(

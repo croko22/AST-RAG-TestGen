@@ -47,13 +47,13 @@ def test_evaluate_run_prefers_jacoco_xml_over_stdout_fallback(tmp_path, monkeypa
         ]
     )
 
-    def fake_execute_command(cmd: str, project_path: Path, run_path: Path) -> CommandResult:
+    def fakerun_command(cmd: str, cwd: Path, **kwargs) -> CommandResult:
         result = next(command_results)
 
-        # Side effect: create jacoco.xml at the project_path location
+        # Side effect: create jacoco.xml at the cwd location
         # This simulates Maven creating the report when coverage_cmd runs
         if "jacoco" in cmd.lower():
-            jacoco_dir = project_path / "target" / "site" / "jacoco"
+            jacoco_dir = cwd / "target" / "site" / "jacoco"
             jacoco_dir.mkdir(parents=True, exist_ok=True)
             (jacoco_dir / "jacoco.xml").write_text(
                 '<report name="test"><counter type="LINE" missed="20" covered="80"/></report>',
@@ -62,7 +62,7 @@ def test_evaluate_run_prefers_jacoco_xml_over_stdout_fallback(tmp_path, monkeypa
 
         return result
 
-    monkeypatch.setattr("benchmark.evaluator._execute_command", fake_execute_command)
+    monkeypatch.setattr("benchmark.evaluator.run_command", fakerun_command)
 
     # The project_root is still passed but is only used for reference.
     # Commands run in temp_path created by evaluate_run.
@@ -94,10 +94,10 @@ def test_evaluate_run_uses_stdout_fallback_when_artifact_missing(tmp_path, monke
         ]
     )
 
-    def fake_execute_command(cmd: str, project_path: Path, run_path: Path) -> CommandResult:
+    def fakerun_command(cmd: str, cwd: Path, **kwargs) -> CommandResult:
         return next(command_results)
 
-    monkeypatch.setattr("benchmark.evaluator._execute_command", fake_execute_command)
+    monkeypatch.setattr("benchmark.evaluator.run_command", fakerun_command)
 
     metrics = evaluate_run(run_dir, _eval_config(), project_root)
 
@@ -127,10 +127,10 @@ def test_evaluate_run_sets_null_reason_for_out_of_range_fallback(tmp_path, monke
         ]
     )
 
-    def fake_execute_command(cmd: str, project_path: Path, run_path: Path) -> CommandResult:
+    def fakerun_command(cmd: str, cwd: Path, **kwargs) -> CommandResult:
         return next(command_results)
 
-    monkeypatch.setattr("benchmark.evaluator._execute_command", fake_execute_command)
+    monkeypatch.setattr("benchmark.evaluator.run_command", fakerun_command)
 
     metrics = evaluate_run(run_dir, _eval_config(), project_root)
 
@@ -167,10 +167,10 @@ def test_evaluate_run_no_project_modification(tmp_path, monkeypatch):
         ]
     )
 
-    def fake_execute_command(cmd: str, project_path: Path, run_path: Path) -> CommandResult:
+    def fakerun_command(cmd: str, cwd: Path, **kwargs) -> CommandResult:
         return next(command_results)
 
-    monkeypatch.setattr("benchmark.evaluator._execute_command", fake_execute_command)
+    monkeypatch.setattr("benchmark.evaluator.run_command", fakerun_command)
 
     metrics = evaluate_run(run_dir, _eval_config(), project_root)
 
@@ -204,10 +204,10 @@ def test_evaluate_run_cleans_up_temp_directory(tmp_path, monkeypatch):
         ]
     )
 
-    def fake_execute_command(cmd: str, project_path: Path, run_path: Path) -> CommandResult:
+    def fakerun_command(cmd: str, cwd: Path, **kwargs) -> CommandResult:
         return next(command_results)
 
-    monkeypatch.setattr("benchmark.evaluator._execute_command", fake_execute_command)
+    monkeypatch.setattr("benchmark.evaluator.run_command", fakerun_command)
 
     # List temp directories before
     temp_dirs_before = set(

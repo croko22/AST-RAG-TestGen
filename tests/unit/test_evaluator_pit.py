@@ -32,8 +32,8 @@ class TestEvaluateRunPitIntegration:
         project_root = tmp_path / "project"
 
         monkeypatch.setattr(
-            "benchmark.evaluator._execute_command",
-            lambda *a: CommandResult(True, "", "", 0),
+            "benchmark.evaluator.run_command",
+            lambda *a, **kw: CommandResult(True, "", "", 0),
         )
         monkeypatch.setattr(
             "benchmark.evaluator.parse_pit_report",
@@ -57,8 +57,8 @@ class TestEvaluateRunPitIntegration:
         project_root = tmp_path / "project"
 
         monkeypatch.setattr(
-            "benchmark.evaluator._execute_command",
-            lambda *a: CommandResult(True, "", "", 0),
+            "benchmark.evaluator.run_command",
+            lambda *a, **kw: CommandResult(True, "", "", 0),
         )
         monkeypatch.setattr(
             "benchmark.evaluator.parse_pit_report",
@@ -79,11 +79,11 @@ class TestEvaluateRunPitIntegration:
 
         executed_commands = []
 
-        def fake_execute(cmd, project_path, run_path):
+        def fake_run(cmd, cwd, **kwargs):
             executed_commands.append(cmd)
             return CommandResult(True, "", "", 0)
 
-        monkeypatch.setattr("benchmark.evaluator._execute_command", fake_execute)
+        monkeypatch.setattr("benchmark.evaluator.run_command", fake_run)
         monkeypatch.setattr(
             "benchmark.evaluator.parse_pit_report",
             lambda path: {
@@ -109,8 +109,8 @@ class TestEvaluateRunPitIntegration:
         project_root = tmp_path / "project"
 
         monkeypatch.setattr(
-            "benchmark.evaluator._execute_command",
-            lambda *a: CommandResult(True, "", "", 0),
+            "benchmark.evaluator.run_command",
+            lambda *a, **kw: CommandResult(True, "", "", 0),
         )
 
         metrics = evaluate_run(run_dir, _eval_config(), project_root)
