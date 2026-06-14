@@ -72,11 +72,12 @@ class TestSerializeMetrics:
         assert serialized["timings"]["parse_ms"] == 100
         assert serialized["timings"]["llm_ms"] == 1200
 
-    def test_quality_score_computed(self):
+    def test_quality_score_field_present(self):
         result = _make_result(assertion_count=10, test_count=5, trivial_flag=False)
         serialized = _serialize_metrics(result.metrics)
 
-        assert serialized["quality_score"] > 0
+        assert "quality_score" in serialized
+        assert isinstance(serialized["quality_score"], float)
 
 
 class TestSerializeRunResult:

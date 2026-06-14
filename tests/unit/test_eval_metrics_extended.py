@@ -62,37 +62,18 @@ class TestEvalMetricsExtended:
 
 
 class TestQualityScore:
-    def test_trivial_flag_zero(self):
-        m = EvalMetrics(compile_pass=True, test_pass=True, trivial_flag=True)
+    def test_defaults_to_zero(self):
+        m = EvalMetrics(compile_pass=True, test_pass=True)
         assert m.quality_score == 0.0
 
-    def test_zero_test_count(self):
-        m = EvalMetrics(compile_pass=True, test_pass=True, test_count=0)
-        assert m.quality_score == 0.0
-
-    def test_good_metrics(self):
+    def test_stored_value(self):
         m = EvalMetrics(
             compile_pass=True,
             test_pass=True,
-            test_count=4,
-            assertion_count=8,
-            coverage_pct=80.0,
+            quality_score=0.85,
         )
-        score = m.quality_score
-        assert 0.0 < score <= 1.0
-        expected_base = 8 / 4
-        expected_coverage = 80.0 / 100.0
-        expected = min(expected_base * 0.6 + expected_coverage * 0.4, 1.0)
-        assert abs(score - expected) < 0.001
+        assert m.quality_score == 0.85
 
-    def test_no_coverage(self):
-        m = EvalMetrics(
-            compile_pass=True,
-            test_pass=True,
-            test_count=2,
-            assertion_count=4,
-            coverage_pct=None,
-        )
-        score = m.quality_score
-        expected = min(4 / 2 * 0.6 + 0.0 * 0.4, 1.0)
-        assert abs(score - expected) < 0.001
+    def test_zero_explicit(self):
+        m = EvalMetrics(compile_pass=True, test_pass=True, quality_score=0.0)
+        assert m.quality_score == 0.0

@@ -731,6 +731,7 @@ def _deserialize_run_result(data: dict[str, Any]) -> RunResult:
         assertion_count=metrics_data.get("assertion_count", 0),
         trivial_flag=metrics_data.get("trivial_flag", False),
         test_count=metrics_data.get("test_count", 0),
+        quality_score=metrics_data.get("quality_score", 0.0),
         timings=timings,
         mutation_score_pct=metrics_data.get("mutation_score_pct"),
         killed_mutations=metrics_data.get("killed_mutations"),

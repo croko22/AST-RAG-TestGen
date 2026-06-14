@@ -52,6 +52,7 @@ def evaluate_run(
     test_content = test_file.read_text(encoding="utf-8")
 
     quality = assess_test_quality(test_content)
+    quality_score = quality.score / 100.0
 
     timings = _extract_timings(generation_result)
     generation_time_ms = (
@@ -94,6 +95,7 @@ def evaluate_run(
                 assertion_count=quality.assertion_count,
                 test_count=quality.test_count,
                 trivial_flag=quality.trivial_flag,
+                quality_score=quality_score,
                 timings=timings,
                 generation_time_ms=generation_time_ms,
                 compile_errors=[line for line in stderr_text.split("\n") if line.strip()],
@@ -110,6 +112,7 @@ def evaluate_run(
                 assertion_count=quality.assertion_count,
                 test_count=quality.test_count,
                 trivial_flag=quality.trivial_flag,
+                quality_score=quality_score,
                 timings=timings,
                 generation_time_ms=generation_time_ms,
                 compile_errors=[line for line in stderr_text.split("\n") if line.strip()],
@@ -161,6 +164,7 @@ def evaluate_run(
             assertion_count=quality.assertion_count,
             test_count=quality.test_count,
             trivial_flag=quality.trivial_flag,
+            quality_score=quality_score,
             timings=timings,
             generation_time_ms=generation_time_ms,
             compile_errors=[],

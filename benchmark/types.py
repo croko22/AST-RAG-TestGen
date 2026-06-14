@@ -41,16 +41,7 @@ class EvalMetrics:
     compile_errors: list[str] = field(default_factory=list)
     final_status: str = "success"
     timings: PipelineTimings = field(default_factory=PipelineTimings)
-
-    @property
-    def quality_score(self) -> float:
-        if self.trivial_flag:
-            return 0.0
-        if self.test_count == 0:
-            return 0.0
-        base = self.assertion_count / max(self.test_count, 1)
-        coverage_bonus = (self.coverage_pct or 0.0) / 100.0
-        return min(base * 0.6 + coverage_bonus * 0.4, 1.0)
+    quality_score: float = 0.0
 
 
 @dataclass(slots=True)
