@@ -106,8 +106,8 @@ class TestBuildPromptWithRag:
 class TestBuildTestPromptConvenience:
     def test_convenience_passes_rag_context(self):
         with (
-            patch("core.prompt_builder.JavaFileRetriever") as MockRet,
-            patch("core.prompt_builder.DependencyResolver") as MockRes,
+            patch("rag.retriever.JavaFileRetriever") as MockRet,
+            patch("rag.retriever.DependencyResolver") as MockRes,
         ):
             mock_retriever = MagicMock()
             mock_resolver = MagicMock()

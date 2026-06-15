@@ -84,8 +84,6 @@ def __getattr__(name):
         return get_parser().JavaDependency
     elif name == "MethodSignature":
         return get_parser().MethodSignature
-    elif name == "extract_dependencies_from_file":
-        return get_extraction().extract_dependencies_from_file
     elif name == "JavaFileRetriever":
         return get_retriever().JavaFileRetriever
     elif name == "DependencyResolver":
@@ -122,5 +120,4 @@ __all__ = [
     "TestBundle",
     "TestInfo",
     "build_test_prompt",
-    "extract_dependencies_from_file",
 ]

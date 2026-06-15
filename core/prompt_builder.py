@@ -3,8 +3,9 @@ Prompt builder module for assembling the master prompt
 with code under test and extracted context.
 """
 
+from typing import Any
+
 from core.parsing.models import MethodSignature, ParsedJavaClass
-from rag.retriever import DependencyResolver, JavaFileRetriever
 
 
 class PromptBuilder:
@@ -15,8 +16,8 @@ class PromptBuilder:
 
     def __init__(
         self,
-        retriever: JavaFileRetriever,
-        dependency_resolver: DependencyResolver,
+        retriever: Any,
+        dependency_resolver: Any,
     ):
         """
         Initialize the prompt builder.
@@ -217,6 +218,8 @@ def build_test_prompt(
     Returns:
         Tuple of (code_under_test, dependency_context)
     """
+    from rag.retriever import DependencyResolver, JavaFileRetriever
+
     retriever = JavaFileRetriever(java_project_path)
     resolver = DependencyResolver(retriever)
     builder = PromptBuilder(retriever, resolver)

@@ -7,13 +7,6 @@ from pathlib import Path
 from core.parsing.scanner import JavaFileScanner
 from rag.models import RetrievalResult
 
-try:
-    from core.parsing.parser import JavaParser
-
-    _parser = JavaParser()
-except ImportError:
-    _parser = None
-
 logger = logging.getLogger(__name__)
 
 
@@ -143,6 +136,25 @@ class JavaFileRetriever:
 
         self._class_index: dict[str, Path] | None = None
         self._parse_errors: int = 0
+        self._parser: object | None = None
+
+    def _get_parser(self):
+        """Lazily create a JavaParser instance.
+
+        Raises RuntimeError if tree-sitter is not installed, instead of
+        silently returning None.
+        """
+        if self._parser is None:
+            try:
+                from core.parsing.parser import JavaParser
+
+                self._parser = JavaParser()
+            except ImportError as exc:
+                raise RuntimeError(
+                    "tree-sitter is required for Java parsing but is not installed. "
+                    "Install it with: pip install tree-sitter tree-sitter-java"
+                ) from exc
+        return self._parser
 
     def _scan_java_files(self) -> list[Path]:
         return self._scanner.scan()
@@ -153,7 +165,7 @@ class JavaFileRetriever:
             self._parse_errors = 0
             for java_file in self._scan_java_files():
                 try:
-                    parsed = _parser.parse_file(str(java_file)) if _parser else None
+                    parsed = self._get_parser().parse_file(str(java_file))
                     if parsed and parsed.name and parsed.name != "Unknown":
                         if parsed.package:
                             fqcn = f"{parsed.package}.{parsed.name}"
@@ -183,7 +195,9 @@ class JavaFileRetriever:
 
     def parse_file(self, file_path: str) -> ParsedJavaClass | None:
         try:
-            return _parser.parse_file(file_path) if _parser else None
+            return self._get_parser().parse_file(file_path)
+        except RuntimeError:
+            raise
         except Exception as e:
             logger.warning(f"Failed to parse {file_path}: {e}")
             return None

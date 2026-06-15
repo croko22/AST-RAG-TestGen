@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from core import JavaParser, extract_dependencies_from_file
+from core import JavaParser
 
 
 class TestJavaParser:
@@ -20,7 +20,7 @@ class TestJavaParser:
 
     def test_extract_methods(self, sample_java_file):
         """Test method signature extraction."""
-        result = extract_dependencies_from_file(sample_java_file)
+        result = JavaParser().parse_file(sample_java_file)
 
         assert len(result.methods) >= 1
         method = result.methods[0]
@@ -30,7 +30,7 @@ class TestJavaParser:
 
     def test_extract_fields(self, sample_java_file):
         """Test field extraction."""
-        result = extract_dependencies_from_file(sample_java_file)
+        result = JavaParser().parse_file(sample_java_file)
 
         assert len(result.fields) >= 1
         field = result.fields[0]
@@ -56,19 +56,19 @@ class TestJavaParser:
         """Test visibility modifier extraction with different modifiers."""
         file = tmp_path / "Test.java"
         file.write_text(f"class Test {{{code}}}")
-        result = extract_dependencies_from_file(str(file))
+        result = JavaParser().parse_file(str(file))
         assert result.methods[0].visibility == expected
 
     def test_filter_standard_library_imports(self, sample_java_file):
         """Test that standard library imports are filtered from dependencies."""
-        result = extract_dependencies_from_file(sample_java_file)
+        result = JavaParser().parse_file(sample_java_file)
 
         dep_names = [dep.name for dep in result.dependencies]
         assert "List" not in dep_names
 
     def test_content_is_preserved(self, sample_java_file):
         """Test that full file content is preserved."""
-        result = extract_dependencies_from_file(sample_java_file)
+        result = JavaParser().parse_file(sample_java_file)
 
         original_content = Path(sample_java_file).read_text()
         assert result.content == original_content
@@ -77,7 +77,7 @@ class TestJavaParser:
         """Test detection of static methods."""
         file = tmp_path / "Test.java"
         file.write_text("class Test { public static void main(String[] args) {} }")
-        result = extract_dependencies_from_file(str(file))
+        result = JavaParser().parse_file(str(file))
 
         static_method = [m for m in result.methods if m.name == "main"][0]
         assert static_method.is_static is True
@@ -92,7 +92,7 @@ public interface TestInterface {
     void setData(String data);
 }
 """)
-        result = extract_dependencies_from_file(str(file))
+        result = JavaParser().parse_file(str(file))
         assert result.name == "TestInterface"
         assert len(result.methods) == 2
         method_names = [m.name for m in result.methods]
@@ -108,7 +108,7 @@ import static java.util.Collections.emptyList;
 import java.util.List;
 public class Test {}
 """)
-        result = extract_dependencies_from_file(str(file))
+        result = JavaParser().parse_file(str(file))
         assert "java.util.List" in result.imports
         assert any("Collections" in imp for imp in result.imports)
 
@@ -120,7 +120,7 @@ package com.test;
 import java.util.*;
 public class Test {}
 """)
-        result = extract_dependencies_from_file(str(file))
+        result = JavaParser().parse_file(str(file))
         assert "java.util" in result.imports
 
     def test_parse_with_spring_imports(self, tmp_path):
@@ -132,7 +132,7 @@ import org.springframework.stereotype.Service;
 import com.example.Custom;
 public class Test {}
 """)
-        result = extract_dependencies_from_file(str(file))
+        result = JavaParser().parse_file(str(file))
         dep_names = [d.name for d in result.dependencies]
         assert "Service" not in dep_names
         assert "Custom" in dep_names
@@ -147,7 +147,7 @@ class Test {
     }
 }
 """)
-        result = extract_dependencies_from_file(str(file))
+        result = JavaParser().parse_file(str(file))
         assert len(result.methods) == 1
         method = result.methods[0]
         assert method.name == "process"
@@ -157,7 +157,7 @@ class Test {
         """Test parsing file without package declaration."""
         file = tmp_path / "Test.java"
         file.write_text("public class Test {}")
-        result = extract_dependencies_from_file(str(file))
+        result = JavaParser().parse_file(str(file))
         assert result.name == "Test"
         assert result.package is None or result.package == ""
 
@@ -169,6 +169,6 @@ package com.test;
 import com.example.MyClass;
 public class Test {}
 """)
-        result = extract_dependencies_from_file(str(file))
+        result = JavaParser().parse_file(str(file))
         dep_names = [d.name for d in result.dependencies]
         assert "MyClass" in dep_names
