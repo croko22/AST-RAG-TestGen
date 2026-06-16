@@ -2,7 +2,7 @@
 
 from pathlib import Path
 
-from core import DependencyResolver, JavaFileRetriever
+from rag.retriever import DependencyResolver, JavaFileRetriever
 
 
 class TestJavaFileRetriever:

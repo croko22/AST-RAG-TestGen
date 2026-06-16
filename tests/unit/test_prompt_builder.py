@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 
-from core import PromptBuilder
+from core.prompt_builder import PromptBuilder
 from core.parsing.models import MethodSignature
 from core.prompt_builder import build_test_prompt
 

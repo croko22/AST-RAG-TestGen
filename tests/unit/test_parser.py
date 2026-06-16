@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pytest
 
-from core import JavaParser
+from core.parsing.parser import JavaParser
 
 
 class TestJavaParser:

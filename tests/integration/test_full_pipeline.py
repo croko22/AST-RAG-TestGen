@@ -8,7 +8,8 @@ from unittest.mock import patch
 
 import pytest
 
-from core import DependencyResolver, JavaFileRetriever, PromptBuilder
+from rag.retriever import DependencyResolver, JavaFileRetriever
+from core.prompt_builder import PromptBuilder
 
 
 class TestFullPipeline:
