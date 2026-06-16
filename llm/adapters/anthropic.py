@@ -60,4 +60,3 @@ class AnthropicAdapter(BaseLLMAdapter):
 
         content = message.content[0].text if message.content else ""
         return content
-

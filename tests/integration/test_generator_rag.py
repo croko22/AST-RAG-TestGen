@@ -52,9 +52,7 @@ def _patch_pipeline(
     ]
     if rag_return is not None:
         mock_result = _make_rag_mock(rag_return[0], rag_return[1])
-        patches.insert(
-            2, patch("rag.pipeline.RAGPipeline.retrieve", return_value=mock_result)
-        )
+        patches.insert(2, patch("rag.pipeline.RAGPipeline.retrieve", return_value=mock_result))
     return patches
 
 
@@ -80,7 +78,12 @@ class TestGeneratorRagVsAst:
     def test_rag_enabled_uses_rag(self, mock_output, mock_parsed, tmp_path):
         rag_result = _make_rag_mock(
             "rag ctx",
-            {"strategy": "hybrid", "chunks_indexed": 10, "results_retrieved": 3, "top_scores": [0.9]},
+            {
+                "strategy": "hybrid",
+                "chunks_indexed": 10,
+                "results_retrieved": 3,
+                "top_scores": [0.9],
+            },
         )
         with (
             patch("orchestration.generator._parse_java_file", return_value=mock_parsed),
@@ -258,7 +261,12 @@ class TestRetrievalStrategySelection:
     def test_hybrid_strategy(self, mock_output, mock_parsed, tmp_path):
         rag_result = _make_rag_mock(
             "ctx",
-            {"strategy": "hybrid", "chunks_indexed": 5, "results_retrieved": 2, "top_scores": [0.8]},
+            {
+                "strategy": "hybrid",
+                "chunks_indexed": 5,
+                "results_retrieved": 2,
+                "top_scores": [0.8],
+            },
         )
         with (
             patch("orchestration.generator._parse_java_file", return_value=mock_parsed),

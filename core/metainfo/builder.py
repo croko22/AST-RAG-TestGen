@@ -9,6 +9,7 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 from core.parsing.scanner import JavaFileScanner
+
 from .database import MetainfoDatabase
 from .schemas import ClassInfo, FieldInfo, MethodInfo, PackageInfo
 

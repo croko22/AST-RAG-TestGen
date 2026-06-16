@@ -4,6 +4,11 @@ from __future__ import annotations
 
 import logging
 from pathlib import Path
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from core.parsing.models import ParsedJavaClass
+
 from core.parsing.scanner import JavaFileScanner
 from rag.models import RetrievalResult
 

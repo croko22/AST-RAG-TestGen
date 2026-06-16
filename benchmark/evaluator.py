@@ -10,7 +10,7 @@ from typing import TYPE_CHECKING
 
 from benchmark.schemas import EvaluationConfig
 from benchmark.types import EvalMetrics, PipelineTimings, RunResult
-from postproc._runner import CommandResult, run_command, stage_test_file
+from postproc._runner import run_command, stage_test_file
 from postproc.pit_parser import parse_pit_report
 from postproc.quality import assess_test_quality
 from postproc.validator import parse_coverage

@@ -65,4 +65,3 @@ class GLMAdapter(BaseLLMAdapter):
         if content is None:
             return ""
         return content
-

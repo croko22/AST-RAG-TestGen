@@ -9,7 +9,6 @@ from pathlib import Path
 from typing import Any
 
 from benchmark.schemas import BenchmarkManifest, ScoringConfig, ScoringWeights
-from postproc._runner import run_git
 from benchmark.types import (
     EvalMetrics,
     PipelineTimings,
@@ -17,6 +16,7 @@ from benchmark.types import (
     ProvenanceRecord,
     RunResult,
 )
+from postproc._runner import run_git
 
 
 class ReportBundle:

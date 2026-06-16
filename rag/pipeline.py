@@ -5,7 +5,7 @@ from __future__ import annotations
 import hashlib
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from core.parsing.models import ParsedJavaClass
@@ -14,6 +14,7 @@ if TYPE_CHECKING:
 @dataclass(slots=True)
 class RAGConfig:
     """Configuration for the RAG pipeline."""
+
     alpha: float = 0.5
     retrieval_top_k: int = 10
     max_context_tokens: int = 4000
@@ -24,6 +25,7 @@ class RAGConfig:
 @dataclass(slots=True)
 class RAGResult:
     """Result from RAG retrieval."""
+
     context: str | None
     sources: dict[str, Any] = field(default_factory=dict)
 

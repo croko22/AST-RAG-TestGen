@@ -68,4 +68,3 @@ class OpenAIAdapter(BaseLLMAdapter):
         if content is None:
             return ""
         return content
-

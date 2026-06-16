@@ -58,4 +58,3 @@ class GeminiAdapter(BaseLLMAdapter):
         )
 
         return response.text
-

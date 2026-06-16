@@ -5,7 +5,6 @@ Single source of truth for finding Java files and excluding test files.
 
 from __future__ import annotations
 
-from functools import lru_cache
 from pathlib import Path
 
 
@@ -32,8 +31,7 @@ class JavaFileScanner:
         """
         if self._files_cache is None:
             self._files_cache = [
-                p for p in self.project_root.rglob("*.java")
-                if not p.name.startswith(".")
+                p for p in self.project_root.rglob("*.java") if not p.name.startswith(".")
             ]
 
         if include_tests:
