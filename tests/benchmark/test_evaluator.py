@@ -6,8 +6,9 @@ from pathlib import Path
 
 import pytest
 
-from benchmark.evaluator import CommandResult, evaluate_run
+from benchmark.evaluator import evaluate_run
 from benchmark.schemas import EvaluationConfig
+from postproc._runner import CommandResult
 
 pytestmark = pytest.mark.slow
 

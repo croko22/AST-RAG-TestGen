@@ -6,13 +6,19 @@ Single source of truth for finding Java files and excluding test files.
 from __future__ import annotations
 
 from pathlib import Path
+from typing import ClassVar
 
 
 class JavaFileScanner:
     """Scan a Java project for source files, excluding tests."""
 
-    _TEST_DIRS = {"test", "tests", "testing"}
-    _TEST_SUFFIXES = ("Test.java", "Tests.java", "IT.java", "E2ETest.java")
+    _TEST_DIRS: ClassVar[set[str]] = {"test", "tests", "testing"}
+    _TEST_SUFFIXES: ClassVar[tuple[str, ...]] = (
+        "Test.java",
+        "Tests.java",
+        "IT.java",
+        "E2ETest.java",
+    )
 
     def __init__(self, project_root: str | Path):
         self.project_root = Path(project_root)

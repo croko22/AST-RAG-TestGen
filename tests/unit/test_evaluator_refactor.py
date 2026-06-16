@@ -5,7 +5,6 @@ from unittest.mock import MagicMock
 import pytest
 
 from benchmark.evaluator import (
-    CommandResult,
     _extract_coverage,
     _extract_timings,
     _find_jacoco_xml,
@@ -13,6 +12,7 @@ from benchmark.evaluator import (
 )
 from benchmark.schemas import EvaluationConfig
 from benchmark.types import PipelineTimings
+from postproc._runner import CommandResult
 
 
 def _eval_config(**overrides) -> EvaluationConfig:
