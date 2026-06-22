@@ -4,8 +4,8 @@ import pytest
 
 # Try to import core modules, but don't fail if tree-sitter is not installed
 try:
-    from rag.retriever import DependencyResolver, JavaFileRetriever
     from llm import LLMClient, LLMConfig
+    from rag.retriever import DependencyResolver, JavaFileRetriever
 except ImportError:
     # tree-sitter not available - set to None for tests that don't need it
     JavaFileRetriever = None

@@ -165,7 +165,7 @@ class JavaParser:
                                     methods.append(method)
                             elif item.type == "class_declaration":
                                 # Recursively extract inner class methods
-                                inner_methods, inner_fields = JavaParser._extract_class_body(
+                                inner_methods, _ = JavaParser._extract_class_body(
                                     item, is_inner=True
                                 )
                                 methods.extend(inner_methods)

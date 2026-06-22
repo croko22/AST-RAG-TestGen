@@ -67,14 +67,14 @@ class TestExtractCoverageUsesPostproc:
         assert branch_pct is None
 
     def test_stdout_fallback_no_branch(self, tmp_path):
-        line_pct, branch_pct, source, reason = _extract_coverage(tmp_path, "Coverage: 65.3%")
+        line_pct, branch_pct, source, _ = _extract_coverage(tmp_path, "Coverage: 65.3%")
 
         assert line_pct == pytest.approx(65.3)
         assert branch_pct is None
         assert source == "stdout_regex"
 
     def test_no_coverage_available(self, tmp_path):
-        line_pct, branch_pct, source, reason = _extract_coverage(tmp_path, "")
+        line_pct, branch_pct, _, reason = _extract_coverage(tmp_path, "")
 
         assert line_pct is None
         assert branch_pct is None
