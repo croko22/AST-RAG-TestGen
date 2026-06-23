@@ -284,8 +284,6 @@ class ScopeGraph(BaseModel):
     EDGE_DEF_TO_SCOPE: ClassVar[str] = "DefToScope"
     EDGE_IMPORT_TO_SCOPE: ClassVar[str] = "ImportToScope"
     EDGE_REF_TO_SCOPE: ClassVar[str] = "RefToScope"
-    EDGE_REF_TO_DEF: ClassVar[str] = "RefToDef"
-    EDGE_REF_TO_IMPORT: ClassVar[str] = "RefToImport"
 
     def add_scope(self, scope_id: str, parent_id: str | None = None) -> None:
         """Add a lexical scope to the graph."""
