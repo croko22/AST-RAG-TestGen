@@ -14,13 +14,6 @@ from typing import Any, Literal
 
 from output import get_output
 
-try:
-    import postproc.validator  # noqa: F401
-
-    _VALIDATOR_AVAILABLE = True
-except ImportError:
-    _VALIDATOR_AVAILABLE = False
-
 
 @dataclass(slots=True)
 class GenerationResult:
