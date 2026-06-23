@@ -8,8 +8,9 @@ from argparse import Namespace
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
+import cli.parser
 import main
-from main import build_arg_parser
+from cli.parser import build_arg_parser
 
 
 class TestBenchmarkModeDetection:
@@ -264,6 +265,7 @@ class TestRunBenchmarkMode:
     ):
         """run_benchmark_mode should complete all phases."""
         from benchmark.schemas import BenchmarkManifest
+        from orchestration.benchmark import run_benchmark_mode as _run_benchmark_mode
 
         mock_manifest = MagicMock(spec=BenchmarkManifest)
         mock_manifest.manifest_version = 1
@@ -297,7 +299,7 @@ class TestRunBenchmarkMode:
         )
         mock_csv.return_value = Path("thesis_metrics.csv")
 
-        result = main.run_benchmark_mode(
+        result = _run_benchmark_mode(
             manifest_path="bench.yaml",
             output_dir="./results",
             dry_run=False,
@@ -315,10 +317,11 @@ class TestRunBenchmarkMode:
     def test_run_benchmark_mode_invalid_manifest(self, mock_load):
         """run_benchmark_mode should return error code on invalid manifest."""
         from benchmark.manifest import ManifestValidationError
+        from orchestration.benchmark import run_benchmark_mode as _run_benchmark_mode
 
         mock_load.side_effect = ManifestValidationError("Invalid manifest")
 
-        result = main.run_benchmark_mode(
+        result = _run_benchmark_mode(
             manifest_path="invalid.yaml",
             output_dir="./results",
             dry_run=False,
@@ -329,9 +332,11 @@ class TestRunBenchmarkMode:
     @patch("orchestration.benchmark.run_benchmark_mode")
     def test_run_benchmark_mode_manifest_not_found(self, mock_benchmark):
         """run_benchmark_mode should return error code when manifest not found."""
+        from orchestration.benchmark import run_benchmark_mode as _run_benchmark_mode
+
         mock_benchmark.return_value = 1
 
-        result = main.run_benchmark_mode(
+        result = _run_benchmark_mode(
             manifest_path="missing.yaml",
             output_dir="./results",
             dry_run=False,
