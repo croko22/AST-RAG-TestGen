@@ -89,7 +89,7 @@ class ChromaIndexer:
         if not embedding:
             return []
         try:
-            collection = self._get_collection(collection_name)
+            collection = self._get_collection(effective_name)
         except Exception:
             return []
 
