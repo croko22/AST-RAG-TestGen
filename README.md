@@ -116,10 +116,10 @@ python main.py --install-completion
 
 ```bash
 # Basic usage
-python main.py generate UsuarioService.java mock-java-project/
+python main.py generate examples/src/main/java/com/example/CalculatorService.java examples/
 
 # Use different provider
-python main.py generate service.java project/ --provider nvidia --model meta/llama-3.3-70b-instruct
+python main.py generate examples/src/main/java/com/example/CalculatorService.java examples/ --provider nvidia --model meta/llama-3.3-70b-instruct
 
 # Custom output directory
 python main.py generate service.java project/ --output ./my_tests
@@ -173,35 +173,47 @@ python main.py <java_file> <java_project_path> [options]
 | `--max-deps`, `-d` | `10` | Maximum number of dependencies to include |
 | `--print` | `false` | Print generated test to stdout |
 
+### Quickstart
+
+The repository includes a minimal Java project under `examples/` that works on a fresh clone — no additional setup required:
+
+```bash
+# Generate a test using the built-in example project (first run)
+python main.py generate examples/src/main/java/com/example/CalculatorService.java examples/
+
+# Print the generated test to stdout
+python main.py generate examples/src/main/java/com/example/CalculatorService.java examples/ --print
+```
+
 ### Examples
 
 ```bash
-# Generate test for a specific file
-python main.py mock-java-project/src/main/java/com/example/demo/service/UsuarioService.java mock-java-project/
+# Generate test for the example CalculatorService
+python main.py generate examples/src/main/java/com/example/CalculatorService.java examples/
 
 # Use OpenAI
-python main.py service.java project/ --provider openai --model gpt-4-turbo
+python main.py generate examples/src/main/java/com/example/CalculatorService.java examples/ --provider openai --model gpt-4-turbo
 
 # Use GLM (Zhipu AI)
-python main.py service.java project/ --provider glm --model glm-5-turbo
+python main.py generate examples/src/main/java/com/example/CalculatorService.java examples/ --provider glm --model glm-5-turbo
 
 # Use Gemini
-python main.py service.java project/ --provider gemini --model gemini-2.0-flash-exp
+python main.py generate examples/src/main/java/com/example/CalculatorService.java examples/ --provider gemini --model gemini-2.0-flash-exp
 
 # Use OpenRouter
-python main.py service.java project/ --provider openrouter --model anthropic/claude-3.5-sonnet
+python main.py generate examples/src/main/java/com/example/CalculatorService.java examples/ --provider openrouter --model anthropic/claude-3.5-sonnet
 
 # Use NVIDIA
-python main.py service.java project/ --provider nvidia --model meta/llama-3.3-70b-instruct
+python main.py generate examples/src/main/java/com/example/CalculatorService.java examples/ --provider nvidia --model meta/llama-3.3-70b-instruct
 
 # Custom output directory
-python main.py service.java project/ --output ./my_tests
+python main.py generate examples/src/main/java/com/example/CalculatorService.java examples/ --output ./my_tests
 
 # Limit dependencies
-python main.py service.java project/ --max-deps 5
+python main.py generate examples/src/main/java/com/example/CalculatorService.java examples/ --max-deps 5
 
 # Print to stdout
-python main.py service.java project/ --print
+python main.py generate examples/src/main/java/com/example/CalculatorService.java examples/ --print
 ```
 
 ## LLM Providers
@@ -251,6 +263,11 @@ AST-RAG-TestGen/
 │   └── console.py           # Rich console wrapper
 ├── config/                  # Configuration management
 │   └── settings.py          # Pydantic settings
+├── examples/                # Minimal Java project for testing (committed to repo)
+│   └── src/main/java/com/example/
+│       ├── Calculator.java          # Basic arithmetic operations
+│       ├── StringUtils.java        # String utility methods
+│       └── CalculatorService.java   # Service combining Calculator + StringUtils
 ├── main.py                  # Main entry point (46 lines)
 ├── pyproject.toml           # Project configuration
 ├── requirements.txt         # Pip dependencies
@@ -334,6 +351,10 @@ Detailed architecture and design documentation is available in `docs/`:
 - **Token/Cost Fields**: Provider token usage and cost estimates are not available from all SDKs and are recorded as nullable fields when unavailable.
 - **Provider Variability**: LLM outputs may vary between runs even with fixed seeds due to provider-side non-determinism. Use multiple trials for statistically meaningful comparisons.
 - **Sequential Default**: Default concurrency is 1 (sequential). Higher concurrency may cause rate limiting with some providers.
+
+## Replication
+
+For full replication instructions including benchmark dataset setup, see [docs/replication.md](docs/replication.md).
 
 ## License
 
