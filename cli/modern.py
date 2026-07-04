@@ -7,6 +7,7 @@ This module provides the modern CLI interface with subcommands and auto-completi
 from __future__ import annotations
 
 import sys
+from collections.abc import Callable
 from typing import cast
 
 # Typer for modern CLI
