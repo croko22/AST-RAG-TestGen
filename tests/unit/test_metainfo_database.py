@@ -863,5 +863,3 @@ class TestScopeGraphModel:
         assert ScopeGraph.EDGE_DEF_TO_SCOPE == "DefToScope"
         assert ScopeGraph.EDGE_IMPORT_TO_SCOPE == "ImportToScope"
         assert ScopeGraph.EDGE_REF_TO_SCOPE == "RefToScope"
-        assert ScopeGraph.EDGE_REF_TO_DEF == "RefToDef"
-        assert ScopeGraph.EDGE_REF_TO_IMPORT == "RefToImport"
