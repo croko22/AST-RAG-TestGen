@@ -30,6 +30,7 @@ AST-RAG TestGen generates high-quality JUnit 5 + Mockito tests through a 4-step 
 
 - Python 3.11 or later
 - pip or conda
+- **Java 11+ JDK** — required for compilation validation and coverage analysis of generated tests. Verify with `javac -version`
 
 ### Installation Methods
 

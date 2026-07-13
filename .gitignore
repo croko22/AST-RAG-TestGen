@@ -70,6 +70,9 @@ skills-lock.json
 TEST_STATUS.md
 .codex
 
+# Agent skill registry cache (auto-generated)
+.atl/.skill-registry.cache.json
+
 # Conda
 .conda/
 condaenv.*.txt

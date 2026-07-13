@@ -69,9 +69,9 @@ mcp = [
 ast-rag-testgen = "main:main"
 
 [project.urls]
-Homepage = "https://github.com/croko22/Tesis-RAG-vs-RL-Arena"
-Repository = "https://github.com/croko22/Tesis-RAG-vs-RL-Arena"
-Documentation = "https://github.com/croko22/Tesis-RAG-vs-RL-Arena#readme"
+Homepage = "https://github.com/croko22/AST-RAG-TestGen"
+Repository = "https://github.com/croko22/AST-RAG-TestGen"
+Documentation = "https://github.com/croko22/AST-RAG-TestGen#readme"
 
 [tool.setuptools.packages.find]
 where = ["."]

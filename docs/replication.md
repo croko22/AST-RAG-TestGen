@@ -3,6 +3,7 @@
 ## Prerequisites
 
 - **Python 3.11+** — verify with `python --version`
+- **Java 11+ JDK** — required for compilation validation and coverage analysis of generated tests. Verify with `javac -version`
 - **Git** — verify with `git --version`
 - **At least one LLM API key** (see the table in Step 3)
 - (Optional) **Conda** — for isolated environment management
@@ -120,11 +121,7 @@ The `--alpha` parameter controls the blend between vector similarity (semantic) 
 
 ### Dataset
 
-The full benchmark dataset (RefTest-12) is available on Google Drive:
-
-> **TODO**: Replace this with your Google Drive folder link
-
-Download and extract the dataset to `datasets/reftest-12/`. The directory structure should look like:
+The full benchmark dataset (RefTest-12) will be published alongside the thesis document. Once available, download and extract it to `datasets/reftest-12/`. The directory structure should look like:
 
 ```
 datasets/reftest-12/

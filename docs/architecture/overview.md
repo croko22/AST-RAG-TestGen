@@ -155,6 +155,6 @@ python main.py <java_file> <java_project_path> [options]
 
 Example:
 ```bash
-python main.py mock-java-project/src/main/java/com/example/demo/service/UsuarioService.java \
-  mock-java-project/ --provider nvidia --model meta/llama-3.3-70b-instruct
+python main.py examples/src/main/java/com/example/CalculatorService.java \
+  examples/ --provider nvidia --model meta/llama-3.3-70b-instruct
 ```
