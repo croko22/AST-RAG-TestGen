@@ -7,7 +7,9 @@ import pytest
 pytestmark = pytest.mark.slow
 
 import json
+from pathlib import Path
 
+from benchmark import runner
 from benchmark.planner import plan_runs
 from benchmark.runner import (
     _create_run_workspace,
@@ -15,8 +17,9 @@ from benchmark.runner import (
     execute_run,
     execute_runs,
 )
-from benchmark.schemas import BenchmarkManifest
-from benchmark.types import EvalMetrics, RunResult
+from benchmark.schemas import BenchmarkManifest, EvaluationConfig
+from benchmark.types import EvalMetrics, RunPlan, RunResult
+from orchestration.generator import GenerationResult
 
 
 def _minimal_manifest() -> BenchmarkManifest:
@@ -218,3 +221,133 @@ def test_execute_runs_threads_eval_config_to_each_plan(tmp_path, monkeypatch):
     assert len(results) == len(plans)
     assert len(captured_eval_configs) == len(plans)
     assert all(eval_cfg == manifest.evaluation for _, eval_cfg in captured_eval_configs)
+
+
+# --- Repair loop (T1) -------------------------------------------------------
+
+
+def _eval_config() -> EvaluationConfig:
+    return EvaluationConfig(compile_cmd="mvn -q test-compile", test_cmd="mvn -q test")
+
+
+def _repair_plan(tmp_path, repair_attempts: int = 2) -> RunPlan:
+    return RunPlan(
+        run_id="run_repair",
+        dataset_id="svc",
+        java_file="src/Service.java",
+        provider="test",
+        model="m",
+        trial=1,
+        seed=0,
+        max_dependencies=5,
+        timeout_seconds=10,
+        retry_count=0,
+        project_root=str(tmp_path),
+        repair_attempts=repair_attempts,
+    )
+
+
+def _write_fake_generation(output_dir, code="class ServiceTest {}"):
+    target = Path(output_dir) / "ServiceTest.java"
+    target.write_text(code, encoding="utf-8")
+    return GenerationResult(test_code=code, output_path=str(target))
+
+
+def test_attempt_rank_prefers_compiling_attempt():
+    compiling = EvalMetrics(compile_pass=True, test_pass=False, compile_errors=[])
+    failing_few = EvalMetrics(compile_pass=False, test_pass=False, compile_errors=["a"])
+    failing_many = EvalMetrics(compile_pass=False, test_pass=False, compile_errors=["a", "b"])
+
+    assert runner._attempt_rank(compiling) > runner._attempt_rank(failing_few)
+    assert runner._attempt_rank(failing_few) > runner._attempt_rank(failing_many)
+
+
+def test_error_signature_none_when_empty():
+    assert runner._error_signature(EvalMetrics(compile_pass=False, test_pass=False)) is None
+
+
+def test_error_signature_is_order_independent():
+    a = EvalMetrics(compile_pass=False, test_pass=False, compile_errors=["b", "a"])
+    b = EvalMetrics(compile_pass=False, test_pass=False, compile_errors=["a", "b"])
+
+    assert runner._error_signature(a) == runner._error_signature(b)
+
+
+def test_execute_with_repair_retries_until_compile_passes(tmp_path, monkeypatch):
+    plan = _repair_plan(tmp_path)
+    calls = {"generation": 0, "feedback": []}
+
+    def fake_generation(plan, output_dir, feedback_context=None):
+        calls["generation"] += 1
+        calls["feedback"].append(feedback_context)
+        return str(output_dir), 7, _write_fake_generation(output_dir)
+
+    def fake_eval(run_dir, eval_config, project_root, generation_result=None):
+        if calls["generation"] == 1:
+            return EvalMetrics(
+                compile_pass=False,
+                test_pass=False,
+                failure_type="compile_failed",
+                failure_message="boom",
+                compile_errors=["ServiceTest.java:3: cannot find symbol"],
+            )
+        return EvalMetrics(compile_pass=True, test_pass=False)
+
+    monkeypatch.setattr(runner, "_execute_generation", fake_generation)
+    monkeypatch.setattr(runner, "_run_with_timeout", lambda func, timeout, *a, **k: func(*a, **k))
+    monkeypatch.setattr("benchmark.evaluator.evaluate_run", fake_eval)
+
+    metrics, _, latency_ms = runner._execute_with_repair(
+        plan, tmp_path, _eval_config(), max_attempts=3
+    )
+
+    assert metrics.compile_pass is True
+    assert metrics.attempt_count == 2
+    assert calls["generation"] == 2
+    assert calls["feedback"][0] is None
+    assert "cannot find symbol" in calls["feedback"][1]
+    assert latency_ms == 14
+
+
+def test_execute_with_repair_stops_when_errors_do_not_change(tmp_path, monkeypatch):
+    plan = _repair_plan(tmp_path)
+    calls = {"generation": 0}
+
+    def fake_generation(plan, output_dir, feedback_context=None):
+        calls["generation"] += 1
+        return str(output_dir), 5, _write_fake_generation(output_dir)
+
+    def fake_eval(run_dir, eval_config, project_root, generation_result=None):
+        return EvalMetrics(
+            compile_pass=False,
+            test_pass=False,
+            failure_type="compile_failed",
+            compile_errors=["ServiceTest.java:3: cannot find symbol"],
+        )
+
+    monkeypatch.setattr(runner, "_execute_generation", fake_generation)
+    monkeypatch.setattr(runner, "_run_with_timeout", lambda func, timeout, *a, **k: func(*a, **k))
+    monkeypatch.setattr("benchmark.evaluator.evaluate_run", fake_eval)
+
+    metrics, _, _ = runner._execute_with_repair(plan, tmp_path, _eval_config(), max_attempts=5)
+
+    # Attempt 1 -> attempt 2 with identical errors -> stop (no progress).
+    assert calls["generation"] == 2
+    assert metrics.compile_pass is False
+
+
+def test_execute_with_repair_without_eval_config_is_single_success(tmp_path, monkeypatch):
+    plan = _repair_plan(tmp_path)
+    calls = {"generation": 0}
+
+    def fake_generation(plan, output_dir, feedback_context=None):
+        calls["generation"] += 1
+        return str(output_dir), 1, _write_fake_generation(output_dir)
+
+    monkeypatch.setattr(runner, "_execute_generation", fake_generation)
+    monkeypatch.setattr(runner, "_run_with_timeout", lambda func, timeout, *a, **k: func(*a, **k))
+
+    metrics, _, _ = runner._execute_with_repair(plan, tmp_path, None, max_attempts=3)
+
+    assert metrics.compile_pass is True
+    assert calls["generation"] == 1

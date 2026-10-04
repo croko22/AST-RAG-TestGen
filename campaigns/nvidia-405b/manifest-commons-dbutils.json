@@ -112,6 +112,7 @@
     "max_dependencies": 5,
     "timeout_seconds": 300,
     "retry_count": 1,
+    "repair_attempts": 2,
     "concurrency": 1
   },
   "evaluation": {

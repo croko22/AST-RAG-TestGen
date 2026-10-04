@@ -80,8 +80,12 @@ class PromptBuilder:
         return f"{header}\n{rag_context}"
 
     def _format_feedback_context(self, feedback_context: str) -> str:
-        header = "### FEEDBACK DE INTENTO ANTERIOR"
-        return f"{header}\n{feedback_context}"
+        instruction = (
+            "Tu intento anterior NO compilo. Corrige UNICAMENTE los errores del compilador "
+            "listados abajo. No inventes clases, metodos, constructores ni firmas que no "
+            "aparezcan en el contexto; usa exclusivamente los simbolos disponibles."
+        )
+        return f"### FEEDBACK DE INTENTO ANTERIOR\n{instruction}\n\n{feedback_context}"
 
     def _build_dependency_context(
         self,

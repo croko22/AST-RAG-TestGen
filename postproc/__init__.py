@@ -1,5 +1,10 @@
 """Post-processing pipeline: validation and quality assessment for generated tests."""
 
+from postproc.diagnostics import (
+    JavacDiagnostic,
+    parse_javac_diagnostics,
+    summarize_diagnostics,
+)
 from postproc.quality import QualityReport, assess_test_quality
 from postproc.validator import (
     CompileResult,
@@ -13,10 +18,13 @@ from postproc.validator import (
 __all__ = [
     "CompileResult",
     "CoverageResult",
+    "JavacDiagnostic",
     "QualityReport",
     "TestRunResult",
     "assess_test_quality",
     "parse_coverage",
+    "parse_javac_diagnostics",
     "run_tests",
+    "summarize_diagnostics",
     "validate_compilation",
 ]

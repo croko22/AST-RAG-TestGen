@@ -85,6 +85,7 @@ class RunPlan:
     timeout_seconds: int
     retry_count: int
     project_root: str
+    repair_attempts: int = 0
 
 
 @dataclass(slots=True)

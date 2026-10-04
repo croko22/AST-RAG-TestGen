@@ -42,6 +42,7 @@ class RunConfig(StrictModel):
     max_dependencies: int = Field(default=10, ge=1)
     timeout_seconds: int = Field(default=300, ge=1)
     retry_count: int = Field(default=0, ge=0)
+    repair_attempts: int = Field(default=0, ge=0)
     concurrency: int = Field(default=1, ge=1)
 
 

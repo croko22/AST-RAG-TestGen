@@ -40,6 +40,7 @@ def generate_test_for_file(
     rag_config: dict[str, Any] | None = None,
     retrieval_strategy: Literal["ast", "rag", "hybrid"] = "ast",
     feedback_config: Any = None,
+    feedback_context: str | None = None,
     # Injectable seams (for testing / DI)
     parser: Any = None,
     retriever: Any = None,
@@ -101,78 +102,40 @@ def generate_test_for_file(
         max_dependencies=max_dependencies,
         rag_context=rag_context,
         max_context_tokens=max_ctx_tokens,
+        feedback_context=feedback_context,
     )
     timings["prompt_ms"] = int((time.perf_counter() - t0) * 1000)
 
     output.print_info(f"    Context length: {len(dependency_signatures)} chars")
 
-    # Default feedback config - disabled by default (mvn compile is slow)
-    # Users can enable via FeedbackLoopConfig in main.py CLI
-    if feedback_config is None:
+    t0 = time.perf_counter()
+    output.print_info("[4/4] 🤖 Generating test with LLM...")
+    test_code = _generate_test_with_llm(
+        code_under_test=code_under_test,
+        dependency_context=dependency_signatures,
+        provider=llm_provider,
+        model=llm_model,
+        client=llm_client,
+    )
+    timings["llm_ms"] = int((time.perf_counter() - t0) * 1000)
+    timings["llm_attempt_1_ms"] = timings["llm_ms"]
 
-        class DefaultFeedback:
-            max_retries = 1
-            retry_on_compile_fail = False
+    if test_code is None:
+        test_code = ""
+        output.print_warning("LLM returned None, using empty string")
+    cleaned_code = test_code.strip()
+    if cleaned_code.startswith("```java"):
+        cleaned_code = cleaned_code[7:]
+    if cleaned_code.startswith("```"):
+        cleaned_code = cleaned_code[3:]
+    if cleaned_code.endswith("```"):
+        cleaned_code = cleaned_code[:-3]
+    cleaned_code = cleaned_code.strip()
 
-        feedback_config = DefaultFeedback()
-
-    max_retries = getattr(feedback_config, "max_retries", 1)
-    retry_on_compile_fail = getattr(feedback_config, "retry_on_compile_fail", False)
-
+    # Retries are owned by the benchmark runner (compile feedback loop), not here.
     attempt = 1
     compile_errors: list[str] = []
     final_status = "success"
-    test_code = ""
-
-    t_llm_total = time.perf_counter()
-    while attempt <= max_retries:
-        t0 = time.perf_counter()
-        output.print_info(f"[4/4] 🤖 Generating test with LLM... (attempt {attempt}/{max_retries})")
-        test_code = _generate_test_with_llm(
-            code_under_test=code_under_test,
-            dependency_context=dependency_signatures,
-            provider=llm_provider,
-            model=llm_model,
-            client=llm_client,
-        )
-        timings[f"llm_attempt_{attempt}_ms"] = int((time.perf_counter() - t0) * 1000)
-
-        if test_code is None:
-            test_code = ""
-            output.print_warning("LLM returned None, using empty string")
-        cleaned_code = test_code.strip()
-        if cleaned_code.startswith("```java"):
-            cleaned_code = cleaned_code[7:]
-        if cleaned_code.startswith("```"):
-            cleaned_code = cleaned_code[3:]
-        if cleaned_code.endswith("```"):
-            cleaned_code = cleaned_code[:-3]
-        cleaned_code = cleaned_code.strip()
-
-        # Skip compile validation in feedback loop - evaluator handles it
-        # Validation via mvn compile is too slow for retry loop
-        if retry_on_compile_fail and attempt < max_retries:
-            # Add feedback for next attempt
-            feedback = f"Attempt {attempt} generated - will be validated by evaluator"
-            t_prompt = time.perf_counter()
-            code_under_test, dependency_signatures = _build_prompt(
-                parsed_class=parsed_class,
-                project_path=Path(java_project_path),
-                dependency_context=dependency_context,
-                max_dependencies=max_dependencies,
-                rag_context=rag_context,
-                max_context_tokens=max_ctx_tokens,
-                feedback_context=feedback,
-            )
-            timings[f"prompt_rebuild_attempt_{attempt}_ms"] = int(
-                (time.perf_counter() - t_prompt) * 1000
-            )
-            attempt += 1
-        else:
-            final_status = "success"
-            break
-
-    timings["llm_ms"] = int((time.perf_counter() - t_llm_total) * 1000)
 
     output_path = Path(output_dir)
     output_path.mkdir(parents=True, exist_ok=True)

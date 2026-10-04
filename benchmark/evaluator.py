@@ -10,7 +10,8 @@ from typing import TYPE_CHECKING
 
 from benchmark.schemas import EvaluationConfig
 from benchmark.types import EvalMetrics, PipelineTimings, RunResult
-from postproc._runner import run_command, stage_test_file
+from postproc._runner import CommandResult, run_command, stage_test_file
+from postproc.diagnostics import parse_javac_diagnostics, summarize_diagnostics
 from postproc.pit_parser import parse_pit_report
 from postproc.quality import assess_test_quality
 from postproc.validator import parse_coverage
@@ -74,36 +75,50 @@ def evaluate_run(
 
         compile_result = run_command(eval_config.compile_cmd, temp_path)
         if not compile_result.success:
-            stderr_text = compile_result.stderr or ""
+            combined_output = _combine_output(compile_result)
+            diagnostics = parse_javac_diagnostics(combined_output)
+            compile_errors = [diagnostic.format() for diagnostic in diagnostics]
+            if not compile_errors:
+                compile_errors = _error_lines(combined_output)
+            failure_message = (
+                summarize_diagnostics(diagnostics)
+                or "\n".join(_error_lines(combined_output))
+                or combined_output.strip()[:500]
+                or "Compilation failed"
+            )
             return EvalMetrics(
                 compile_pass=False,
                 test_pass=False,
                 failure_type="compile_failed",
-                failure_message=stderr_text[:500] if stderr_text else "Compilation failed",
+                failure_message=failure_message,
                 assertion_count=quality.assertion_count,
                 test_count=quality.test_count,
                 trivial_flag=quality.trivial_flag,
                 quality_score=quality_score,
                 timings=timings,
                 generation_time_ms=generation_time_ms,
-                compile_errors=[line for line in stderr_text.split("\n") if line.strip()],
+                compile_errors=compile_errors,
             )
 
         test_result = run_command(eval_config.test_cmd, temp_path)
         if not test_result.success:
-            stderr_text = test_result.stderr or ""
+            combined_output = _combine_output(test_result)
+            test_errors = _error_lines(combined_output)
+            failure_message = (
+                "\n".join(test_errors) or combined_output.strip()[:500] or "Tests failed"
+            )
             return EvalMetrics(
                 compile_pass=True,
                 test_pass=False,
                 failure_type="test_failed",
-                failure_message=stderr_text[:500] if stderr_text else "Tests failed",
+                failure_message=failure_message,
                 assertion_count=quality.assertion_count,
                 test_count=quality.test_count,
                 trivial_flag=quality.trivial_flag,
                 quality_score=quality_score,
                 timings=timings,
                 generation_time_ms=generation_time_ms,
-                compile_errors=[line for line in stderr_text.split("\n") if line.strip()],
+                compile_errors=test_errors,
             )
 
         coverage_pct: float | None = None
@@ -232,6 +247,27 @@ def _bounded_percent(value: float) -> float | None:
     if 0.0 <= value <= 100.0:
         return value
     return None
+
+
+def _combine_output(result: CommandResult) -> str:
+    """Join stdout and stderr, since Maven/javac emit errors on both streams."""
+    parts = [part for part in (result.stdout, result.stderr) if part]
+    return "\n".join(parts)
+
+
+def _error_lines(output: str, limit: int = 20) -> list[str]:
+    """Extract compiler/test error lines from raw command output."""
+    lines: list[str] = []
+    for raw_line in output.splitlines():
+        stripped = raw_line.strip()
+        if not stripped:
+            continue
+        lowered = stripped.lower()
+        if stripped.startswith("[ERROR]") or lowered.startswith("error:") or " error:" in lowered:
+            lines.append(stripped)
+        if len(lines) >= limit:
+            break
+    return lines
 
 
 def merge_run_metrics(

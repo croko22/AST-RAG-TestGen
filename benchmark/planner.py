@@ -72,6 +72,7 @@ def plan_runs(manifest: BenchmarkManifest) -> list[RunPlan]:
             timeout_seconds=run_config.timeout_seconds,
             retry_count=run_config.retry_count,
             project_root=project_root,
+            repair_attempts=run_config.repair_attempts,
         )
         plans.append(plan)
 
@@ -95,5 +96,6 @@ def get_run_config_snapshot(plan: RunPlan) -> dict[str, Any]:
         "max_dependencies": plan.max_dependencies,
         "timeout_seconds": plan.timeout_seconds,
         "retry_count": plan.retry_count,
+        "repair_attempts": plan.repair_attempts,
         "project_root": plan.project_root,
     }

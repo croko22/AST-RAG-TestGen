@@ -225,3 +225,39 @@ def test_evaluate_run_cleans_up_temp_directory(tmp_path, monkeypatch):
     # Temp directory should be cleaned up
     assert not temp_dirs_after, f"Temp directories not cleaned up: {temp_dirs_after}"
     assert metrics.compile_pass is True
+
+
+def test_evaluate_run_surfaces_stdout_compile_errors(tmp_path, monkeypatch):
+    """Maven writes javac errors to stdout; they must not be discarded."""
+    project_root = tmp_path / "project"
+    run_dir = tmp_path / "run"
+    project_root.mkdir(parents=True)
+    run_dir.mkdir(parents=True)
+
+    (run_dir / "Test.java").write_text(
+        "package com.example;\n\npublic class Test {}",
+        encoding="utf-8",
+    )
+
+    maven_stdout = (
+        "[INFO] BUILD FAILURE\n"
+        "[ERROR] /x/Test.java:[3,5] cannot find symbol\n"
+        "[ERROR]   symbol:   class Foo\n"
+        "[ERROR]   location: class Test\n"
+    )
+    jvm_warning = "OpenJDK 64-Bit Server VM warning: Sharing is only supported ..."
+
+    def fakerun_command(cmd: str, cwd: Path, **kwargs) -> CommandResult:
+        return CommandResult(False, maven_stdout, jvm_warning, 1)
+
+    monkeypatch.setattr("benchmark.evaluator.run_command", fakerun_command)
+
+    metrics = evaluate_run(run_dir, _eval_config(), project_root)
+
+    assert metrics.compile_pass is False
+    assert metrics.failure_type == "compile_failed"
+    assert "cannot find symbol" in metrics.failure_message
+    assert "symbol: class Foo" in metrics.failure_message
+    assert any("cannot find symbol" in error for error in metrics.compile_errors)
+    # The useless JVM warning must not be the primary failure message.
+    assert "Sharing is only supported" not in metrics.failure_message
