@@ -24,9 +24,9 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
-from benchmark.manifest import load_manifest  # noqa: E402
-from postproc._runner import run_command, stage_test_file  # noqa: E402
-from postproc.diagnostics import parse_javac_diagnostics, summarize_diagnostics  # noqa: E402
+from benchmark.manifest import load_manifest
+from postproc._runner import run_command, stage_test_file
+from postproc.diagnostics import parse_javac_diagnostics, summarize_diagnostics
 
 
 def replay_one(test_path: Path, project_root: Path, compile_cmd: str, timeout: int) -> dict:
