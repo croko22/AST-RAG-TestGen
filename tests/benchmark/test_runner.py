@@ -136,6 +136,7 @@ def test_execute_runs_continues_after_failure(tmp_path):
         max_dependencies = 5
         timeout_seconds = 60
         retry_count = 0
+        repair_attempts = 0
         project_root = "project"
 
     failing_plan = FailingPlan()
