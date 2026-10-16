@@ -23,6 +23,43 @@ except ImportError:
 
 from output import get_output
 
+# Hardcoded fallbacks, mirroring cli.parser.build_arg_parser.
+_DEFAULT_PROVIDER = "anthropic"
+_DEFAULT_MODEL = "claude-3-5-sonnet-20241022"
+_DEFAULT_OUTPUT = "./tests_generados"
+_DEFAULT_MAX_DEPS = 10
+_DEFAULT_BENCHMARK_OUTPUT = "./benchmark_results"
+
+
+def _config_defaults():
+    """Resolve CLI defaults from the .env-backed config.
+
+    Falls back to the hardcoded defaults when the config is unavailable, so a
+    broken .env never breaks the CLI.
+
+    Returns:
+        Tuple of (provider, model, output, max_deps, benchmark_output).
+    """
+    provider = _DEFAULT_PROVIDER
+    model = _DEFAULT_MODEL
+    output = _DEFAULT_OUTPUT
+    max_deps = _DEFAULT_MAX_DEPS
+    benchmark_output = _DEFAULT_BENCHMARK_OUTPUT
+
+    try:
+        from config import get_config
+
+        config = get_config()
+        provider = config.llm.provider
+        model = config.llm.model
+        output = str(config.java.test_output_dir)
+        max_deps = config.java.max_dependencies
+        benchmark_output = str(config.benchmark.output_dir)
+    except Exception:
+        pass
+
+    return provider, model, output, max_deps, benchmark_output
+
 
 def create_modern_cli():
     """Create and return the modern Typer CLI application.
@@ -39,22 +76,26 @@ def create_modern_cli():
         add_completion=True,
     )
 
+    default_provider, default_model, default_output, default_max_deps, default_bench = (
+        _config_defaults()
+    )
+
     @app.command()
     def generate(
         java_file: str = typer.Argument(..., help="Path to the Java file to generate tests for"),
         project_path: str = typer.Argument(..., help="Root path of the Java project"),
         provider: str = Opt(
-            "anthropic",
+            default_provider,
             "--provider",
             "-p",
             help="LLM provider (anthropic, openai, glm, gemini, nvidia, openrouter)",
         ),
-        model: str = Opt("claude-3-5-sonnet-20241022", "--model", "-m", help="LLM model to use"),
+        model: str = Opt(default_model, "--model", "-m", help="LLM model to use"),
         output: str = Opt(
-            "./tests_generados", "--output", "-o", help="Output directory for generated tests"
+            default_output, "--output", "-o", help="Output directory for generated tests"
         ),
         max_deps: int = Opt(
-            10, "--max-deps", "-d", help="Maximum number of dependencies to include"
+            default_max_deps, "--max-deps", "-d", help="Maximum number of dependencies to include"
         ),
         print_code: bool = Opt(False, "--print", help="Print the generated test to stdout"),
     ) -> None:
@@ -86,7 +127,7 @@ def create_modern_cli():
     def benchmark(
         manifest: str = typer.Argument(..., help="Path to benchmark manifest (JSON or TOML)"),
         output: str = Opt(
-            "./benchmark_results", "--output", "-o", help="Output directory for benchmark results"
+            default_bench, "--output", "-o", help="Output directory for benchmark results"
         ),
         dry_run: bool = Opt(False, "--dry-run", help="Run benchmark without actual generation"),
     ) -> None:
