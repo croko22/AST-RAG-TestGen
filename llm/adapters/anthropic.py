@@ -6,6 +6,8 @@ This module provides the Anthropic adapter implementation.
 
 from __future__ import annotations
 
+import inspect
+
 try:
     import anthropic
 
@@ -44,19 +46,27 @@ class AnthropicAdapter(BaseLLMAdapter):
         system_prompt = self.build_system_prompt()
         user_prompt = self.build_user_prompt(code_under_test, dependency_context)
 
-        message = self.client.messages.create(
-            model=self.config.model,
-            max_tokens=self.config.max_tokens,
-            temperature=self.config.temperature,
-            top_p=self.config.top_p,
-            system=system_prompt,
-            messages=[
+        # anthropic SDK v1 removed temperature/top_p from messages.create()
+        # (deprecated by the API; see anthropic-sdk-python MIGRATION.md).
+        # Only send sampling params the installed signature actually accepts.
+        params = inspect.signature(self.client.messages.create).parameters
+        kwargs: dict = {
+            "model": self.config.model,
+            "max_tokens": self.config.max_tokens,
+            "system": system_prompt,
+            "messages": [
                 {
                     "role": "user",
                     "content": user_prompt,
                 }
             ],
-        )
+        }
+        if "temperature" in params:
+            kwargs["temperature"] = self.config.temperature
+        if "top_p" in params:
+            kwargs["top_p"] = self.config.top_p
+
+        message = self.client.messages.create(**kwargs)
 
         content = message.content[0].text if message.content else ""
         return content
