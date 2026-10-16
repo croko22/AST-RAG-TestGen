@@ -325,8 +325,7 @@ Detailed architecture and design documentation is available in `docs/`:
 ### Runtime
 
 - Python >= 3.11
-- tree-sitter >= 0.21.0
-- tree-sitter-languages
+- tree-sitter >= 0.22.0
 - tree-sitter-java
 - openai >= 1.0.0
 - anthropic >= 0.18.0

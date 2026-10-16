@@ -1,7 +1,6 @@
 # AST-RAG TestGen Requirements
 # Tree-sitter AST parser
-tree-sitter>=0.21.0
-tree-sitter-languages
+tree-sitter>=0.22.0
 tree-sitter-java
 
 # LLM API clients

@@ -30,7 +30,7 @@ class JavaParser:
     def __init__(self):
         """Initialize the Java parser."""
         if not TREE_SITTER_AVAILABLE:
-            raise ImportError("tree-sitter or tree-sitter-languages is not installed")
+            raise ImportError("tree-sitter or tree-sitter-java is not installed")
 
         self.parser = Parser()
         self.parser.language = Language(tree_sitter_java.language())

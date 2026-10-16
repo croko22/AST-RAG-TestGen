@@ -34,8 +34,7 @@ classifiers = [
 ]
 
 dependencies = [
-    "tree-sitter>=0.21.0",
-    "tree-sitter-languages",
+    "tree-sitter>=0.22.0",
     "tree-sitter-java",
     "openai>=1.0.0",
     "anthropic>=0.18.0",
